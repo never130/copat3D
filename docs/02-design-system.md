@@ -146,14 +146,40 @@ Limitación aceptada: solo se anima la vista **entrante**, porque la saliente se
 
 La transición de hoja no vive solo en el cambio de ruta: **cada sección se comporta como una hoja** mientras scrolleás.
 
-| Fase | Rango | Qué hace |
+| Clase | Estado | Aspecto |
 |---|---|---|
-| Entrada | `entry 0%` → `entry 42%` | Sube 52px y escala de 0.97 a 1, apareciendo |
-| Salida | `exit 20%` → `exit 100%` | Sube 40px, escala a 0.94 y baja a 30% de opacidad |
+| `.sheet` | Todavía no llegó | Opacidad 0, bajada 52px, escala 0.97 |
+| `.sheet-in` | Apoyada, a la vista | Opacidad 1, sin transformar |
+| `.sheet-past` | Ya pasó, la siguiente la cubre | Opacidad 0.3, subida 40px, escala 0.94 |
 
-El efecto combinado es que la sección siguiente parece **taparte** la anterior, como pasar páginas. Se implementa con `animation-timeline: view()` sobre la clase `.sheet`, sin JavaScript.
+El efecto combinado es que la sección siguiente parece **tapar** a la anterior, como pasar páginas.
 
-Detalle de implementación que importa: la entrada usa `both` y la salida solo `forwards`. En CSS, **la última animación declarada gana**, así que si `sheet-cover` rellenara también hacia atrás, pisaría a `sheet-settle` durante toda la entrada y la sección aparecería ya encogida.
+#### Por qué con IntersectionObserver y no con CSS puro
+
+La primera implementación usó `animation-timeline: view()`, que es la vía elegante y sin JavaScript. **No funcionó**, por dos motivos que se sumaron:
+
+1. Solo corre en Chromium. Firefox y Safari quedaban sin efecto alguno.
+2. El minificador (Lightning CSS, dentro de Tailwind v4) reescribe `animation-range` a una forma condensada difícil de auditar: `entry 0% entry 42%` sale compilado como `entry entry 42%`.
+
+Se reemplazó por `SheetMotion` (`src/components/SheetMotion.tsx`): un IntersectionObserver que conmuta clases y deja que CSS haga transiciones normales. Menos sofisticado, pero **determinista y universal**, que es lo que corresponde cuando el efecto es parte central de la identidad y no un adorno.
+
+#### ⚠️ `.sheet` va en bloques, nunca en la `<section>`
+
+Es el error que hizo que el efecto **no se viera** en la primera versión funcional. Una `<section>` mide ~1200px: su borde superior cruza el umbral del observer mientras todavía estás mirando la sección anterior, la transición de 0.7s se completa **fuera de pantalla**, y para cuando llegás a verla ya está asentada. El efecto corría perfecto y era invisible.
+
+La clase va en unidades **más chicas que el viewport** — encabezado, tarjeta, CTA, marquesina — que entran a la vista mientras animan. Como referencia, los bloques actuales miden entre 93 y 309px contra un viewport de 900.
+
+Regla al agregar contenido nuevo: si el bloque es más alto que la pantalla, no lleva `.sheet`; se la ponés a sus hijos.
+
+#### Escalonado
+
+Los grupos de tarjetas usan `--sheet-delay` (90ms por índice) para repartirse como hojas en vez de aparecer de golpe.
+
+#### Otros detalles que importan al tocarlo
+
+- El estado inicial cuelga de `.js-sheets`, clase que agrega el propio script. **Si el JS no corre, las secciones quedan visibles** en lugar de invisibles para siempre.
+- Las clases iniciales se calculan **antes** de activar `.js-sheets`. Al revés, todo saltaría a opacidad 0 y el observer lo corregiría un frame después, con parpadeo visible.
+- Un `.sheet` **no puede tener hover con `transform`** (por ejemplo `hover:-translate-y-1`): la transición de 0.7s de la hoja lo vuelve pesado. Las tarjetas de ejes usan la barra de acento superior como señal de hover.
 
 Reemplaza a la vieja clase `.reveal`, que animaba elementos sueltos: animar la sección completa como una unidad lee mucho más como una hoja que animar sus cajas por separado.
 
@@ -172,7 +198,7 @@ Elegidas por ser modernas *y* baratas en performance — todas degradan sin romp
 | Técnica | Uso en el sitio |
 |---|---|
 | `@property` + `@keyframes` | Degradé del hero que rota su ángulo animadamente |
-| `animation-timeline: scroll()/view()` | Parallax y entradas de sección sin JS |
+| `animation-timeline: scroll()` | Parallax de las figuras del hero (decorativo, solo Chromium) |
 | `color-mix()` | Derivar hovers y bordes de un solo token |
 | `backdrop-filter` | Navbar y cards de agenda (glassmorphism) |
 | `@starting-style` | Animación de entrada de elementos nuevos |

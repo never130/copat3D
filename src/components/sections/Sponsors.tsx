@@ -24,10 +24,10 @@ export function Sponsors() {
   return (
     <section
       id="empresas"
-      className="sheet scroll-mt-24 overflow-hidden py-24 sm:py-32"
+      className="scroll-mt-24 overflow-hidden py-24 sm:py-32"
     >
       <div className="mx-auto max-w-7xl px-5">
-        <div className="max-w-2xl">
+        <div className="sheet max-w-2xl">
           <p className="text-accent-text font-mono text-xs font-medium tracking-[0.25em] uppercase">
             Acompañan
           </p>
@@ -37,7 +37,7 @@ export function Sponsors() {
         </div>
       </div>
 
-      <div className="marquee-mask mt-14 flex overflow-hidden">
+      <div className="sheet marquee-mask mt-14 flex overflow-hidden">
         <div className="marquee-track flex gap-4">
           {track.map((nombre, i) => (
             <div
@@ -53,7 +53,7 @@ export function Sponsors() {
       </div>
 
       <div className="mx-auto mt-14 max-w-7xl px-5">
-        <div className="hero-gradient grain relative overflow-hidden rounded-3xl px-8 py-14 text-center sm:px-14">
+        <div className="sheet hero-gradient grain relative overflow-hidden rounded-3xl px-8 py-14 text-center sm:px-14">
           <div className="relative z-10">
             <h3 className="text-[clamp(1.5rem,4vw,2.5rem)] text-white">
               ¿Tu empresa quiere ser parte?

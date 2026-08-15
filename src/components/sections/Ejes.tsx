@@ -27,9 +27,9 @@ export function Ejes() {
   return (
     <section
       id="ejes"
-      className="sheet mx-auto max-w-7xl scroll-mt-24 px-5 py-24 sm:py-32"
+      className="mx-auto max-w-7xl scroll-mt-24 px-5 py-24 sm:py-32"
     >
-      <div className="max-w-2xl">
+      <div className="sheet max-w-2xl">
         <p className="text-accent-text font-mono text-xs font-medium tracking-[0.25em] uppercase">
           Ejes temáticos
         </p>
@@ -43,12 +43,17 @@ export function Ejes() {
       </div>
 
       <div className="mt-14 grid gap-5 sm:grid-cols-2">
-        {EJES.map((eje) => {
+        {EJES.map((eje, i) => {
           const a = ACCENT[eje.color];
           return (
             <article
               key={eje.id}
-              className={`group border-border bg-surface relative overflow-hidden rounded-3xl border p-8 transition-all duration-300 hover:-translate-y-1 ${a.border}`}
+              // Escalonado: las tarjetas se reparten como hojas, no de golpe
+              style={{ "--sheet-delay": `${i * 90}ms` } as React.CSSProperties}
+              // Sin hover:-translate-y: .sheet ya transiciona `transform` a
+              // 0.7s y el lift quedaría pesado. La barra de acento superior
+              // es la señal de hover.
+              className={`sheet group border-border bg-surface relative overflow-hidden rounded-3xl border p-8 ${a.border}`}
             >
               <div
                 className={`absolute top-0 left-0 h-1 w-full ${a.bg} scale-x-0 transition-transform duration-300 group-hover:scale-x-100`}

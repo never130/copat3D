@@ -16,8 +16,8 @@ export default function RegistroPage() {
         bajada="Participá de forma presencial en Ushuaia o seguí las charlas en vivo desde donde estés."
       />
 
-      <div className="sheet mx-auto max-w-2xl px-5 py-20">
-        <div className="border-border bg-surface rounded-3xl border border-dashed p-12 text-center">
+      <div className="mx-auto max-w-2xl px-5 py-20">
+        <div className="sheet border-border bg-surface rounded-3xl border border-dashed p-12 text-center">
           <h2 className="text-2xl">El formulario se habilita en breve</h2>
           <p className="text-muted mx-auto mt-4 max-w-md leading-relaxed">
             Estamos terminando de definir el circuito de acreditación junto a la

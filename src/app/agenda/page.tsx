@@ -21,12 +21,13 @@ export default function AgendaPage() {
         bajada="Charlas, talleres y demostraciones en vivo en la Fábrica de Talentos."
       />
 
-      <div className="sheet mx-auto max-w-7xl px-5 py-20">
+      <div className="mx-auto max-w-7xl px-5 py-20">
         <div className="grid gap-5 sm:grid-cols-2">
-          {DIAS.map((dia) => (
+          {DIAS.map((dia, i) => (
             <article
               key={dia.fecha}
-              className="border-border bg-surface rounded-3xl border p-8"
+              style={{ "--sheet-delay": `${i * 90}ms` } as React.CSSProperties}
+              className="sheet border-border bg-surface rounded-3xl border p-8"
             >
               <h2 className="text-2xl">{dia.fecha}</h2>
               <p className="text-muted mt-3">{dia.detalle}</p>
@@ -44,7 +45,7 @@ export default function AgendaPage() {
           ))}
         </div>
 
-        <p className="text-muted mt-10 text-center">
+        <p className="sheet text-muted mt-10 text-center">
           Estamos cerrando el cronograma con los speakers confirmados.
           <span className="bg-copat-yellow text-magenta-deep ml-2 inline-block rounded-full px-3 py-1 text-xs font-bold tracking-wide uppercase">
             Próximamente

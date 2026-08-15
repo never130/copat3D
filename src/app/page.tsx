@@ -14,11 +14,8 @@ function Proximamente({
   texto: string;
 }) {
   return (
-    <section
-      id={id}
-      className="sheet mx-auto max-w-7xl scroll-mt-24 px-5 py-24"
-    >
-      <div className="border-border bg-surface rounded-3xl border border-dashed p-14 text-center">
+    <section id={id} className="mx-auto max-w-7xl scroll-mt-24 px-5 py-24">
+      <div className="sheet border-border bg-surface rounded-3xl border border-dashed p-14 text-center">
         <h2 className="text-[clamp(1.75rem,5vw,2.75rem)]">{titulo}</h2>
         <p className="text-muted mx-auto mt-4 max-w-md">{texto}</p>
         <span className="bg-copat-yellow text-magenta-deep mt-6 inline-block rounded-full px-4 py-1.5 text-xs font-bold tracking-wide uppercase">

@@ -295,42 +295,42 @@
    secciones quedan estáticas — degradación limpia.
    ============================================================ */
 
-@supports (animation-timeline: view()) {
-  @keyframes sheet-settle {
-    from {
-      opacity: 0;
-      transform: translateY(52px) scale(0.97);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
+/* Se usa IntersectionObserver y no `animation-timeline: view()`:
+   el scroll-driven de CSS solo corre en Chromium, y su sintaxis de
+   `animation-range` se reescribe al minificar de forma difícil de
+   auditar. Transiciones simples conmutadas por clase son
+   deterministas y andan en todos los navegadores.
 
-  @keyframes sheet-cover {
-    from {
-      opacity: 1;
-      transform: none;
-    }
-    to {
-      opacity: 0.3;
-      transform: translateY(-40px) scale(0.94);
-    }
-  }
+   El estado inicial cuelga de .js-sheets, que agrega el propio JS:
+   si el script no corre, las secciones quedan visibles en lugar de
+   invisibles para siempre.
 
-  .sheet {
-    transform-origin: center top;
-    /* La entrada lleva `both` y la salida solo `forwards`: la última
-       animación declarada gana, así que si sheet-cover rellenara hacia
-       atrás pisaría a sheet-settle durante toda la entrada. */
-    animation:
-      sheet-settle linear both,
-      sheet-cover linear forwards;
-    animation-timeline: view(), view();
-    animation-range:
-      entry 0% entry 42%,
-      exit 20% exit 100%;
-  }
+   IMPORTANTE: .sheet va en BLOQUES (encabezado, tarjeta, CTA), nunca en
+   la <section> entera. Una sección mide ~1200px y su borde superior
+   cruza el umbral mientras todavía mirás la sección anterior: la
+   transición se completa fuera de pantalla y no se ve nada. Los bloques
+   son más chicos que el viewport y entran a la vista mientras animan. */
+
+.js-sheets .sheet {
+  opacity: 0;
+  transform: translateY(52px) scale(0.97);
+  transform-origin: center top;
+  transition:
+    opacity 0.7s var(--ease-out-expo),
+    transform 0.7s var(--ease-out-expo);
+  transition-delay: var(--sheet-delay, 0ms);
+}
+
+/* Hoja apoyada: a la vista */
+.js-sheets .sheet.sheet-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hoja tapada: ya pasó hacia arriba, la siguiente la cubre */
+.js-sheets .sheet.sheet-past {
+  opacity: 0.3;
+  transform: translateY(-40px) scale(0.94);
 }
 
 /* ============================================================
@@ -431,5 +431,13 @@
     transition-duration: 0.12s !important;
     scroll-behavior: auto !important;
     animation-timeline: none !important;
+  }
+
+  /* Las hojas quedan apoyadas y a plena opacidad: sin movimiento, pero
+     tampoco atenuadas a medias, que sería peor que no tener el efecto. */
+  .js-sheets .sheet,
+  .js-sheets .sheet.sheet-past {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
