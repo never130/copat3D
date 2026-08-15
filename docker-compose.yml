@@ -1,0 +1,46 @@
+# Entorno de desarrollo COPAT 3D
+#   docker compose up
+# App con hot-reload en http://localhost:3000 y Postgres local en :5432.
+# El Postgres local evita tocar la base real de Neon durante el desarrollo.
+
+services:
+  app:
+    build:
+      context: .
+      target: dev
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://copat:copat@db:5432/copat3d
+      CONTACT_TO: ${CONTACT_TO:-copat3d@aif.gob.ar}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      WATCHPACK_POLLING: "true" # el hot-reload en volumen montado necesita polling
+    volumes:
+      - .:/app
+      # Volúmenes anónimos: mantienen los node_modules y el build del contenedor,
+      # sin que el bind mount del host los pise.
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: copat
+      POSTGRES_PASSWORD: copat
+      POSTGRES_DB: copat3d
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U copat -d copat3d"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:

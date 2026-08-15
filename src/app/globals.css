@@ -1,0 +1,435 @@
+@import "tailwindcss";
+
+/* Dark mode por clase, controlado por next-themes */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   TOKENS SEMÁNTICOS — cambian según el modo
+   Ver docs/02-design-system.md
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  --bg: #faf7fb;
+  --surface: #ffffff;
+  --surface-2: #f3eef6;
+  --border: rgb(10 4 16 / 0.1);
+  --fg: #12060f;
+  --muted: #5c4e63;
+
+  /* Magenta puro sobre fondo claro da 4.6:1 — insuficiente para texto chico.
+     El acento de texto en modo claro usa el tono profundo (~7:1). */
+  --accent-text: #b00057;
+  --focus: #b00057;
+  --paper-shadow: rgb(60 20 45 / 0.22);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --bg: #0b0410;
+  --surface: #170a1e;
+  --surface-2: #21102a;
+  --border: rgb(255 255 255 / 0.09);
+  --fg: #ffffff;
+  --muted: #a899b0;
+
+  --accent-text: #ffc629;
+  --focus: #ffc629;
+  --paper-shadow: rgb(0 0 0 / 0.55);
+}
+
+/* ============================================================
+   TEMA TAILWIND
+   ============================================================ */
+
+@theme {
+  /* Marca */
+  --color-magenta: #e6006e;
+  --color-magenta-bright: #ff2d8f;
+  --color-magenta-deep: #b00057;
+
+  /* Acentos — tomados de las figuras del arte original */
+  --color-copat-yellow: #ffc629;
+  --color-copat-green: #7dc142;
+  --color-copat-lilac: #b57be8;
+  --color-copat-sky: #6fb9e4;
+  --color-copat-coral: #e8897f;
+
+  /* Movimiento */
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent-text: var(--accent-text);
+
+  --font-display: var(--font-inter-tight), "Helvetica Now Display", system-ui, sans-serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* El neo-grotesco pesado necesita tracking negativo */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+    line-height: 0.95;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Foco visible siempre, con color según el fondo real */
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Sobre el magenta del hero, el foco magenta sería invisible: va amarillo */
+  .hero-gradient :focus-visible {
+    outline-color: var(--color-copat-yellow);
+  }
+
+  ::selection {
+    background: var(--color-magenta);
+    color: #fff;
+  }
+}
+
+/* ============================================================
+   DEGRADÉ ANIMADO DEL HERO
+   @property permite interpolar el ángulo — sin él, el navegador
+   no sabe animar un custom property y el degradé saltaría.
+   ============================================================ */
+
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 135deg;
+  inherits: false;
+}
+
+@keyframes rotate-gradient {
+  to {
+    --gradient-angle: 495deg; /* 135 + 360 */
+  }
+}
+
+.hero-gradient {
+  background: linear-gradient(
+    var(--gradient-angle),
+    var(--color-magenta-bright) 0%,
+    var(--color-magenta) 45%,
+    var(--color-magenta-deep) 100%
+  );
+  animation: rotate-gradient 24s linear infinite;
+}
+
+/* Textura de grano: evita que el magenta plano se lea "digital barato" */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   FIGURAS 3D — periodos primos entre sí para que el conjunto
+   nunca se sincronice y se vea mecánico
+   ============================================================ */
+
+@keyframes float-spin {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-22px) rotate(180deg);
+  }
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-18deg) translateX(0);
+  }
+  50% {
+    transform: rotate(18deg) translateX(14px);
+  }
+}
+
+@keyframes sway-reverse {
+  0%,
+  100% {
+    transform: rotate(18deg) translateX(0);
+  }
+  50% {
+    transform: rotate(-18deg) translateX(-14px);
+  }
+}
+
+@keyframes tumble {
+  0% {
+    transform: rotate3d(1, 1, 0.4, 0deg);
+  }
+  100% {
+    transform: rotate3d(1, 1, 0.4, 360deg);
+  }
+}
+
+@keyframes gear {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
+.anim-float-spin {
+  animation: float-spin 19s var(--ease-out-expo) infinite;
+}
+.anim-sway {
+  animation: sway 11s ease-in-out infinite;
+}
+.anim-sway-reverse {
+  animation: sway-reverse 13s ease-in-out infinite;
+}
+.anim-tumble {
+  animation: tumble 23s linear infinite;
+}
+.anim-gear {
+  animation: gear 9s linear infinite;
+}
+.anim-bob {
+  animation: bob 7s ease-in-out infinite;
+}
+
+/* ============================================================
+   PARALLAX POR SCROLL — CSS puro, sin listeners de JS.
+   Degrada a figuras estáticas donde no hay soporte.
+   ============================================================ */
+
+@supports (animation-timeline: scroll()) {
+  @keyframes drift-back {
+    to {
+      transform: translateY(-60px);
+    }
+  }
+  @keyframes drift-mid {
+    to {
+      transform: translateY(-150px);
+    }
+  }
+  @keyframes drift-front {
+    to {
+      transform: translateY(-280px);
+    }
+  }
+
+  .plane-back {
+    animation: drift-back linear both;
+    animation-timeline: scroll();
+  }
+  .plane-mid {
+    animation: drift-mid linear both;
+    animation-timeline: scroll();
+  }
+  .plane-front {
+    animation: drift-front linear both;
+    animation-timeline: scroll();
+  }
+}
+
+/* ============================================================
+   PASE DE HOJAS AL SCROLLEAR
+
+   Cada sección entra como una hoja que se apoya, y sale como una
+   hoja que queda tapada por la siguiente. Es el mismo lenguaje
+   que la transición de ruta de template.tsx, pero atado al scroll
+   en vez de a la navegación.
+
+   Sin soporte de scroll-driven animations no se aplica nada y las
+   secciones quedan estáticas — degradación limpia.
+   ============================================================ */
+
+@supports (animation-timeline: view()) {
+  @keyframes sheet-settle {
+    from {
+      opacity: 0;
+      transform: translateY(52px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes sheet-cover {
+    from {
+      opacity: 1;
+      transform: none;
+    }
+    to {
+      opacity: 0.3;
+      transform: translateY(-40px) scale(0.94);
+    }
+  }
+
+  .sheet {
+    transform-origin: center top;
+    /* La entrada lleva `both` y la salida solo `forwards`: la última
+       animación declarada gana, así que si sheet-cover rellenara hacia
+       atrás pisaría a sheet-settle durante toda la entrada. */
+    animation:
+      sheet-settle linear both,
+      sheet-cover linear forwards;
+    animation-timeline: view(), view();
+    animation-range:
+      entry 0% entry 42%,
+      exit 20% exit 100%;
+  }
+}
+
+/* ============================================================
+   CARROUSEL DE SPONSORS
+   ============================================================ */
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee 40s linear infinite;
+  width: max-content;
+}
+
+.marquee-mask {
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+/* ============================================================
+   TRANSICIÓN DE HOJA entre vistas
+   Cada ruta entra como una hoja de papel que se apoya sobre la
+   anterior: sube desde abajo, con la sombra proyectada bajo su
+   canto superior, y se asienta.
+   Implementado en app/template.tsx, que React remonta en cada
+   navegación. Ver docs/02-design-system.md
+   ============================================================ */
+
+@keyframes paper-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 46px, 0) scale(0.985);
+    box-shadow: 0 -34px 60px -14px var(--paper-shadow);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    /* `none` y no `scale(1)`: cualquier transform en un ancestro convierte a
+       los position:fixed descendientes en absolute. Con `none` el elemento
+       deja de ser bloque contenedor al terminar la animación. */
+    transform: none;
+    box-shadow: 0 0 0 0 rgb(0 0 0 / 0);
+  }
+}
+
+/* Canto de la hoja: una línea de luz que recorre el borde superior
+   al entrar y se desvanece. Es el detalle que la hace leer como papel. */
+@keyframes paper-edge {
+  from {
+    opacity: 0.9;
+    transform: scaleX(0.4);
+  }
+  to {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+.paper {
+  transform-origin: top center;
+  animation: paper-in 620ms var(--ease-out-expo) both;
+  will-change: transform, opacity;
+}
+
+.paper::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-copat-yellow),
+    var(--color-magenta-bright),
+    transparent
+  );
+  animation: paper-edge 720ms var(--ease-out-expo) both;
+  pointer-events: none;
+  z-index: 60;
+}
+
+/* ============================================================
+   ACCESIBILIDAD — requisito, no extra.
+   Desactiva todo el movimiento ambiental.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.12s !important;
+    scroll-behavior: auto !important;
+    animation-timeline: none !important;
+  }
+}
