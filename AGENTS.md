@@ -97,6 +97,8 @@ Dos condiciones para que el sticky del hero funcione:
 
 ## Navbar
 
+- **El estado blanco/sólido lo decide `<NavbarSentinel />`**, no la posición de scroll. El centinela marca dónde termina la cabecera magenta y empieza el contenido; el navbar lo observa. Medir contra `window.innerHeight` solo servía para el hero: el `PageHeader` de las páginas interiores mide ~250px, así que en `/agenda` y `/registro` el navbar quedaba oscuro sobre el magenta.
+- El centinela va **fuera** de la cabecera, al inicio del contenido. El hero es `sticky` y nunca se va de pantalla, así que uno colocado adentro jamás cruzaría el borde superior. **Toda página nueva con cabecera magenta tiene que incluirlo**; si falta, el navbar arranca sólido.
 - El fondo va en `.navbar-bg`, una capa aparte, para poder desvanecerlo hacia abajo con `mask-image`. Si la máscara se aplicara al `<header>`, también se desvanecerían el logo y los links.
 - El menú móvil (`lg:hidden`) bloquea el scroll del body mientras está abierto, cierra con `Escape` y al navegar, y expone `aria-expanded` / `aria-controls`. **No lo cierres con un efecto sobre `pathname`**: sería `setState` en el cuerpo de un efecto, que el React Compiler rechaza (trampa 4). Se cierra con `onClick` en cada link.
 - El botón "Inscribirme" del header se oculta en `<sm` porque compite con la hamburguesa; en mobile el CTA vive dentro del menú.

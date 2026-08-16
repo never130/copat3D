@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { NavbarSentinel } from "@/components/layout/NavbarSentinel";
 import { PageHeader } from "@/components/layout/PageHeader";
 
 export const metadata: Metadata = {
@@ -15,6 +16,8 @@ export default function RegistroPage() {
         titulo="Inscripción"
         bajada="Participá de forma presencial en Ushuaia o seguí las charlas en vivo desde donde estés."
       />
+
+      <NavbarSentinel />
 
       <div className="mx-auto max-w-2xl px-5 py-20">
         <div className="sheet border-border bg-surface rounded-3xl border border-dashed p-12 text-center">

@@ -82,13 +82,13 @@ export function Hero() {
       {/* Indicador de scroll. Antes era el contorno de un mouse, que no se
           entendía a ese tamaño y encima no significa nada en un celular.
           Un chevron con la acción escrita se lee en cualquier dispositivo. */}
-      <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1.5 text-white/75">
+      <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 text-white/75">
         <span className="font-mono text-[10px] tracking-[0.2em] uppercase">
           Seguí bajando
         </span>
         <svg
           viewBox="0 0 24 14"
-          className="anim-bob w-5"
+          className="anim-nudge w-5"
           fill="none"
           stroke="currentColor"
           strokeWidth="2.5"

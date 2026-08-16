@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { NavbarSentinel } from "@/components/layout/NavbarSentinel";
 import { PageHeader } from "@/components/layout/PageHeader";
 
 export const metadata: Metadata = {
@@ -20,6 +21,8 @@ export default function AgendaPage() {
         titulo="Agenda"
         bajada="Charlas, talleres y demostraciones en vivo en la Fábrica de Talentos."
       />
+
+      <NavbarSentinel />
 
       <div className="mx-auto max-w-7xl px-5 py-20">
         <div className="grid gap-5 sm:grid-cols-2">

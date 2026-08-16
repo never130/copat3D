@@ -1,3 +1,4 @@
+import { NavbarSentinel } from "@/components/layout/NavbarSentinel";
 import { Ejes } from "@/components/sections/Ejes";
 import { Hero } from "@/components/sections/Hero";
 import { Sponsors } from "@/components/sections/Sponsors";
@@ -58,6 +59,7 @@ export default function Home() {
             hero fijo. No dividir en varias: la gracia del efecto es que
             pase una página entera, no cada sección por separado. */}
         <div className="paper-page">
+          <NavbarSentinel />
           <Ejes />
           <Proximamente
             id="talentos"

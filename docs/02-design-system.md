@@ -52,10 +52,12 @@ El navbar vive sobre **dos fondos distintos** y necesita dos tratamientos. Ignor
 
 | Estado | Cuándo | Tratamiento |
 |---|---|---|
-| `overlay` | Portada, sobre el magenta del hero | Texto, bordes y CTA en blanco; fondo transparente |
-| `solid` | Scrolleado más allá del 82% del hero, **o** cualquier página interior | `--surface` al 85% con `backdrop-blur`; texto `--fg`; CTA magenta con texto blanco |
+| `overlay` | Sobre cualquier cabecera magenta (hero o `PageHeader`) | Texto, bordes y CTA en blanco; fondo transparente |
+| `solid` | Pasada la cabecera, o página sin cabecera magenta | `--surface` al 82% con `backdrop-blur` y desvanecido hacia abajo; texto `--fg`; CTA magenta |
 
-Se resuelve con un listener de scroll (no con CSS scroll-driven): el navbar es UI crítica y una degradación fallida lo dejaría ilegible en Safari y Firefox, que todavía no soportan `animation-timeline`.
+El corte lo marca `<NavbarSentinel />`, un elemento de 1px al inicio del contenido que el navbar observa. **No** se usa la posición de scroll: el hero ocupa una pantalla entera pero el `PageHeader` mide ~250px, y medir contra el viewport dejaba el navbar oscuro sobre el magenta de las páginas interiores.
+
+Tampoco se usa CSS scroll-driven: el navbar es UI crítica y una degradación fallida lo dejaría ilegible en Safari y Firefox, que todavía no soportan `animation-timeline`.
 
 ## Tipografía
 

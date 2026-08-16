@@ -23,34 +23,42 @@ const LINKS = [
  * Los contenedores flotantes (píldora del menú, botón de tema, hamburguesa)
  * comparten un único set de clases para que no diverjan.
  */
+/** Alto aproximado del navbar: el punto donde se considera que la cabecera
+ *  magenta ya pasó por debajo. */
+const LINEA_NAVBAR = 72;
+
 export function Navbar() {
   const pathname = usePathname();
-  const overHero = pathname === "/";
-  const [pastHero, setPastHero] = useState(false);
+  const [pasoCabecera, setPasoCabecera] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
 
-  // Derivado, no almacenado: el navbar vive en el layout y no se remonta al
-  // navegar, así que guardar `solid` en estado quedaría desactualizado.
   // Con el menú abierto el fondo sobra: el panel ya cubre toda la pantalla.
-  const solid = (!overHero || pastHero) && !menuAbierto;
+  const solid = pasoCabecera && !menuAbierto;
   const enBlanco = !solid;
 
   useEffect(() => {
-    if (!overHero) return;
+    const centinela = document.querySelector("[data-navbar-sentinel]");
 
-    const onScroll = () =>
-      setPastHero(window.scrollY > window.innerHeight * 0.82);
+    // Página sin cabecera magenta: el navbar va sólido desde el arranque.
+    // El rAF evita hacer setState en el cuerpo del efecto (trampa 4).
+    if (!centinela) {
+      const raf = requestAnimationFrame(() => setPasoCabecera(true));
+      return () => cancelAnimationFrame(raf);
+    }
 
-    // rAF en vez de llamada directa: cubre la restauración de scroll al
-    // recargar a mitad de página sin hacer setState en el cuerpo del efecto.
-    const raf = requestAnimationFrame(onScroll);
-    window.addEventListener("scroll", onScroll, { passive: true });
+    const observer = new IntersectionObserver(
+      ([entrada]) => {
+        // `boundingClientRect.top` y no `isIntersecting`: este último es
+        // falso tanto cuando el centinela quedó arriba como cuando todavía
+        // está más abajo de la pantalla, y son estados opuestos.
+        setPasoCabecera(entrada.boundingClientRect.top <= LINEA_NAVBAR);
+      },
+      { rootMargin: `-${LINEA_NAVBAR}px 0px 0px 0px`, threshold: 0 },
+    );
 
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, [overHero]);
+    observer.observe(centinela);
+    return () => observer.disconnect();
+  }, [pathname]);
 
   // Escape para cerrar y bloqueo del scroll de fondo mientras el menú está
   // abierto: sin esto la página sigue scrolleando detrás del panel.
