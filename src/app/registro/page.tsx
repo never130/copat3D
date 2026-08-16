@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 export const metadata: Metadata = {
   title: "Inscripción",
   description:
-    "Inscribite gratis a COPAT 3D. 2 y 3 de octubre de 2026, Ushuaia, Tierra del Fuego. Modalidad presencial y virtual.",
+    "Inscribite gratis a COPAT 3D. 2 y 3 de octubre de 2026, Ciudad Autónoma de Buenos Aires. Modalidad presencial.",
 };
 
 export default function RegistroPage() {
@@ -14,7 +14,7 @@ export default function RegistroPage() {
       <PageHeader
         eyebrow="Entrada gratuita"
         titulo="Inscripción"
-        bajada="Participá de forma presencial en Ushuaia o seguí las charlas en vivo desde donde estés."
+        bajada="Participá de forma presencial en la Ciudad Autónoma de Buenos Aires."
       />
 
       <NavbarSentinel />

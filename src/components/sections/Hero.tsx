@@ -59,7 +59,7 @@ export function Hero() {
               </svg>
             }
           >
-            Buenos Aires, Argentina
+            Ciudad Autónoma de Buenos Aires
           </Chip>
         </div>
 

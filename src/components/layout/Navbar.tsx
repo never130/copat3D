@@ -100,7 +100,7 @@ export function Navbar() {
             className={`flex items-center gap-2.5 transition-colors duration-300 ${
               enBlanco ? "text-white" : "text-fg"
             }`}
-            aria-label="COPAT 3D — inicio"
+            aria-label="COPAT 3D - inicio"
           >
             <Logo className="size-9" />
             <span className="font-display text-xl font-extrabold tracking-tight">
@@ -208,7 +208,7 @@ export function Navbar() {
           </Link>
 
           <p className="mt-7 text-center text-sm text-white/80">
-            2 y 3 de octubre · Ushuaia, Tierra del Fuego
+            2 y 3 de octubre · Ciudad Autónoma de Buenos Aires
           </p>
         </div>
       )}

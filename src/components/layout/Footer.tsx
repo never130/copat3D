@@ -43,7 +43,7 @@ export function Footer() {
                 copat3d@aif.gob.ar
               </a>
             </li>
-            <li>Ushuaia, Tierra del Fuego</li>
+            <li>Ciudad Autónoma de Buenos Aires</li>
             <li>2 y 3 de octubre de 2026</li>
             <li>
               <Link href="/privacidad" className="hover:text-fg transition-colors">

@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 export const metadata: Metadata = {
   title: "Agenda",
   description:
-    "Cronograma de charlas, talleres y demostraciones en vivo de COPAT 3D. 2 y 3 de octubre de 2026, Ushuaia.",
+    "Cronograma de charlas, talleres y demostraciones en vivo de COPAT 3D. 2 y 3 de octubre de 2026, Ciudad Autónoma de Buenos Aires.",
 };
 
 const DIAS = [
