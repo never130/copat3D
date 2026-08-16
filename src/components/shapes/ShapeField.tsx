@@ -11,6 +11,7 @@ import {
   Tripod,
   Zigzag,
 } from "./index";
+import { WireCube, WireIcosahedron, WirePrism } from "./wire";
 
 /**
  * Campo de figuras del hero.
@@ -32,6 +33,49 @@ import {
  * degradé + grano cargan el peso visual del hero en pantallas chicas.
  */
 export function ShapeField() {
+  return (
+    <>
+      <MobileWire />
+      <DesktopShapes />
+    </>
+  );
+}
+
+/**
+ * Capa móvil: wireframes en lugar de figuras rellenas.
+ *
+ * En un teléfono el contenido del hero ocupa casi toda la pantalla (522px de
+ * 667), así que no hay hueco libre donde poner una figura sólida sin taparle
+ * algo al usuario. Un contorno sí puede convivir con el texto: la grande va
+ * como marca de agua al 10% detrás del título —se lee como textura, no como
+ * un objeto que estorba— y las chicas sangran por los bordes.
+ */
+function MobileWire() {
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 overflow-hidden sm:hidden"
+      aria-hidden="true"
+    >
+      <WireIcosahedron
+        tono="filigrana"
+        size={300}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[58%]"
+      />
+      <WireCube
+        tono="blanco"
+        size={104}
+        className="absolute top-[12%] -left-10"
+      />
+      <WirePrism
+        tono="blanco"
+        size={96}
+        className="absolute right-[-2.5rem] bottom-[13%]"
+      />
+    </div>
+  );
+}
+
+function DesktopShapes() {
   return (
     <div
       className="pointer-events-none absolute inset-0 hidden overflow-hidden sm:block"

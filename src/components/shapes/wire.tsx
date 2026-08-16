@@ -13,7 +13,16 @@
  * utilidades `text-*`.
  */
 
-export type WireTono = "coral" | "sky" | "yellow" | "green" | "lilac";
+export type WireTono =
+  | "coral"
+  | "sky"
+  | "yellow"
+  | "green"
+  | "lilac"
+  /** Sobre el magenta del hero, donde los acentos no contrastan. */
+  | "blanco"
+  /** Marca de agua: puede quedar detrás de texto sin comprometer la lectura. */
+  | "filigrana";
 
 /**
  * Color de trazo según el modo.
@@ -32,6 +41,8 @@ const TONOS: Record<WireTono, string> = {
   yellow: "text-copat-yellow-deep/55 dark:text-copat-yellow/25",
   green: "text-copat-green-deep/55 dark:text-copat-green/25",
   lilac: "text-copat-lilac-deep/55 dark:text-copat-lilac/32",
+  blanco: "text-white/30",
+  filigrana: "text-white/[0.10]",
 };
 
 type WireProps = {
@@ -196,13 +207,20 @@ export function WirePrism({ tono = "green", size = 115, className }: WireProps) 
  * horizontal (lo tiene `.paper-page`). `clip` y no `hidden`: `hidden` crearía
  * un contenedor de scroll y rompería el `sticky` del hero.
  */
-export function WireMargins({ children }: { children: React.ReactNode }) {
+export function WireMargins({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  /** Para separar las piezas de escritorio de las de mobile. */
+  className?: string;
+}) {
   return (
     // data-wire: marca el contenedor para poder auditarlo desde Playwright
     // (que no se solape con texto ni genere scroll horizontal).
     <div
       data-wire
-      className="pointer-events-none absolute inset-0"
+      className={`pointer-events-none absolute inset-0 ${className}`}
       aria-hidden="true"
     >
       {children}

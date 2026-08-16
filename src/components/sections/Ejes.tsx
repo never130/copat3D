@@ -75,26 +75,44 @@ export function Ejes() {
       id="ejes"
       className="relative mx-auto max-w-7xl scroll-mt-24 px-5 py-24 sm:py-32"
     >
-      <WireMargins>
+      {/* Márgenes laterales: solo asoman cuando el viewport supera el
+          max-w-7xl del contenido. En mobile quedan fuera de pantalla. */}
+      <WireMargins className="hidden sm:block">
         <WireIcosahedron
           size={140}
           tono="coral"
-              className="absolute top-[5%] -left-36"
+          className="absolute top-[5%] -left-36"
         />
         <WirePrism
           size={112}
           tono="green"
-              className="absolute top-[16%] -right-32"
+          className="absolute top-[16%] -right-32"
         />
         <WireCube
           size={120}
           tono="sky"
-              className="absolute top-[52%] -right-32"
+          className="absolute top-[52%] -right-32"
         />
         <WireOctahedron
           size={118}
           tono="lilac"
-              className="absolute bottom-[8%] -left-32"
+          className="absolute bottom-[8%] -left-32"
+        />
+      </WireMargins>
+
+      {/* Mobile: van en las bandas de padding vertical de la sección (py-24),
+          que es el único espacio realmente libre en pantallas angostas, y
+          sangran por el borde para no invadir la columna de texto. */}
+      <WireMargins className="sm:hidden">
+        <WirePrism
+          size={86}
+          tono="green"
+          className="absolute top-4 -right-8 opacity-70"
+        />
+        <WireOctahedron
+          size={92}
+          tono="lilac"
+          className="absolute -bottom-2 -left-8 opacity-70"
         />
       </WireMargins>
 

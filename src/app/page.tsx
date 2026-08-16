@@ -36,7 +36,24 @@ function Proximamente({
       id={id}
       className="relative mx-auto max-w-7xl scroll-mt-24 px-5 py-24"
     >
-      <WireMargins>
+      {/* Mobile: en las bandas de padding, sangrando por el borde */}
+      <WireMargins className="sm:hidden">
+        {figura === "piramide" ? (
+          <WirePyramid
+            size={84}
+            tono="yellow"
+            className="absolute top-3 -right-8 opacity-70"
+          />
+        ) : (
+          <WireOctahedron
+            size={88}
+            tono="lilac"
+            className="absolute top-3 -left-8 opacity-70"
+          />
+        )}
+      </WireMargins>
+
+      <WireMargins className="hidden sm:block">
         {figura === "piramide" ? (
           <>
             <WirePyramid
