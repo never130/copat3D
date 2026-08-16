@@ -17,9 +17,9 @@ export default function AgendaPage() {
   return (
     <main className="flex-1">
       <PageHeader
-        eyebrow="Dos días · Presencial y virtual"
+        eyebrow="Dos días · Presenciales"
         titulo="Agenda"
-        bajada="Charlas, talleres y demostraciones en vivo en la Fábrica de Talentos."
+        bajada="Charlas, talleres y demostraciones en vivo en la Ciudad Autónoma de Buenos Aires."
       />
 
       <NavbarSentinel />
