@@ -1,27 +1,66 @@
 import { EJES } from "@/content/ejes";
 
-const ACCENT: Record<string, { text: string; bg: string; border: string }> = {
+/**
+ * Las tarjetas no usan la caja genérica de borde parejo: la identidad del
+ * congreso es "capa a capa", así que cada una se lee como una pieza apoyada
+ * sobre una base de color —el plato de la impresora— con las capas apiladas
+ * a un costado. El número gigante sangra fuera del recorte, como en el arte
+ * original del afiche.
+ */
+const ACCENT: Record<
+  string,
+  { text: string; bg: string; borderHover: string; glow: string }
+> = {
   "copat-coral": {
     text: "text-copat-coral",
     bg: "bg-copat-coral",
-    border: "group-hover:border-copat-coral/50",
+    borderHover: "group-hover:border-copat-coral/45",
+    glow: "group-hover:shadow-copat-coral/20",
   },
   "copat-sky": {
     text: "text-copat-sky",
     bg: "bg-copat-sky",
-    border: "group-hover:border-copat-sky/50",
+    borderHover: "group-hover:border-copat-sky/45",
+    glow: "group-hover:shadow-copat-sky/20",
   },
   "copat-yellow": {
     text: "text-copat-yellow",
     bg: "bg-copat-yellow",
-    border: "group-hover:border-copat-yellow/50",
+    borderHover: "group-hover:border-copat-yellow/45",
+    glow: "group-hover:shadow-copat-yellow/20",
   },
   "copat-green": {
     text: "text-copat-green",
     bg: "bg-copat-green",
-    border: "group-hover:border-copat-green/50",
+    borderHover: "group-hover:border-copat-green/45",
+    glow: "group-hover:shadow-copat-green/20",
   },
 };
+
+/** Capas apiladas: la firma visual de la impresión 3D. Se despliegan al pasar
+ *  el mouse, de abajo hacia arriba, como si la pieza siguiera imprimiéndose. */
+function Capas({ color }: { color: string }) {
+  return (
+    <div
+      className="pointer-events-none absolute right-7 bottom-7 flex flex-col items-end gap-[3px]"
+      aria-hidden="true"
+    >
+      {[0, 1, 2, 3, 4].map((n) => (
+        <span
+          key={n}
+          className={`block h-[3px] rounded-full ${color} w-[var(--w)] transition-[width,opacity] duration-500 ease-[var(--ease-out-expo)] group-hover:w-[calc(var(--w)*1.7)] group-hover:opacity-100`}
+          style={
+            {
+              "--w": `${12 + n * 7}px`,
+              opacity: 0.2 + n * 0.09,
+              transitionDelay: `${(4 - n) * 45}ms`,
+            } as React.CSSProperties
+          }
+        />
+      ))}
+    </div>
+  );
+}
 
 export function Ejes() {
   return (
@@ -29,7 +68,7 @@ export function Ejes() {
       id="ejes"
       className="mx-auto max-w-7xl scroll-mt-24 px-5 py-24 sm:py-32"
     >
-      <div className="sheet max-w-2xl">
+      <div className="sheet sheet-print max-w-2xl">
         <p className="text-accent-text font-mono text-xs font-medium tracking-[0.25em] uppercase">
           Ejes temáticos
         </p>
@@ -46,35 +85,62 @@ export function Ejes() {
         {EJES.map((eje, i) => {
           const a = ACCENT[eje.color];
           return (
-            <article
+            // El .sheet va en el envoltorio y no en la tarjeta: así la
+            // animación de entrada y el hover no se pelean por `transform`.
+            <div
               key={eje.id}
-              // Escalonado: las tarjetas se reparten como hojas, no de golpe
+              className="sheet"
               style={{ "--sheet-delay": `${i * 90}ms` } as React.CSSProperties}
-              // Sin hover:-translate-y: .sheet ya transiciona `transform` a
-              // 0.7s y el lift quedaría pesado. La barra de acento superior
-              // es la señal de hover.
-              className={`sheet group border-border bg-surface relative overflow-hidden rounded-3xl border p-8 ${a.border}`}
             >
-              <div
-                className={`absolute top-0 left-0 h-1 w-full ${a.bg} scale-x-0 transition-transform duration-300 group-hover:scale-x-100`}
-                style={{ transformOrigin: "left" }}
-              />
-              <span className={`font-display text-5xl font-black ${a.text} opacity-30`}>
-                {eje.numero}
-              </span>
-              <h3 className="mt-4 text-2xl">{eje.titulo}</h3>
-              <p className="text-muted mt-3 leading-relaxed">{eje.descripcion}</p>
-              <ul className="mt-6 flex flex-wrap gap-2">
-                {eje.temas.map((tema) => (
-                  <li
-                    key={tema}
-                    className="border-border bg-surface-2 rounded-full border px-3 py-1.5 text-xs font-medium"
+              <article
+                // `translate` y no `transform` en la lista de transición:
+                // Tailwind v4 anima -translate-y con la propiedad `translate`,
+                // así que declarar `transform` deja el lift SIN transición y
+                // el hover salta de golpe. Ver trampa 11 de AGENTS.md.
+                // Curva `ease-out` y no out-expo: la expo arranca demasiado
+                // rápido y en un gesto de hover se siente brusca.
+                className={`group border-border bg-surface relative h-full overflow-hidden rounded-3xl rounded-br-none border pt-8 pr-8 pb-10 pl-8 transition-[translate,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_var(--paper-shadow)] ${a.borderHover}`}
+              >
+                {/* Número sangrando fuera del recorte, como en el afiche */}
+                <span
+                  className={`font-display pointer-events-none absolute -top-6 -right-2 text-[8rem] leading-none font-black ${a.text} opacity-[0.07] transition-opacity duration-500 group-hover:opacity-[0.16]`}
+                  aria-hidden="true"
+                >
+                  {eje.numero}
+                </span>
+
+                <div className="relative">
+                  <p
+                    className={`font-mono text-xs font-bold tracking-[0.2em] ${a.text}`}
                   >
-                    {tema}
-                  </li>
-                ))}
-              </ul>
-            </article>
+                    EJE {eje.numero}
+                  </p>
+                  <h3 className="mt-3 max-w-[15ch] text-2xl">{eje.titulo}</h3>
+                  <p className="text-muted mt-3 max-w-[42ch] leading-relaxed">
+                    {eje.descripcion}
+                  </p>
+                  <ul className="mt-6 flex max-w-[38ch] flex-wrap gap-2">
+                    {eje.temas.map((tema) => (
+                      <li
+                        key={tema}
+                        className="border-border bg-surface-2 text-muted rounded-full border px-3 py-1.5 text-xs font-medium"
+                      >
+                        {tema}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <Capas color={a.bg} />
+
+                {/* Plato de la impresora: la base de color sobre la que se
+                    apoya la pieza. Crece de un lado al pasar el mouse. */}
+                <span
+                  className={`absolute inset-x-0 bottom-0 h-[3px] ${a.bg} origin-left scale-x-[0.18] transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-x-100`}
+                  aria-hidden="true"
+                />
+              </article>
+            </div>
           );
         })}
       </div>

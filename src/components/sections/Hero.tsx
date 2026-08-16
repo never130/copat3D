@@ -12,12 +12,19 @@ function Chip({ icon, children }: { icon: React.ReactNode; children: React.React
 
 export function Hero() {
   return (
-    <section className="hero-gradient grain relative flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 pt-28 pb-16">
+    // sticky + z-0: el hero se queda apoyado al fondo mientras el resto de
+    // la página se desliza por encima.
+    //
+    // El padding chico en mobile no es estético: con pt-28/pb-16 el hero
+    // medía 698px contra los 667 de un iPhone SE y no entraba, lo que dejaba
+    // su parte inferior inalcanzable al quedar pegado. Con pt-24/pb-12 entra
+    // y el efecto funciona en todos los tamaños.
+    <section className="hero-gradient grain sticky top-0 z-0 flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 pt-24 pb-12 sm:pt-28 sm:pb-16">
       <ShapeField />
 
       <div className="relative z-10 flex flex-col items-center text-center">
         <p className="mb-6 font-mono text-xs font-medium tracking-[0.25em] text-white/85 uppercase">
-          Fin del Mundo · Tierra del Fuego
+          Fin del Mundo · Tierra del Fuego AeIAS
         </p>
 
         <h1 className="font-display text-[clamp(3.5rem,15vw,11rem)] leading-[0.85] font-black text-white">
@@ -52,7 +59,7 @@ export function Hero() {
               </svg>
             }
           >
-            Ushuaia, Tierra del Fuego
+            Buenos Aires, Argentina
           </Chip>
         </div>
 
@@ -72,11 +79,24 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Indicador de scroll */}
-      <div className="absolute bottom-7 left-1/2 z-10 -translate-x-1/2 text-white/70">
-        <svg viewBox="0 0 24 40" className="anim-bob h-9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          <rect x="1" y="1" width="22" height="38" rx="11" />
-          <path d="M12 9v6" />
+      {/* Indicador de scroll. Antes era el contorno de un mouse, que no se
+          entendía a ese tamaño y encima no significa nada en un celular.
+          Un chevron con la acción escrita se lee en cualquier dispositivo. */}
+      <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1.5 text-white/75">
+        <span className="font-mono text-[10px] tracking-[0.2em] uppercase">
+          Seguí bajando
+        </span>
+        <svg
+          viewBox="0 0 24 14"
+          className="anim-bob w-5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M3 3l9 8 9-8" />
         </svg>
       </div>
     </section>

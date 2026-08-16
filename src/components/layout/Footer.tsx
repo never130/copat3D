@@ -14,8 +14,7 @@ export function Footer() {
           </div>
           <p className="text-muted mt-4 max-w-sm text-sm leading-relaxed">
             Congreso Patagónico de Impresión 3D, Fabricación Digital e
-            Innovación Aplicada. Organizado por la Agencia de Innovación de
-            Fuego.
+            Innovación Aplicada. Organizado por la Agencia de Innovación Fueguina.
           </p>
           <p className="font-display mt-5 text-lg font-bold italic">
             Diseñando el futuro capa a capa
@@ -56,8 +55,8 @@ export function Footer() {
       </div>
 
       <div className="border-border text-muted border-t px-5 py-6 text-center text-xs">
-        © {new Date().getFullYear()} COPAT 3D · Agencia de Innovación de Fuego ·
-        Gobierno de Tierra del Fuego
+        © {new Date().getFullYear()} COPAT 3D · Agencia de Innovación Fueguina ·
+        Gobierno de Tierra del Fuego AeIAS
       </div>
     </footer>
   );

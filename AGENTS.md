@@ -76,6 +76,31 @@ docs/                     Documentación del proyecto (leer antes de tocar)
 
 **El contenido vive en `src/content/` como TypeScript**, no en un CMS. Fue una decisión explícita: un solo evento, ~30 charlas, y un CMS agregaría infraestructura y un punto de falla a cambio de comodidad que se usa cinco veces.
 
+## Las tres escalas de la hoja
+
+La metáfora de "capa a capa" se aplica en tres tamaños, y los tres usan el mismo canto de luz amarillo→magenta para que se lean como el mismo material:
+
+| Escala | Clase | Dónde | Mecanismo |
+|---|---|---|---|
+| Página entera | `.paper-page` | Todo el contenido tras el hero, en la portada | Hero `sticky`, la hoja se desliza encima |
+| Vista | `.paper` | Cambio de ruta | `template.tsx`, remontado por Next |
+| Bloque | `.sheet` | Encabezados, tarjetas, CTA | IntersectionObserver + transición |
+
+`.paper-page` **no se subdivide**: la gracia es que pase una página completa sobre el hero, no cada sección por su cuenta.
+
+El patrón es el que se conoce como **sticky reveal** o *scroll stacking*: un elemento fijo al que la capa siguiente le pasa por encima.
+
+Dos condiciones para que el sticky del hero funcione:
+
+1. **Ningún ancestro con `overflow: hidden` ni `height` fija.** Si alguna vez deja de pegarse, buscá ahí primero.
+2. **El hero tiene que entrar en el viewport.** Si es más alto, queda pegado y su parte inferior se vuelve inalcanzable. Con `pt-28/pb-16` medía 698px contra los 667 de un iPhone SE; el padding chico en mobile (`pt-24 pb-12`) existe por eso, no por estética. Al agregarle contenido al hero, **medí en 375×667 antes de dar por terminado**.
+
+## Navbar
+
+- El fondo va en `.navbar-bg`, una capa aparte, para poder desvanecerlo hacia abajo con `mask-image`. Si la máscara se aplicara al `<header>`, también se desvanecerían el logo y los links.
+- El menú móvil (`lg:hidden`) bloquea el scroll del body mientras está abierto, cierra con `Escape` y al navegar, y expone `aria-expanded` / `aria-controls`. **No lo cierres con un efecto sobre `pathname`**: sería `setState` en el cuerpo de un efecto, que el React Compiler rechaza (trampa 4). Se cierra con `onClick` en cada link.
+- El botón "Inscribirme" del header se oculta en `<sm` porque compite con la hamburguesa; en mobile el CTA vive dentro del menú.
+
 ## ⚠️ Trampas conocidas
 
 Todas son bugs que ya ocurrieron en este proyecto. No las reintroduzcas.
@@ -125,7 +150,25 @@ Además, el minificador de Tailwind v4 reescribe `animation-range` de forma dif�
 
 El magenta institucional `#E6006E` sobre fondo claro da 4.6:1 — insuficiente para texto chico. Para **texto** usá el token `--accent-text` (`#B00057` en claro, amarillo en oscuro). El magenta puro va en fondos, no en tipografía chica.
 
-### 9. Helvetica Now Display es paga
+### 9. `clip-path: inset(100%)` + IntersectionObserver = deadlock
+
+Un elemento con área visible cero hace que el observer calcule ratio 0 y **nunca** lo reporte como visible. Si la clase que lo revela depende del observer, queda oculto para siempre *porque* está oculto.
+
+La variante `.sheet-print` arranca en `inset(72% 0 0 0)`: sigue invisible (la opacidad es 0) pero deja área para medir. El observer además usa `threshold: 0`.
+
+Regla general: **nada que dependa del observer para aparecer puede tener área cero antes de aparecer.**
+
+### 10. El CSS sin capa le gana a las utilidades de Tailwind
+
+`globals.css` define reglas fuera de todo `@layer` (`.marquee-track`, `.js-sheets .sheet`, `.paper`). En la cascada, **los estilos sin capa vencen a los de cualquier capa**, sin importar la especificidad — y las utilidades de Tailwind v4 viven en `@layer utilities`.
+
+Consecuencia práctica: una utilidad como `group-hover:[animation-play-state:paused]` sobre `.marquee-track` **no se aplica nunca**. Si necesitás modificar algo definido sin capa, la regla nueva también va sin capa, al lado de la original.
+
+### 11. Tailwind v4 usa la propiedad `translate`, no `transform`
+
+`-translate-y-1.5` genera `translate: 0 -0.375rem`, no una `matrix()`. Al depurar o testear un hover, mirá `getComputedStyle(el).translate`; `transform` va a decir `none` aunque el efecto esté funcionando perfecto.
+
+### 12. Helvetica Now Display es paga
 
 Es de Monotype y requiere licencia web. El sitio usa **Inter Tight** como sustituto libre. No la sirvas desde un CDN ni la copies de otro sitio. Si aparece la licencia, se cambia en `layout.tsx` y en `--font-display`.
 

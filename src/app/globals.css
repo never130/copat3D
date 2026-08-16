@@ -313,24 +313,44 @@
 
 .js-sheets .sheet {
   opacity: 0;
-  transform: translateY(52px) scale(0.97);
+  transform: translate3d(0, 48px, 0) scale(0.98);
   transform-origin: center top;
   transition:
-    opacity 0.7s var(--ease-out-expo),
-    transform 0.7s var(--ease-out-expo);
+    opacity 0.75s var(--ease-out-expo),
+    transform 0.75s var(--ease-out-expo);
   transition-delay: var(--sheet-delay, 0ms);
 }
 
-/* Hoja apoyada: a la vista */
+/* Hoja apoyada: a la vista y asentada */
 .js-sheets .sheet.sheet-in {
   opacity: 1;
   transform: none;
 }
 
-/* Hoja tapada: ya pasó hacia arriba, la siguiente la cubre */
-.js-sheets .sheet.sheet-past {
-  opacity: 0.3;
-  transform: translateY(-40px) scale(0.94);
+/* Variante "impresión": el bloque se construye de abajo hacia arriba, como
+   una pieza saliendo de la impresora. El clip deja visible una franja
+   apoyada en el borde inferior que crece hacia arriba, capa por capa.
+
+   ⚠️ El clip inicial NO puede ser `inset(100% ...)`. Con área cero,
+   IntersectionObserver calcula ratio 0 y nunca reporta el elemento como
+   visible: queda oculto para siempre porque está oculto. Se deja un 28%
+   de área —invisible igual, porque la opacidad es 0— para que el observer
+   tenga algo que medir.
+
+   Solo para bloques SIN hover: el clip recorta lo que se salga de la caja,
+   así que un `hover:-translate-y` quedaría cortado. */
+.js-sheets .sheet-print {
+  transform: translate3d(0, 20px, 0);
+  clip-path: inset(72% 0 0 0);
+  transition:
+    opacity 0.75s var(--ease-out-expo),
+    transform 0.75s var(--ease-out-expo),
+    clip-path 0.9s var(--ease-out-expo);
+  transition-delay: var(--sheet-delay, 0ms);
+}
+
+.js-sheets .sheet-print.sheet-in {
+  clip-path: inset(0 0 0 0);
 }
 
 /* ============================================================
@@ -346,6 +366,14 @@
 .marquee-track {
   animation: marquee 40s linear infinite;
   width: max-content;
+}
+
+/* La pausa va acá y no como utilidad `group-hover:` de Tailwind: esta regla
+   está fuera de toda capa (`@layer`), y en la cascada los estilos sin capa
+   le ganan a cualquier utilidad por más específica que sea. La utilidad
+   nunca se aplicaría. */
+.marquee-mask:hover .marquee-track {
+  animation-play-state: paused;
 }
 
 .marquee-mask {
@@ -418,6 +446,112 @@
 }
 
 /* ============================================================
+   NAVBAR
+
+   El fondo va en una capa aparte y no en el <header>: así se le puede
+   aplicar una máscara que lo desvanece hacia abajo, en vez del canto
+   duro que dejaba un fondo opaco recortado contra el contenido.
+   La máscara no puede ir en el header porque también desvanecería
+   el logo y los links.
+   ============================================================ */
+
+.navbar-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-color: color-mix(in srgb, var(--surface) 82%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 55%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
+}
+
+/* ============================================================
+   MENÚ MÓVIL
+   Se despliega hacia abajo como una hoja, con los links entrando
+   escalonados. Mismo lenguaje que el resto de las transiciones.
+   ============================================================ */
+
+@keyframes menu-abrir {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes menu-link {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.menu-movil {
+  animation: menu-abrir 0.42s var(--ease-out-expo) both;
+}
+
+.menu-movil li {
+  animation: menu-link 0.5s var(--ease-out-expo) both;
+  animation-delay: calc(120ms + var(--i, 0) * 55ms);
+}
+
+/* ============================================================
+   HOJA DE PÁGINA sobre el hero
+
+   El hero queda `sticky` al fondo y todo el resto del contenido se
+   desliza por encima como una hoja entera que tapa la anterior. Es
+   la versión a pantalla completa de la misma metáfora que usan
+   `.paper` (rutas) y `.sheet` (bloques).
+
+   Requisitos para que el sticky funcione: ningún ancestro con
+   `overflow: hidden` ni con `height` fija. Si alguna vez deja de
+   pegarse, buscá ahí primero.
+   ============================================================ */
+
+.paper-page {
+  position: relative;
+  z-index: 10;
+  background-color: var(--bg);
+  border-start-start-radius: 2.5rem;
+  border-start-end-radius: 2.5rem;
+  box-shadow: 0 -40px 80px -24px var(--paper-shadow);
+}
+
+/* Canto de la hoja: la misma línea de luz que la transición de ruta,
+   para que las dos transiciones se lean como el mismo material. */
+.paper-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-copat-yellow),
+    var(--color-magenta-bright),
+    transparent
+  );
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* ============================================================
    ACCESIBILIDAD — requisito, no extra.
    Desactiva todo el movimiento ambiental.
    ============================================================ */
@@ -434,10 +568,13 @@
   }
 
   /* Las hojas quedan apoyadas y a plena opacidad: sin movimiento, pero
-     tampoco atenuadas a medias, que sería peor que no tener el efecto. */
+     tampoco atenuadas a medias, que sería peor que no tener el efecto.
+     El clip también se anula: si quedara aplicado, el bloque seguiría
+     recortado para siempre. */
   .js-sheets .sheet,
-  .js-sheets .sheet.sheet-past {
+  .js-sheets .sheet-print {
     opacity: 1 !important;
     transform: none !important;
+    clip-path: none !important;
   }
 }

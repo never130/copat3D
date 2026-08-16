@@ -20,18 +20,20 @@ const LINKS = [
  * - overlay: flotando sobre el magenta del hero → todo en blanco.
  * - sólido:  ya pasó el hero, o es una página interior → superficie del tema.
  *
- * Los contenedores flotantes (píldora del menú y botón de tema) comparten
- * un único set de clases para que no diverjan: antes tenían opacidades de
- * borde y de fondo distintas y se notaba el desfasaje.
+ * Los contenedores flotantes (píldora del menú, botón de tema, hamburguesa)
+ * comparten un único set de clases para que no diverjan.
  */
 export function Navbar() {
   const pathname = usePathname();
   const overHero = pathname === "/";
   const [pastHero, setPastHero] = useState(false);
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   // Derivado, no almacenado: el navbar vive en el layout y no se remonta al
   // navegar, así que guardar `solid` en estado quedaría desactualizado.
-  const solid = !overHero || pastHero;
+  // Con el menú abierto el fondo sobra: el panel ya cubre toda la pantalla.
+  const solid = (!overHero || pastHero) && !menuAbierto;
+  const enBlanco = !solid;
 
   useEffect(() => {
     if (!overHero) return;
@@ -50,76 +52,158 @@ export function Navbar() {
     };
   }, [overHero]);
 
+  // Escape para cerrar y bloqueo del scroll de fondo mientras el menú está
+  // abierto: sin esto la página sigue scrolleando detrás del panel.
+  useEffect(() => {
+    if (!menuAbierto) return;
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuAbierto(false);
+    };
+    const overflowPrevio = document.body.style.overflow;
+
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = overflowPrevio;
+    };
+  }, [menuAbierto]);
+
   // Fuente única de verdad de las superficies flotantes del navbar.
-  const chip = solid
-    ? "border-border bg-surface-2/80"
-    : "border-white/20 bg-white/10";
+  const chip = enBlanco
+    ? "border-white/20 bg-white/10"
+    : "border-border bg-surface-2/80";
 
   return (
-    <header
-      // Sin borde inferior: la píldora del menú ya tiene el suyo y los dos
-      // juntos leen como un doble trazo.
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        solid ? "bg-surface/80 backdrop-blur-xl" : ""
-      }`}
-    >
-      <nav
-        className={`mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 transition-[padding] duration-300 ${
-          solid ? "py-2.5" : "py-4"
-        }`}
-      >
-        <Link
-          href="/"
-          className={`flex items-center gap-2.5 transition-colors duration-300 ${
-            solid ? "text-fg" : "text-white"
+    <>
+      <header className="fixed inset-x-0 top-0 z-50">
+        {solid && <div className="navbar-bg" aria-hidden="true" />}
+
+        <nav
+          className={`relative mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 transition-[padding] duration-300 ${
+            solid ? "py-2.5" : "py-4"
           }`}
-          aria-label="COPAT 3D — inicio"
         >
-          <Logo className="size-9" />
-          <span className="font-display text-xl font-extrabold tracking-tight">
-            COPAT 3D
-          </span>
-        </Link>
+          <Link
+            href="/"
+            onClick={() => setMenuAbierto(false)}
+            className={`flex items-center gap-2.5 transition-colors duration-300 ${
+              enBlanco ? "text-white" : "text-fg"
+            }`}
+            aria-label="COPAT 3D — inicio"
+          >
+            <Logo className="size-9" />
+            <span className="font-display text-xl font-extrabold tracking-tight">
+              COPAT 3D
+            </span>
+          </Link>
 
-        <ul
-          className={`hidden items-center gap-1 rounded-full border px-2 py-1.5 backdrop-blur-md transition-colors duration-300 lg:flex ${chip}`}
+          <ul
+            className={`hidden items-center gap-1 rounded-full border px-2 py-1.5 backdrop-blur-md transition-colors duration-300 lg:flex ${chip}`}
+          >
+            {LINKS.map((link) => {
+              const activo = link.href === pathname;
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    aria-current={activo ? "page" : undefined}
+                    className={`block rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors duration-200 ${
+                      enBlanco
+                        ? activo
+                          ? "text-magenta-deep bg-white"
+                          : "text-white/90 hover:bg-white/15 hover:text-white"
+                        : activo
+                          ? "bg-magenta text-white"
+                          : "text-muted hover:bg-surface hover:text-fg"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="flex items-center gap-2">
+            <ThemeToggle chipClassName={chip} solid={solid} />
+
+            <Link
+              href="/registro"
+              onClick={() => setMenuAbierto(false)}
+              className={`hidden rounded-full px-5 py-2.5 text-sm font-bold transition-all duration-300 hover:scale-[1.03] sm:block ${
+                enBlanco ? "text-magenta-deep bg-white" : "bg-magenta text-white"
+              }`}
+            >
+              Inscribirme
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setMenuAbierto((v) => !v)}
+              aria-expanded={menuAbierto}
+              aria-controls="menu-movil"
+              aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
+              className={`grid size-10 place-items-center rounded-full border backdrop-blur-md transition-colors duration-300 lg:hidden ${chip} ${
+                enBlanco ? "text-white" : "text-fg"
+              }`}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="size-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                aria-hidden="true"
+              >
+                {menuAbierto ? (
+                  <path d="M5 5l14 14M19 5L5 19" />
+                ) : (
+                  <path d="M3.5 7h17M3.5 12h17M3.5 17h17" />
+                )}
+              </svg>
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      {menuAbierto && (
+        <div
+          id="menu-movil"
+          className="menu-movil hero-gradient grain fixed inset-0 z-40 flex flex-col justify-center px-7 pt-24 pb-10 lg:hidden"
         >
-          {LINKS.map((link) => {
-            const active = link.href === pathname;
-            return (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  aria-current={active ? "page" : undefined}
-                  className={`block rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors duration-200 ${
-                    solid
-                      ? active
-                        ? "bg-magenta text-white"
-                        : "text-muted hover:bg-surface hover:text-fg"
-                      : active
-                        ? "text-magenta-deep bg-white"
-                        : "text-white/90 hover:bg-white/15 hover:text-white"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+          <nav aria-label="Navegación principal">
+            <ul>
+              {LINKS.map((link, i) => (
+                <li key={link.href} style={{ "--i": i } as React.CSSProperties}>
+                  <Link
+                    href={link.href}
+                    onClick={() => setMenuAbierto(false)}
+                    className="font-display block border-b border-white/15 py-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-        <div className="flex items-center gap-2">
-          <ThemeToggle chipClassName={chip} solid={solid} />
           <Link
             href="/registro"
-            className={`rounded-full px-5 py-2.5 text-sm font-bold transition-all duration-300 hover:scale-[1.03] ${
-              solid ? "bg-magenta text-white" : "text-magenta-deep bg-white"
-            }`}
+            onClick={() => setMenuAbierto(false)}
+            className="text-magenta-deep mt-9 block rounded-full bg-white px-8 py-4 text-center text-base font-bold"
           >
-            Inscribirme
+            Inscribirme gratis
           </Link>
+
+          <p className="mt-7 text-center text-sm text-white/80">
+            2 y 3 de octubre · Ushuaia, Tierra del Fuego
+          </p>
         </div>
-      </nav>
-    </header>
+      )}
+    </>
   );
 }
