@@ -68,13 +68,13 @@ export function Hero() {
             href="/registro"
             className="text-magenta-deep rounded-full bg-white px-8 py-4 text-base font-bold transition-transform duration-200 hover:scale-[1.03]"
           >
-            Inscribirme gratis
+            Quiero mi entrada
           </Link>
           <a
             href="#empresas"
             className="rounded-full border-2 border-white/60 px-8 py-4 text-base font-bold text-white transition-colors duration-200 hover:bg-white/15"
           >
-            Sumar mi empresa
+            Sumá tu empresa
           </a>
         </div>
       </div>
