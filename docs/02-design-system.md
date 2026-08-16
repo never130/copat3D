@@ -64,7 +64,9 @@ Tampoco se usa CSS scroll-driven: el navbar es UI crítica y una degradación fa
 | Rol | Fuente | Peso |
 |---|---|---|
 | Display / Títulos | Helvetica Now Display | Bold / 700–900 |
-| Cuerpo / UI | Inter | 400 / 500 / 600 |
+| Cuerpo / UI | Helvetica Now Display | 400 / 500 / 600 |
+
+> **Una sola familia, por peso de carga.** El sitio usaba Inter Tight para títulos e Inter para el cuerpo: dos archivos variables de ~45 KB que sumaban **91.7 KB de los 301 KB** totales de la portada. Inter Tight es Inter con el espaciado más ajustado, así que usarla también en el cuerpo cuesta una diferencia mínima a 16px y ahorra un archivo entero (**91.7 → 44.2 KB**).
 
 > ⚠️ **Helvetica Now Display es una fuente paga de Monotype** y requiere licencia web (con tope de pageviews) para usarse en producción. No se puede servir desde un CDN público ni copiarse de otro sitio.
 >

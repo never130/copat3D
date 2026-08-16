@@ -29,7 +29,7 @@ export default function RegistroPage() {
           contenedor y quedarían recortadas. */}
       <div className="overflow-x-clip">
         <div className="relative mx-auto max-w-2xl px-5 py-20">
-          <WireMargins>
+          <WireMargins className="hidden sm:block">
             {/* Offsets más grandes que en la portada: este contenedor es
                 `max-w-2xl`, mucho más angosto, así que con -left-40 asomaba
                 un borde de ~8px ya en 768px y se leía como un artefacto. */}
@@ -42,6 +42,15 @@ export default function RegistroPage() {
               size={104}
               tono="yellow"
               className="absolute right-[-13rem] bottom-[16%]"
+            />
+          </WireMargins>
+
+          {/* Mobile: en la banda de padding, sangrando por el borde */}
+          <WireMargins className="sm:hidden">
+            <WireOctahedron
+              size={90}
+              tono="lilac"
+              className="absolute top-2 -left-8 opacity-70"
             />
           </WireMargins>
 

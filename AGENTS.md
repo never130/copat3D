@@ -107,6 +107,12 @@ Dos condiciones para que el sticky del hero funcione:
 
 Todas son bugs que ya ocurrieron en este proyecto. No las reintroduzcas.
 
+### 0. Auditar solapes exige hit-testing, no solo geometría
+
+El hero es `sticky`: **sigue existiendo en el viewport detrás de `.paper-page` aunque no se vea**. Comparar rectángulos a secas da falsos positivos — el texto oculto del hero "choca" con figuras de secciones que están mucho más abajo.
+
+Cualquier chequeo de solapes tiene que filtrar con `document.elementFromPoint()` en el centro del elemento y verificar que sea realmente el que está arriba. Está resuelto así en `wire.mjs`.
+
 ### 1. `.sheet` va en bloques, nunca en una `<section>` entera
 
 Una sección mide ~1200px contra un viewport de 900. Su borde superior cruza el umbral del observer mientras el usuario todavía mira la sección anterior, la transición se completa **fuera de pantalla** y el efecto es invisible aunque funcione perfecto.
@@ -182,7 +188,14 @@ Las figuras del hero están posicionadas en **porcentajes pensados para una colu
 
 No hay combinación de posiciones que quede a salvo de forma confiable: el alto del bloque de texto cambia según si los chips hacen wrap, la localización, o el contenido real. Por eso `ShapeField` está `hidden sm:block` — directamente ausente en mobile, sin perseguir huecos seguros. El degradé + grano cargan el peso visual ahí.
 
-Si alguna vez se quiere reactivar en mobile, no reuses las posiciones de desktop: hay que diseñar un layout aparte y **medirlo con Playwright en 375×667 como mínimo** antes de darlo por bueno.
+**Qué se muestra en mobile en su lugar:**
+
+- **Hero:** una sola pieza wireframe grande como marca de agua (`tono="filigrana"`, 10% de blanco) detrás del título. Un contorno tenue puede convivir con el texto; una figura rellena no.
+- **Secciones:** wireframes en las **bandas de padding vertical** (`py-24`), sangrando por el borde lateral. Es el único espacio realmente libre en pantallas angostas.
+
+Se probó además con figuras sangrando por los bordes del hero y **se quitaron**: en 320-375px no despegan del texto sin quedar reducidas a un filo de ~16px que se lee como un artefacto de render. No insistas por ahí.
+
+Si alguna vez se quiere reactivar el campo relleno en mobile, no reuses las posiciones de desktop: hay que diseñar un layout aparte y **medirlo con Playwright en 375×667 como mínimo** antes de darlo por bueno.
 
 ### 14. El hero tiene que entrar en 360px de ancho, no solo de alto
 

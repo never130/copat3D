@@ -36,7 +36,7 @@ export default function AgendaPage() {
           cumple ese rol en la portada. */}
       <div className="overflow-x-clip">
         <div className="relative mx-auto max-w-7xl px-5 py-20">
-          <WireMargins>
+          <WireMargins className="hidden sm:block">
             <WireIcosahedron
               size={132}
               tono="coral"
@@ -46,6 +46,15 @@ export default function AgendaPage() {
               size={110}
               tono="sky"
               className="absolute bottom-[12%] -right-32"
+            />
+          </WireMargins>
+
+          {/* Mobile: en la banda de padding, sangrando por el borde */}
+          <WireMargins className="sm:hidden">
+            <WirePrism
+              size={88}
+              tono="sky"
+              className="absolute top-2 -right-8 opacity-70"
             />
           </WireMargins>
 

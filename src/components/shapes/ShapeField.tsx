@@ -11,7 +11,7 @@ import {
   Tripod,
   Zigzag,
 } from "./index";
-import { WireCube, WireIcosahedron, WirePrism } from "./wire";
+import { WireIcosahedron } from "./wire";
 
 /**
  * Campo de figuras del hero.
@@ -45,10 +45,14 @@ export function ShapeField() {
  * Capa móvil: wireframes en lugar de figuras rellenas.
  *
  * En un teléfono el contenido del hero ocupa casi toda la pantalla (522px de
- * 667), así que no hay hueco libre donde poner una figura sólida sin taparle
- * algo al usuario. Un contorno sí puede convivir con el texto: la grande va
- * como marca de agua al 10% detrás del título —se lee como textura, no como
- * un objeto que estorba— y las chicas sangran por los bordes.
+ * 667), así que no queda hueco libre. Un contorno sí puede convivir con el
+ * texto, así que va UNA sola pieza grande como marca de agua al 10% detrás
+ * del título: se lee como textura, no como un objeto que estorba.
+ *
+ * Hubo también un par de figuras sangrando por los bordes laterales y se
+ * quitaron: en 320-375px no hay forma de que despeguen del texto sin quedar
+ * reducidas a un filo de 16px, que se lee como un artefacto de render. Es la
+ * trampa 13 de AGENTS.md — perseguir huecos seguros acá no es confiable.
  */
 function MobileWire() {
   return (
@@ -60,16 +64,6 @@ function MobileWire() {
         tono="filigrana"
         size={300}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[58%]"
-      />
-      <WireCube
-        tono="blanco"
-        size={104}
-        className="absolute top-[12%] -left-10"
-      />
-      <WirePrism
-        tono="blanco"
-        size={96}
-        className="absolute right-[-2.5rem] bottom-[13%]"
       />
     </div>
   );
