@@ -176,7 +176,21 @@ Es para el Dockerfile: emite un servidor autocontenido para que la imagen final 
 
 Por eso está condicionado en `next.config.ts` a `process.env.DOCKER_BUILD`, variable que solo define el `Dockerfile`. Si el deploy en Vercel falla con el build aparentemente limpio (todo en verde y sin "Error" en el log), **este es el primer sospechoso**.
 
-### 13. Helvetica Now Display es paga
+### 13. `ShapeField` no se muestra en mobile — y no lo reactives sin repensar las posiciones
+
+Las figuras del hero están posicionadas en **porcentajes pensados para una columna de texto angosta contra un viewport ancho**. En mobile el texto ocupa casi todo el ancho, así que esos mismos porcentajes caen directo encima: el zigzag amarillo tapaba el eyebrow y el icosaedro quedaba pegado al título (bug real, reportado con captura de un iPhone).
+
+No hay combinación de posiciones que quede a salvo de forma confiable: el alto del bloque de texto cambia según si los chips hacen wrap, la localización, o el contenido real. Por eso `ShapeField` está `hidden sm:block` — directamente ausente en mobile, sin perseguir huecos seguros. El degradé + grano cargan el peso visual ahí.
+
+Si alguna vez se quiere reactivar en mobile, no reuses las posiciones de desktop: hay que diseñar un layout aparte y **medirlo con Playwright en 375×667 como mínimo** antes de darlo por bueno.
+
+### 14. El hero tiene que entrar en 360px de ancho, no solo de alto
+
+Mismo problema que el alto (trampa ya conocida) pero en los *paddings verticales de cada bloque*, no en el padding general de la sección: agregar contenido al hero (un chip más, una línea extra) puede hacer que la sección vuelva a superar el viewport, y como tiene `overflow-hidden`, el excedente **se recorta en silencio** — el botón "Sumar mi empresa" y el indicador de scroll quedaban parcialmente inalcanzables.
+
+**Piso de soporte: 360px de ancho** (el mínimo real del mercado hoy; iPhone SE 1ª gen y otros de 320px están discontinuados desde 2018 y se aceptan como degradación conocida, no como bug a perseguir). Al tocar el contenido del hero, volvé a correr `hero-movil.mjs` o equivalente en 375×667 como mínimo — no alcanza con mirarlo en desktop achicando la ventana, porque `svh` se comporta distinto en un navegador de escritorio que en uno móvil real.
+
+### 15. Helvetica Now Display es paga
 
 Es de Monotype y requiere licencia web. El sitio usa **Inter Tight** como sustituto libre. No la sirvas desde un CDN ni la copies de otro sitio. Si aparece la licencia, se cambia en `layout.tsx` y en `--font-display`.
 

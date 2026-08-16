@@ -19,11 +19,22 @@ import {
  * velocidad con el scroll vía animation-timeline: scroll(). Sin listeners de JS.
  * Cada figura tiene un periodo primo respecto de las demás para que el conjunto
  * nunca se sincronice.
+ *
+ * Oculto por completo bajo `sm` (`hidden sm:block`), a propósito.
+ *
+ * Las posiciones están en porcentaje, pensadas para una columna de texto
+ * angosta contra un viewport ancho. En mobile el texto ocupa casi todo el
+ * ancho y el alto del bloque cambia según si los chips hacen wrap o el
+ * texto es más largo (localización, contenido real de sponsors, etc.):
+ * cualquier posición fija eventualmente vuelve a caer encima de algo. No
+ * hay combinación de porcentajes que quede a salvo de forma confiable, así
+ * que en vez de perseguir huecos seguros se saca el ruido entero y el
+ * degradé + grano cargan el peso visual del hero en pantallas chicas.
  */
 export function ShapeField() {
   return (
     <div
-      className="pointer-events-none absolute inset-0 overflow-hidden"
+      className="pointer-events-none absolute inset-0 hidden overflow-hidden sm:block"
       aria-hidden="true"
     >
       {/* ---------- Plano de fondo ---------- */}

@@ -19,11 +19,11 @@ export function Hero() {
     // medía 698px contra los 667 de un iPhone SE y no entraba, lo que dejaba
     // su parte inferior inalcanzable al quedar pegado. Con pt-24/pb-12 entra
     // y el efecto funciona en todos los tamaños.
-    <section className="hero-gradient grain sticky top-0 z-0 flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 pt-24 pb-12 sm:pt-28 sm:pb-16">
+    <section className="hero-gradient grain sticky top-0 z-0 flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 pt-20 pb-9 sm:pt-28 sm:pb-16">
       <ShapeField />
 
       <div className="relative z-10 flex flex-col items-center text-center">
-        <p className="mb-6 font-mono text-xs font-medium tracking-[0.25em] text-white/85 uppercase">
+        <p className="mb-3 font-mono text-xs font-medium tracking-[0.25em] text-white/85 uppercase sm:mb-6">
           Fin del Mundo · Tierra del Fuego AeIAS
         </p>
 
@@ -31,16 +31,16 @@ export function Hero() {
           COPAT&nbsp;3D
         </h1>
 
-        <p className="mt-6 max-w-2xl text-balance text-base text-white/90 sm:text-lg">
+        <p className="mt-3 max-w-2xl text-balance text-base text-white/90 sm:mt-6 sm:text-lg">
           Congreso Patagónico de Impresión 3D, Fabricación Digital e Innovación
           Aplicada
         </p>
 
-        <p className="font-display mt-8 text-[clamp(1.25rem,3.6vw,2.25rem)] font-bold text-white italic">
+        <p className="font-display mt-4 text-[clamp(1.25rem,3.6vw,2.25rem)] font-bold text-white italic sm:mt-8">
           Diseñando el futuro capa a capa
         </p>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:mt-10">
           <Chip
             icon={
               <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -63,7 +63,7 @@ export function Hero() {
           </Chip>
         </div>
 
-        <div className="mt-11 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-6 flex flex-col gap-3 sm:mt-11 sm:flex-row">
           <Link
             href="/registro"
             className="text-magenta-deep rounded-full bg-white px-8 py-4 text-base font-bold transition-transform duration-200 hover:scale-[1.03]"
