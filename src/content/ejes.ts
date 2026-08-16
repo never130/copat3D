@@ -45,7 +45,7 @@ export const EJES: Eje[] = [
   {
     id: "talentos",
     numero: "04",
-    titulo: "Polos Creativos y Talento",
+    titulo: "Polos Creativos y la Fábrica",
     descripcion:
       "La Fábrica de Talentos como motor de formación provincial: robótica, diseño y startups nacidas en el fin del mundo.",
     temas: ["Formación técnica", "Robótica educativa", "Startups locales", "Diseño digital"],

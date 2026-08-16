@@ -57,6 +57,15 @@
   --color-copat-sky: #6fb9e4;
   --color-copat-coral: #e8897f;
 
+  /* Tonos profundos de cada acento — los mismos que usan las caras oscuras
+     de las figuras rellenas. Necesarios sobre fondo claro: los acentos son
+     pasteles y sobre `--bg` claro con poca opacidad quedan invisibles. */
+  --color-copat-yellow-deep: #e0a400;
+  --color-copat-green-deep: #5d9a2c;
+  --color-copat-lilac-deep: #9358cc;
+  --color-copat-sky-deep: #4e97c4;
+  --color-copat-coral-deep: #c96a61;
+
   /* Movimiento */
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -541,6 +550,11 @@
   position: relative;
   z-index: 10;
   background-color: var(--bg);
+  /* Las figuras wireframe de los márgenes se posicionan fuera de la caja del
+     contenido; sin esto generarían scroll horizontal.
+     `clip` y no `hidden`: `hidden` crea un contenedor de scroll y rompería
+     el `sticky` del hero. */
+  overflow-x: clip;
   /* Radio proporcional al ancho: 2.5rem fijos se veían chicos en escritorio
      y desproporcionados en mobile. */
   border-start-start-radius: clamp(1.5rem, 4vw, 3.5rem);

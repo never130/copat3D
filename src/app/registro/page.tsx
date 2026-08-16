@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { NavbarSentinel } from "@/components/layout/NavbarSentinel";
 import { PageHeader } from "@/components/layout/PageHeader";
+import {
+  WireCube,
+  WireMargins,
+  WireOctahedron,
+} from "@/components/shapes/wire";
 
 export const metadata: Metadata = {
   title: "Inscripción",
@@ -19,8 +24,28 @@ export default function RegistroPage() {
 
       <NavbarSentinel />
 
-      <div className="mx-auto max-w-2xl px-5 py-20">
-        <div className="sheet border-border bg-surface rounded-3xl border border-dashed p-12 text-center">
+      {/* El clip va en el envoltorio de ancho completo, no en el contenedor
+          `max-w-2xl`: las figuras se posicionan fuera de la caja de ese
+          contenedor y quedarían recortadas. */}
+      <div className="overflow-x-clip">
+        <div className="relative mx-auto max-w-2xl px-5 py-20">
+          <WireMargins>
+            {/* Offsets más grandes que en la portada: este contenedor es
+                `max-w-2xl`, mucho más angosto, así que con -left-40 asomaba
+                un borde de ~8px ya en 768px y se leía como un artefacto. */}
+            <WireOctahedron
+              size={120}
+              tono="lilac"
+              className="absolute top-[12%] left-[-14rem]"
+            />
+            <WireCube
+              size={104}
+              tono="yellow"
+              className="absolute right-[-13rem] bottom-[16%]"
+            />
+          </WireMargins>
+
+          <div className="sheet border-border bg-surface rounded-3xl border border-dashed p-12 text-center">
           <h2 className="text-2xl">El formulario se habilita en breve</h2>
           <p className="text-muted mx-auto mt-4 max-w-md leading-relaxed">
             Estamos terminando de definir el circuito de acreditación junto a la
@@ -35,13 +60,14 @@ export default function RegistroPage() {
           </a>
         </div>
 
-        {/* El formulario no se publica hasta cerrar el checklist legal:
-            se recolecta DNI y el responsable es un organismo público.
-            Ver docs/04-datos-y-legales.md */}
-        <p className="text-muted mt-8 text-center text-sm">
-          Tus datos se tratarán conforme a la Ley 25.326 de Protección de Datos
-          Personales.
-        </p>
+          {/* El formulario no se publica hasta cerrar el checklist legal:
+              se recolecta DNI y el responsable es un organismo público.
+              Ver docs/04-datos-y-legales.md */}
+          <p className="text-muted mt-8 text-center text-sm">
+            Tus datos se tratarán conforme a la Ley 25.326 de Protección de
+            Datos Personales.
+          </p>
+        </div>
       </div>
     </main>
   );

@@ -1,3 +1,10 @@
+import {
+  WireCube,
+  WireIcosahedron,
+  WireMargins,
+  WireOctahedron,
+  WirePrism,
+} from "@/components/shapes/wire";
 import { EJES } from "@/content/ejes";
 
 /**
@@ -66,8 +73,31 @@ export function Ejes() {
   return (
     <section
       id="ejes"
-      className="mx-auto max-w-7xl scroll-mt-24 px-5 py-24 sm:py-32"
+      className="relative mx-auto max-w-7xl scroll-mt-24 px-5 py-24 sm:py-32"
     >
+      <WireMargins>
+        <WireIcosahedron
+          size={140}
+          tono="coral"
+              className="absolute top-[5%] -left-36"
+        />
+        <WirePrism
+          size={112}
+          tono="green"
+              className="absolute top-[16%] -right-32"
+        />
+        <WireCube
+          size={120}
+          tono="sky"
+              className="absolute top-[52%] -right-32"
+        />
+        <WireOctahedron
+          size={118}
+          tono="lilac"
+              className="absolute bottom-[8%] -left-32"
+        />
+      </WireMargins>
+
       <div className="sheet sheet-print max-w-2xl">
         <p className="text-accent-text font-mono text-xs font-medium tracking-[0.25em] uppercase">
           Ejes temáticos

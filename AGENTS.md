@@ -190,7 +190,27 @@ Mismo problema que el alto (trampa ya conocida) pero en los *paddings verticales
 
 **Piso de soporte: 360px de ancho** (el mínimo real del mercado hoy; iPhone SE 1ª gen y otros de 320px están discontinuados desde 2018 y se aceptan como degradación conocida, no como bug a perseguir). Al tocar el contenido del hero, volvé a correr `hero-movil.mjs` o equivalente en 375×667 como mínimo — no alcanza con mirarlo en desktop achicando la ventana, porque `svh` se comporta distinto en un navegador de escritorio que en uno móvil real.
 
-### 15. Helvetica Now Display es paga
+### 15. Figuras de margen: `overflow-x: clip`, nunca `hidden`
+
+Las wireframe de `WireMargins` se posicionan **fuera** de la caja del contenido (`-left-32` / `-right-32`), así que el ancestro necesita recortar o generan scroll horizontal.
+
+Tiene que ser `overflow-x: clip` (está en `.paper-page`). **`hidden` crea un contenedor de scroll y rompe el `sticky` del hero** — el efecto de hoja sobre el hero deja de funcionar.
+
+El posicionamiento con offsets negativos es **auto-limitante y no necesita breakpoints**: solo asoman cuando el viewport supera el `max-w-7xl` del contenido. Verificado: 0 figuras a la vista en 360/768/1280px, 4 en 1440px y arriba, 0 solapes con texto y sin scroll horizontal en ningún ancho.
+
+Al agregar una figura nueva de margen, corré `wire.mjs` (o equivalente): mide justamente esas tres cosas.
+
+### 16. Los acentos de la marca son pasteles: no sirven como color de trazo en modo claro
+
+Coral `#E8897F`, celeste `#6FB9E4`, etc. son colores **claros**. Sobre `--bg` oscuro con poca opacidad se leen bien; sobre el fondo claro quedan prácticamente blancos e invisibles. Fue un bug real con las figuras wireframe.
+
+Para eso existen los tokens `--color-copat-*-deep` (los mismos tonos que ya usan las caras oscuras de las figuras rellenas). El mapa `TONOS` de `wire.tsx` es la fuente única: define el par claro/oscuro de cada acento en un solo lugar, en vez de repetir variantes `dark:` en los 13 lugares de uso.
+
+Contraste medido contra el fondo: **1.5 a 2.12 en ambos modos**. Para decoración no hace falta 4.5:1, pero por debajo de ~1.25:1 el trazo es imperceptible.
+
+> Al medir contraste desde Playwright, **Tailwind v4 emite los colores como `oklab(...)` con alpha** y parsearlos con una regex da resultados falsos (daban 1.01 en todo). Hay que dejar que el navegador haga la mezcla: pintar fondo y color en un `<canvas>` de 1×1 y leer el píxel. Además `next-themes` usa `defaultTheme="dark"`, así que `colorScheme` de Playwright no cambia el tema — hay que fijar `localStorage.theme` con `addInitScript`.
+
+### 17. Helvetica Now Display es paga
 
 Es de Monotype y requiere licencia web. El sitio usa **Inter Tight** como sustituto libre. No la sirvas desde un CDN ni la copies de otro sitio. Si aparece la licencia, se cambia en `layout.tsx` y en `--font-display`.
 

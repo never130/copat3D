@@ -1,4 +1,12 @@
 import { NavbarSentinel } from "@/components/layout/NavbarSentinel";
+import {
+  WireCube,
+  WireMargins,
+  WireOctahedron,
+  WirePlus,
+  WirePrism,
+  WirePyramid,
+} from "@/components/shapes/wire";
 import { Ejes } from "@/components/sections/Ejes";
 import { Hero } from "@/components/sections/Hero";
 import { Sponsors } from "@/components/sections/Sponsors";
@@ -14,13 +22,55 @@ function Proximamente({
   id,
   titulo,
   texto,
+  figura,
 }: {
   id: string;
   titulo: string;
   texto: string;
+  /** Figura wireframe del margen. Se alterna entre secciones para que no
+   *  se repita la misma pieza al scrollear. */
+  figura: "piramide" | "cruz";
 }) {
   return (
-    <section id={id} className="mx-auto max-w-7xl scroll-mt-24 px-5 py-24">
+    <section
+      id={id}
+      className="relative mx-auto max-w-7xl scroll-mt-24 px-5 py-24"
+    >
+      <WireMargins>
+        {figura === "piramide" ? (
+          <>
+            <WirePyramid
+              size={118}
+              tono="yellow"
+              className="absolute top-[14%] -right-32"
+            />
+            <WirePrism
+              size={106}
+              tono="sky"
+              className="absolute bottom-[14%] -left-32"
+            />
+          </>
+        ) : (
+          <>
+            <WirePlus
+              size={104}
+              tono="lilac"
+              className="absolute top-[18%] -left-32"
+            />
+            <WireOctahedron
+              size={112}
+              tono="coral"
+              className="absolute right-[-8rem] bottom-[16%]"
+            />
+            <WireCube
+              size={92}
+              tono="green"
+              className="absolute top-[6%] -right-28"
+            />
+          </>
+        )}
+      </WireMargins>
+
       <div className="sheet sheet-print border-border bg-surface relative overflow-hidden rounded-[2rem] rounded-bl-none border p-14 text-center">
         <div
           className="text-fg pointer-events-none absolute inset-0 opacity-[0.05]"
@@ -65,12 +115,14 @@ export default function Home() {
             id="talentos"
             titulo="Fábrica de Talentos"
             texto="La sede del congreso y el motor de formación técnica de la provincia."
+            figura="piramide"
           />
           <Sponsors />
           <Proximamente
             id="contacto"
             titulo="Contacto"
             texto="Escribinos a copat3d@aif.gob.ar mientras habilitamos el formulario."
+            figura="cruz"
           />
         </div>
       </div>
