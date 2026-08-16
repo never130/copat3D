@@ -46,7 +46,7 @@ Sitio del **Congreso Patagónico de Impresión 3D, Fabricación Digital e Innova
 
 ```bash
 npm run dev      # desarrollo (http://localhost:3000)
-npm run build    # build de producción (salida standalone)
+npm run build    # build de producción (standalone solo con DOCKER_BUILD=1)
 npm run lint     # ESLint — incluye reglas del React Compiler
 docker compose up                  # dev + Postgres local
 docker build -t copat3d .          # imagen de producción
@@ -170,7 +170,13 @@ Consecuencia práctica: una utilidad como `group-hover:[animation-play-state:pau
 
 `-translate-y-1.5` genera `translate: 0 -0.375rem`, no una `matrix()`. Al depurar o testear un hover, mirá `getComputedStyle(el).translate`; `transform` va a decir `none` aunque el efecto esté funcionando perfecto.
 
-### 12. Helvetica Now Display es paga
+### 12. `output: "standalone"` rompe el deploy en Vercel
+
+Es para el Dockerfile: emite un servidor autocontenido para que la imagen final no necesite `node_modules` ni el código fuente. Pero **Vercel tiene su propio empaquetado serverless y `standalone` lo pisa** — el build compila y genera las páginas sin ningún error visible, y recién falla después, en el paso de empaquetado de Vercel.
+
+Por eso está condicionado en `next.config.ts` a `process.env.DOCKER_BUILD`, variable que solo define el `Dockerfile`. Si el deploy en Vercel falla con el build aparentemente limpio (todo en verde y sin "Error" en el log), **este es el primer sospechoso**.
+
+### 13. Helvetica Now Display es paga
 
 Es de Monotype y requiere licencia web. El sitio usa **Inter Tight** como sustituto libre. No la sirvas desde un CDN ni la copies de otro sitio. Si aparece la licencia, se cambia en `layout.tsx` y en `--font-display`.
 

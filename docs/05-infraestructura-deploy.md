@@ -102,6 +102,10 @@ docker build -t copat3d --build-arg NEXT_PUBLIC_SITE_URL=https://staging.copat3d
 
 La imagen usa **multi-stage build** con la salida `standalone` de Next.js: no incluye `node_modules` de desarrollo ni el código fuente, corre como usuario no-root (`nextjs`, uid 1001) y expone un `HEALTHCHECK` contra `/api/health`.
 
+> ⚠️ **`output: "standalone"` no puede estar activo al deployar en Vercel.** Vercel tiene su propio empaquetado serverless y esa opción lo pisa: el build compila y genera las páginas sin error visible, pero el deploy falla después, en el paso de empaquetado — un fallo silencioso y confuso porque el log previo se ve perfecto.
+>
+> Por eso `next.config.ts` la activa solo bajo `process.env.DOCKER_BUILD`, variable que el `Dockerfile` define antes de compilar y que Vercel nunca setea. Si el deploy en Vercel falla con el log de build en verde, revisar primero que `next.config.ts` no tenga `output: "standalone"` sin esa condición.
+
 > **Nota:** el build descarga las fuentes de Google Fonts, por lo que **requiere red durante `docker build`**. Si se necesita build sin red, hay que auto-hospedar las fuentes en `public/fonts/`.
 
 ### ⚠️ Trampa: `NEXT_PUBLIC_*` vacías rompen el build

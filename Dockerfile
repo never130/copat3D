@@ -35,6 +35,9 @@ CMD ["npm", "run", "dev"]
 # --------------------------------------------------------------------------
 FROM base AS builder
 ENV NEXT_TELEMETRY_DISABLED=1
+# Activa `output: "standalone"` en next.config.ts. Sin esta variable el
+# build produce un .next normal, no el que espera el stage `runner` de abajo.
+ENV DOCKER_BUILD=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # NEXT_PUBLIC_* se inlinea en el bundle en build time, no en runtime.
