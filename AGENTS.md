@@ -34,6 +34,7 @@ Sitio del **Congreso Patagónico de Impresión 3D, Fabricación Digital e Innova
 | Landing: hero, ejes, sponsors, placeholders | ✅ Hecho |
 | Rutas `/agenda` y `/registro` (contenido placeholder) | ✅ Hecho |
 | Docker (dev + producción) | ✅ Verificado corriendo |
+| SEO: metadata, sitemap, robots, JSON-LD, favicon, Open Graph | ✅ Hecho |
 | Documentación `docs/01` a `docs/06` | ✅ Hecho |
 | Formulario de registro | ⛔ Bloqueado por legales |
 | Formulario de contacto → Resend | ❌ Pendiente |

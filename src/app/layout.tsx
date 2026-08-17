@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Inter_Tight } from "next/font/google";
+import { EventoJsonLd } from "@/components/EventoJsonLd";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 /**
@@ -24,14 +26,11 @@ const interTight = Inter_Tight({
   display: "swap",
 });
 
-// `||` y no `??`: la variable puede llegar como cadena vacía —un ARG de Docker
-// sin valor, o un campo vacío en el panel de Vercel— y `??` solo cubre
-// null/undefined, con lo que new URL("") rompe el build entero.
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://copat3d.com.ar";
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  // Canónica del sitio. Evita que Vercel indexe también los dominios
+  // *.vercel.app como contenido duplicado del dominio real.
+  alternates: { canonical: "/" },
   title: {
     default: "COPAT 3D - Congreso Patagónico de Impresión 3D",
     template: "%s · COPAT 3D",
@@ -88,6 +87,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           data-gr-*) antes de que React hidrate. No es un desajuste nuestro
           y no hay forma de evitarlo desde la aplicación. */}
       <body suppressHydrationWarning className="flex min-h-full flex-col">
+        <EventoJsonLd />
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

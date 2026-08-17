@@ -54,7 +54,7 @@ El objetivo real de esta semana es **destrabar lo que depende de terceros**, por
 
 - [ ] Cargar agenda definitiva y speakers confirmados
 - [ ] Fotos y bios de speakers
-- [ ] SEO: metadata, Open Graph, sitemap, robots
+- [x] SEO: metadata, Open Graph, sitemap, robots, favicon, JSON-LD de evento
 - [ ] Microinteracciones y animaciones de entrada
 - [ ] Revisión de textos (redacción institucional)
 

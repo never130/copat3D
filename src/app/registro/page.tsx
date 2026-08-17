@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "Inscripción",
   description:
     "Inscribite gratis a COPAT 3D. 2 y 3 de octubre de 2026, Ushuaia, Tierra del Fuego. Modalidad presencial.",
+  alternates: { canonical: "/registro" },
 };
 
 export default function RegistroPage() {

@@ -137,8 +137,11 @@ Por eso los `ARG` del Dockerfile llevan valor por defecto **y** el código usa `
 - [ ] Formularios probados end-to-end en producción
 - [ ] Mail de contacto llegando a copat3d@aif.gob.ar (revisar spam)
 - [ ] Página `/privacidad` publicada
-- [ ] Open Graph con imagen (verificar cómo se ve al compartir en WhatsApp)
-- [ ] `sitemap.xml` y `robots.txt`
+- [x] Open Graph con imagen (`opengraph-image.jpg`, 1200×630, 74 KB)
+- [ ] Verificar la preview real al compartir en WhatsApp y LinkedIn — **solo se puede una vez publicado**, porque los scrapers necesitan la URL pública
+- [x] `sitemap.xml` y `robots.txt`
+- [x] Favicon, apple-touch-icon y JSON-LD de evento
+- [ ] Revalidar el JSON-LD en la [prueba de resultados enriquecidos de Google](https://search.google.com/test/rich-results) con el dominio ya activo
 - [ ] Favicon COPAT 3D
 - [ ] Lighthouse ≥ 90 en Performance y Accesibilidad
 - [ ] Probado en mobile real, no solo en DevTools
