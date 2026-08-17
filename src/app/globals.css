@@ -128,8 +128,10 @@
     border-radius: 4px;
   }
 
-  /* Sobre el magenta del hero, el foco magenta sería invisible: va amarillo */
-  .hero-gradient :focus-visible {
+  /* Sobre el magenta, el foco magenta sería invisible: va amarillo.
+     Sobre el negro del modo oscuro el amarillo también funciona. */
+  .hero-gradient :focus-visible,
+  .brand-canvas :focus-visible {
     outline-color: var(--color-copat-yellow);
   }
 
@@ -165,6 +167,59 @@
     var(--color-magenta-deep) 100%
   );
   animation: rotate-gradient 24s linear infinite;
+}
+
+/* ============================================================
+   LIENZO DE MARCA — el fondo de las cabeceras (hero y PageHeader)
+
+   Es el único elemento que SÍ cambia entre modos, siguiendo el arte
+   oficial: magenta en claro, negro con retícula en oscuro. La
+   retícula es la del plano técnico, coherente con la temática.
+
+   No confundir con `.hero-gradient`, que es magenta SIEMPRE: lo usan
+   el CTA de sponsors y el menú móvil, que son superficies que deben
+   resaltar sobre el contenido. En oscuro se volverían invisibles.
+   ============================================================ */
+
+/* Sin `position` acá: esta regla está fuera de capa y le ganaría a las
+   utilidades de Tailwind (trampa 10), pisando el `sticky` del hero. Cada
+   elemento que use la clase define su propio posicionamiento. */
+.brand-canvas {
+  background: linear-gradient(
+    var(--gradient-angle),
+    var(--color-magenta-bright) 0%,
+    var(--color-magenta) 45%,
+    var(--color-magenta-deep) 100%
+  );
+  animation: rotate-gradient 24s linear infinite;
+}
+
+/* Grano sobre el magenta: evita que se lea "plano digital" */
+.brand-canvas::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.dark .brand-canvas {
+  /* Un punto más oscuro que --bg (#0b0410) para que la hoja de página,
+     que es más clara, siga leyéndose al deslizarse por encima. */
+  background: #050508;
+  animation: none;
+}
+
+/* En oscuro el grano se reemplaza por la retícula del arte oficial */
+.dark .brand-canvas::after {
+  opacity: 1;
+  mix-blend-mode: normal;
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+  background-size: 52px 52px;
 }
 
 /* Textura de grano: evita que el magenta plano se lea "digital barato" */

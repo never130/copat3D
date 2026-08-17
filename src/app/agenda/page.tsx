@@ -10,7 +10,7 @@ import {
 export const metadata: Metadata = {
   title: "Agenda",
   description:
-    "Cronograma de charlas, talleres y demostraciones en vivo de COPAT 3D. 2 y 3 de octubre de 2026, Ciudad Autónoma de Buenos Aires.",
+    "Cronograma de charlas, talleres y demostraciones en vivo de COPAT 3D. 2 y 3 de octubre de 2026, Ushuaia, Tierra del Fuego.",
 };
 
 const DIAS = [
@@ -24,7 +24,7 @@ export default function AgendaPage() {
       <PageHeader
         eyebrow="Dos días · Presenciales"
         titulo="Agenda"
-        bajada="Charlas, talleres y demostraciones en vivo en la Ciudad Autónoma de Buenos Aires."
+        bajada="Charlas, talleres y demostraciones en vivo en Ushuaia, Tierra del Fuego."
       />
 
       <NavbarSentinel />

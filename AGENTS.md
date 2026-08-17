@@ -231,7 +231,8 @@ Es de Monotype y requiere licencia web. El sitio usa **Inter Tight** como sustit
 
 - **Tailwind v4 con configuración CSS-first.** No hay `tailwind.config.js`; los tokens se definen en `@theme` dentro de `globals.css`.
 - **Modo oscuro por defecto.** La identidad es neón sobre fondo profundo.
-- **El degradé magenta del hero no se invierte** entre modos: es la firma de marca.
+- **El lienzo de marca sí cambia entre modos**, siguiendo el arte oficial: `.brand-canvas` (hero y `PageHeader`) es magenta en claro y negro con retícula en oscuro. En cambio `.hero-gradient` es magenta **siempre** — lo usan el CTA de sponsors y el menú móvil, que deben resaltar sobre el contenido y en oscuro desaparecerían. Ver [docs/02](docs/02-design-system.md).
+- **Las figuras del hero no llevan opacidad reducida.** Atenuarlas las mezcla con el fondo, y el fondo cambia entre modos: al 50% el zigzag verde tiraba a marrón sobre magenta y a oliva sobre negro. La profundidad la dan el tamaño y el parallax.
 - **Server Components por defecto.** `"use client"` solo donde hace falta interactividad real.
 - **Sin ORM.** Con una o dos tablas, el cliente de la base alcanza.
 - **Comentarios que explican el *por qué*, no el *qué*.** El código ya dice qué hace.

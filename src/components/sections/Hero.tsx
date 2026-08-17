@@ -19,7 +19,7 @@ export function Hero() {
     // medía 698px contra los 667 de un iPhone SE y no entraba, lo que dejaba
     // su parte inferior inalcanzable al quedar pegado. Con pt-24/pb-12 entra
     // y el efecto funciona en todos los tamaños.
-    <section className="hero-gradient grain sticky top-0 z-0 flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 pt-20 pb-9 sm:pt-28 sm:pb-16">
+    <section className="brand-canvas sticky top-0 z-0 flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 pt-20 pb-9 sm:pt-28 sm:pb-16">
       <ShapeField />
 
       <div className="relative z-10 flex flex-col items-center text-center">
@@ -59,7 +59,7 @@ export function Hero() {
               </svg>
             }
           >
-            Ciudad Autónoma de Buenos Aires
+            Ushuaia, Tierra del Fuego
           </Chip>
         </div>
 

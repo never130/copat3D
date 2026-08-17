@@ -41,7 +41,24 @@ El **modo oscuro es el default** — la identidad es neón sobre fondo profundo,
 | Acento de texto | `--accent-text` | `#FFC629` | `#B00057` |
 | Anillo de foco | `--focus` | `#FFC629` | `#B00057` |
 
-El hero mantiene el **degradé magenta en ambos modos** — es la firma de la marca y no debe invertirse.
+### El lienzo de marca sí cambia entre modos
+
+> **Corrección.** Este documento decía antes que "el degradé magenta no se invierte entre modos". Era una suposición mía: el arte oficial **sí tiene variante oscura**, negro con retícula técnica.
+
+| Elemento | Claro | Oscuro |
+|---|---|---|
+| `.brand-canvas` — hero y `PageHeader` | Degradé magenta + grano | Negro `#050508` + retícula de 52px al 4.5% |
+| `.hero-gradient` — CTA de sponsors, menú móvil | Magenta | **Magenta** (no cambia) |
+
+La distinción importa: el CTA de sponsors y el menú móvil son superficies que tienen que **resaltar sobre el contenido**. Si siguieran al modo, en oscuro quedarían negras sobre fondo oscuro y desaparecerían. El lienzo de marca es fondo; esos otros son objetos.
+
+El negro del lienzo (`#050508`) es deliberadamente **más oscuro que `--bg`** (`#0b0410`): la hoja de página que se desliza por encima es más clara, y esa diferencia —junto con el canto de luz— es lo que hace legible la transición.
+
+### Las figuras van a color pleno en los dos modos
+
+Los planos de profundidad **no llevan opacidad reducida**. Atenuar una figura la mezcla con el fondo, y el fondo cambia según el modo: al 50%, el zigzag verde tiraba a marrón sobre el magenta y a oliva sobre el negro — dos colores distintos para la misma pieza de marca.
+
+La profundidad la dan el **tamaño y la velocidad de parallax**, que no dependen del fondo.
 
 > **Por qué el acento de texto no es el magenta institucional en modo claro:**
 > `#E6006E` sobre `#FAF7FB` da 4.6:1 — alcanza para texto grande pero **no** para los eyebrows en mayúscula de 12px. El token `--accent-text` usa el tono profundo `#B00057` (~7:1). El magenta puro se sigue usando para fondos y superficies, no para texto chico.

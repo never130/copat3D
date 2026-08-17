@@ -208,7 +208,7 @@ export function Navbar() {
           </Link>
 
           <p className="mt-7 text-center text-sm text-white/80">
-            2 y 3 de octubre · Ciudad Autónoma de Buenos Aires
+            2 y 3 de octubre · Ushuaia, Tierra del Fuego
           </p>
         </div>
       )}

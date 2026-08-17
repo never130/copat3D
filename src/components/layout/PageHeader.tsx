@@ -12,7 +12,7 @@ export function PageHeader({
   bajada?: string;
 }) {
   return (
-    <section className="hero-gradient grain relative overflow-hidden px-5 pt-32 pb-16">
+    <section className="brand-canvas relative overflow-hidden px-5 pt-32 pb-16">
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <Zigzag
           color="yellow"

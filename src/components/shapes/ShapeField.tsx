@@ -75,8 +75,14 @@ function DesktopShapes() {
       className="pointer-events-none absolute inset-0 hidden overflow-hidden sm:block"
       aria-hidden="true"
     >
-      {/* ---------- Plano de fondo ---------- */}
-      <div className="plane-back absolute inset-0 opacity-50">
+      {/* ---------- Plano de fondo ----------
+          Sin opacidad reducida: atenuar la figura la mezcla con el fondo, y
+          el fondo cambia entre modos. Al 50% el zigzag verde tiraba a marrón
+          sobre el magenta y a oliva sobre el negro — dos colores distintos
+          para la misma pieza. En el arte oficial todas van a color pleno en
+          ambos modos; la profundidad la dan el tamaño y la velocidad de
+          parallax, que no dependen del fondo. */}
+      <div className="plane-back absolute inset-0">
         <Pyramid
           color="sky"
           size={62}
@@ -87,16 +93,16 @@ function DesktopShapes() {
           size={70}
           className="anim-sway-reverse absolute top-[9%] left-[22%]"
         />
-        <div className="absolute top-[6%] right-[26%] text-white/70">
+        <div className="absolute top-[6%] right-[26%] text-white/85">
           <Squiggle className="w-14" />
         </div>
-        <div className="absolute bottom-[16%] left-[6%] w-14 text-white/60">
+        <div className="absolute bottom-[16%] left-[6%] w-14 text-white/80">
           <DotGrid className="w-full" />
         </div>
       </div>
 
       {/* ---------- Plano medio ---------- */}
-      <div className="plane-mid absolute inset-0 opacity-90">
+      <div className="plane-mid absolute inset-0">
         <Zigzag
           color="yellow"
           size={104}
@@ -117,13 +123,13 @@ function DesktopShapes() {
           size={92}
           className="anim-sway-reverse absolute right-[16%] bottom-[18%]"
         />
-        <div className="absolute top-[38%] left-[3%] w-5 text-white/70">
+        <div className="absolute top-[38%] left-[3%] w-5 text-white/85">
           <Brace className="w-full" />
         </div>
-        <div className="absolute right-[6%] bottom-[38%] text-white/70">
+        <div className="absolute right-[6%] bottom-[38%] text-white/85">
           <Arc className="w-14" />
         </div>
-        <div className="absolute bottom-[10%] right-[4%] w-14 text-white/60">
+        <div className="absolute bottom-[10%] right-[4%] w-14 text-white/80">
           <DotGrid className="w-full" />
         </div>
       </div>

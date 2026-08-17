@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     template: "%s · COPAT 3D",
   },
   description:
-    "Congreso Patagónico de Impresión 3D, Fabricación Digital e Innovación Aplicada. 2 y 3 de octubre de 2026 en la ciudad Autónoma de Buenos Aires. Diseñando el futuro capa a capa.",
+    "Congreso Patagónico de Impresión 3D, Fabricación Digital e Innovación Aplicada. 2 y 3 de octubre de 2026 en Ushuaia, Tierra del Fuego. Diseñando el futuro capa a capa.",
   keywords: [
     "impresión 3D",
     "fabricación digital",
@@ -48,8 +48,6 @@ export const metadata: Metadata = {
     "congreso",
     "bioimpresión",
     "AeIAS",
-    "Patagonia",
-    "Buenos Aires",
   ],
   openGraph: {
     type: "website",
@@ -58,13 +56,13 @@ export const metadata: Metadata = {
     siteName: "COPAT 3D",
     title: "COPAT 3D - Diseñando el futuro capa a capa",
     description:
-      "Congreso Patagónico de Impresión 3D, Fabricación Digital e Innovación Aplicada. 2 y 3 de octubre, Ciudad Autónoma de Buenos Aires.",
+      "Congreso Patagónico de Impresión 3D, Fabricación Digital e Innovación Aplicada. 2 y 3 de octubre, Ushuaia, Tierra del Fuego.",
   },
   twitter: {
     card: "summary_large_image",
     title: "COPAT 3D - Diseñando el futuro capa a capa",
     description:
-      "Congreso Patagónico de Impresión 3D, Fabricación Digital e Innovación Aplicada. 2 y 3 de octubre, Ciudad Autónoma de Buenos Aires.",
+      "Congreso Patagónico de Impresión 3D, Fabricación Digital e Innovación Aplicada. 2 y 3 de octubre, Ushuaia, Tierra del Fuego.",
   },
   robots: { index: true, follow: true },
 };

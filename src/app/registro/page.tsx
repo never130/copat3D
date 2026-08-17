@@ -10,7 +10,7 @@ import {
 export const metadata: Metadata = {
   title: "Inscripción",
   description:
-    "Inscribite gratis a COPAT 3D. 2 y 3 de octubre de 2026, Ciudad Autónoma de Buenos Aires. Modalidad presencial.",
+    "Inscribite gratis a COPAT 3D. 2 y 3 de octubre de 2026, Ushuaia, Tierra del Fuego. Modalidad presencial.",
 };
 
 export default function RegistroPage() {
@@ -19,7 +19,7 @@ export default function RegistroPage() {
       <PageHeader
         eyebrow="Entrada gratuita"
         titulo="Inscripción"
-        bajada="Participá de forma presencial en la Ciudad Autónoma de Buenos Aires."
+        bajada="Participá de forma presencial en Ushuaia, Tierra del Fuego."
       />
 
       <NavbarSentinel />
