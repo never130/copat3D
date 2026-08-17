@@ -113,6 +113,17 @@ El hero es `sticky`: **sigue existiendo en el viewport detrás de `.paper-page` 
 
 Cualquier chequeo de solapes tiene que filtrar con `document.elementFromPoint()` en el centro del elemento y verificar que sea realmente el que está arriba. Está resuelto así en `wire.mjs`.
 
+### 0.b Las figuras del hero solo caben en las bandas LATERALES
+
+El bloque de texto del hero mide ~510px de alto. En una ventana de 900px deja 219px arriba y 171px abajo; **en una de 700px no deja nada**. Las bandas superior e inferior no son espacio confiable: cualquier figura ahí choca en cuanto la ventana es baja.
+
+Dos cosas más al posicionar:
+
+- **Una figura que rota tiene una caja de colisión de hasta 1.41× su tamaño.** Un icosaedro de 132 con `anim-float-spin` necesita 187px libres. Es la causa de choques que "no se explican" mirando los porcentajes.
+- **El ancho del `<h1>` manda sobre el margen lateral.** Con `15vw` medía 722px en una ventana de 1024 y dejaba 151px por lado, insuficiente. Está en `12vw`, que arriba de ~1467px no cambia nada porque el clamp ya topeaba en `11rem`.
+
+Al mover figuras del hero, correr `figuras-hero.mjs`: mide holgura contra el texto **y entre figuras rellenas** (que se pisen entre sí se lee como error, no como profundidad), en 7 combinaciones de ancho × alto.
+
 ### 1. `.sheet` va en bloques, nunca en una `<section>` entera
 
 Una sección mide ~1200px contra un viewport de 900. Su borde superior cruza el umbral del observer mientras el usuario todavía mira la sección anterior, la transición se completa **fuera de pantalla** y el efecto es invisible aunque funcione perfecto.

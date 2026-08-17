@@ -23,6 +23,12 @@
   --accent-text: #b00057;
   --focus: #b00057;
   --paper-shadow: rgb(60 20 45 / 0.22);
+
+  /* Texto de los botones blancos que se apoyan sobre el lienzo de marca.
+     En claro el lienzo es magenta y el texto magenta lo acompaña; en oscuro
+     el lienzo es negro y el magenta quedaría como único color suelto de la
+     composición, así que ahí va tinta casi negra. */
+  --canvas-ink: #b00057;
 }
 
 .dark {
@@ -38,6 +44,7 @@
   --accent-text: #ffc629;
   --focus: #ffc629;
   --paper-shadow: rgb(0 0 0 / 0.55);
+  --canvas-ink: #12060f;
 }
 
 /* ============================================================
@@ -78,6 +85,7 @@
   --color-fg: var(--fg);
   --color-muted: var(--muted);
   --color-accent-text: var(--accent-text);
+  --color-canvas-ink: var(--canvas-ink);
 
   --font-display: var(--font-inter-tight), "Helvetica Now Display", system-ui, sans-serif;
   /* Misma familia que el display: ver el porqué en layout.tsx */
@@ -326,6 +334,16 @@
 }
 .anim-nudge {
   animation: nudge 1.9s ease-in-out infinite;
+}
+
+/* En ventanas bajas el bloque de texto del hero (~510px) no deja espacio
+   sobre el eyebrow, y el icosaedro —que al girar ocupa 166px— se le monta
+   encima. Se prefiere ocultarlo antes que achicarlo o sacarlo del centro:
+   arriba del wordmark es su lugar en el arte oficial. */
+@media (max-height: 740px) {
+  .solo-alto {
+    display: none;
+  }
 }
 
 /* ============================================================

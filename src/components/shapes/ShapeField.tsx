@@ -83,10 +83,13 @@ function DesktopShapes() {
           ambos modos; la profundidad la dan el tamaño y la velocidad de
           parallax, que no dependen del fondo. */}
       <div className="plane-back absolute inset-0">
+        {/* Bajada de top-[14%]: ahí quedaba apilada sobre la pirámide del
+            plano frontal (top-[16%] right-[6%]) y se leía como un error de
+            render, no como profundidad. */}
         <Pyramid
           color="sky"
           size={62}
-          className="anim-tumble absolute top-[14%] right-[8%]"
+          className="anim-tumble absolute top-[36%] right-[11%]"
         />
         <Zigzag
           color="green"
@@ -108,10 +111,12 @@ function DesktopShapes() {
           size={104}
           className="anim-sway absolute top-[11%] left-[6%]"
         />
+        {/* Subido de top-[13%]: en ventanas de 700px de alto el título arranca
+            en y=169 y esta pieza le entraba por abajo. */}
         <Plus
           color="lilac"
           size={74}
-          className="anim-float-spin absolute top-[13%] right-[19%]"
+          className="anim-float-spin absolute top-[6%] right-[19%]"
         />
         <Plus
           color="lilac"
@@ -136,15 +141,20 @@ function DesktopShapes() {
 
       {/* ---------- Plano frontal ---------- */}
       <div className="plane-front absolute inset-0">
+        {/* Icosaedro y trípode conservan su lugar del arte —sobre y bajo el
+            wordmark— pero corridos a los extremos: al girar, su caja de
+            colisión llega a 1.41× el tamaño, así que a top-[8%] el icosaedro
+            se comía el eyebrow y a bottom-[12%] el trípode quedaba detrás de
+            los botones. */}
         <Icosahedron
           color="coral"
-          size={132}
-          className="anim-float-spin absolute top-[8%] left-[42%] drop-shadow-2xl"
+          size={118}
+          className="anim-float-spin solo-alto absolute top-[2%] left-[43%] drop-shadow-2xl"
         />
         <Tripod
           color="yellow"
-          size={96}
-          className="anim-gear absolute bottom-[12%] left-[41%] drop-shadow-xl"
+          size={88}
+          className="anim-gear absolute bottom-[6%] left-[16%] drop-shadow-xl"
         />
         <Pyramid
           color="sky"

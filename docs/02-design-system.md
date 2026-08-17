@@ -30,6 +30,10 @@ Cada acento se usa **una sola vez por sección** como color de énfasis. No mezc
 
 El **modo oscuro es el default** — la identidad es neón sobre fondo profundo, y es donde las figuras 3D brillan más.
 
+**`--canvas-ink`** es el color del texto de los botones blancos apoyados sobre el lienzo de marca. En claro el lienzo es magenta y el texto magenta lo acompaña; en oscuro el lienzo es negro y ese magenta quedaría como **único color suelto** de la composición, así que ahí va tinta casi negra.
+
+Ojo: no aplica a los botones blancos que están sobre superficies **siempre** magenta (CTA de sponsors, menú móvil). Esos conservan `text-magenta-deep` en los dos modos.
+
 | Rol | Token | Oscuro (default) | Claro |
 |---|---|---|---|
 | Fondo base | `--bg` | `#0B0410` violeta-negro | `#FAF7FB` off-white |
@@ -53,6 +57,18 @@ El **modo oscuro es el default** — la identidad es neón sobre fondo profundo,
 La distinción importa: el CTA de sponsors y el menú móvil son superficies que tienen que **resaltar sobre el contenido**. Si siguieran al modo, en oscuro quedarían negras sobre fondo oscuro y desaparecerían. El lienzo de marca es fondo; esos otros son objetos.
 
 El negro del lienzo (`#050508`) es deliberadamente **más oscuro que `--bg`** (`#0b0410`): la hoja de página que se desliza por encima es más clara, y esa diferencia —junto con el canto de luz— es lo que hace legible la transición.
+
+### Isotipo
+
+Anillos concéntricos poligonales (decágonos) partidos por el eje vertical, con las dos mitades **desfasadas media separación de anillo**. Ese escalón en la costura es la lectura "capa a capa": una pieza cortada al medio donde se ven las capas de impresión desplazadas.
+
+La geometría se **genera** en `Logo.tsx` a partir de cinco constantes (`LADOS`, `ANILLOS`, `NUCLEO`, `DESFASE`, `TRAZO`) en vez de estar dibujada a mano. Ajustar la proporción es cambiar un número, no reescribir cuarenta coordenadas.
+
+Usa `currentColor`, así que hereda el color del contenedor: blanco sobre el lienzo de marca, `--accent-text` en el footer en modo claro.
+
+> **El trazo está limitado por el tamaño de uso, no por el arte.** `TRAZO` es algo menor que la mitad de la separación entre anillos porque con un trazo más grueso el anillo interno y el núcleo se empastan en un solo bulto. Verificado renderizando al tamaño real de uso, no a tamaño de manual de marca.
+
+En navbar y footer se usa a **44px** (`size-11`). A 36px los anillos se comprimían demasiado. Al cambiarlo hay que **recalcular `LINEA_NAVBAR`** en `Navbar.tsx`: ese umbral tiene que ser mayor que el alto real del navbar (isotipo + `py-4`), porque si no el cambio a estado sólido se dispara cuando el contenido todavía está tapado por el propio navbar.
 
 ### Las figuras van a color pleno en los dos modos
 

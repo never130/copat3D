@@ -27,7 +27,11 @@ export function Hero() {
           Fin del Mundo · Tierra del Fuego AeIAS
         </p>
 
-        <h1 className="font-display text-[clamp(3.5rem,15vw,11rem)] leading-[0.85] font-black text-white">
+        {/* 12vw y no 15vw: a 15vw el título medía 722px de ancho en una
+            ventana de 1024 y dejaba 151px de margen lateral, insuficiente
+            para las figuras. Arriba de ~1467px no cambia nada porque el
+            clamp ya topeaba en 11rem; solo alivia el rango apretado. */}
+        <h1 className="font-display text-[clamp(3.5rem,12vw,11rem)] leading-[0.85] font-black text-white">
           COPAT&nbsp;3D
         </h1>
 
@@ -66,7 +70,7 @@ export function Hero() {
         <div className="mt-6 flex flex-col gap-3 sm:mt-11 sm:flex-row">
           <Link
             href="/registro"
-            className="text-magenta-deep rounded-full bg-white px-8 py-4 text-base font-bold transition-transform duration-200 hover:scale-[1.03]"
+            className="text-canvas-ink rounded-full bg-white px-8 py-4 text-base font-bold transition-transform duration-200 hover:scale-[1.03]"
           >
             Quiero mi entrada
           </Link>

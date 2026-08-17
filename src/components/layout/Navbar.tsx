@@ -23,9 +23,12 @@ const LINKS = [
  * Los contenedores flotantes (píldora del menú, botón de tema, hamburguesa)
  * comparten un único set de clases para que no diverjan.
  */
-/** Alto aproximado del navbar: el punto donde se considera que la cabecera
- *  magenta ya pasó por debajo. */
-const LINEA_NAVBAR = 72;
+/** Alto del navbar en estado overlay (76px medidos: isotipo de 44 + py-4),
+ *  más un margen. Es el punto donde se considera que la cabecera magenta ya
+ *  pasó por debajo. Si cambia el tamaño del isotipo o el padding, se
+ *  recalcula: con un umbral menor al alto real, el cambio a sólido se
+ *  dispara cuando el contenido todavía está tapado por el propio navbar. */
+const LINEA_NAVBAR = 80;
 
 export function Navbar() {
   const pathname = usePathname();
@@ -102,7 +105,7 @@ export function Navbar() {
             }`}
             aria-label="COPAT 3D - inicio"
           >
-            <Logo className="size-9" />
+            <Logo className="size-11" />
             <span className="font-display text-xl font-extrabold tracking-tight">
               COPAT 3D
             </span>
@@ -121,7 +124,7 @@ export function Navbar() {
                     className={`block rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors duration-200 ${
                       enBlanco
                         ? activo
-                          ? "text-magenta-deep bg-white"
+                          ? "text-canvas-ink bg-white"
                           : "text-white/90 hover:bg-white/15 hover:text-white"
                         : activo
                           ? "bg-magenta text-white"
@@ -142,7 +145,7 @@ export function Navbar() {
               href="/registro"
               onClick={() => setMenuAbierto(false)}
               className={`hidden rounded-full px-5 py-2.5 text-sm font-bold transition-all duration-300 hover:scale-[1.03] sm:block ${
-                enBlanco ? "text-magenta-deep bg-white" : "bg-magenta text-white"
+                enBlanco ? "text-canvas-ink bg-white" : "bg-magenta text-white"
               }`}
             >
               Inscribirme
