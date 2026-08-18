@@ -82,6 +82,22 @@ Definir **por cuánto tiempo** se guardan los datos después del evento. No pued
 
 El sitio necesita `/privacidad` con: responsable, finalidad, destinatarios, derechos del titular, plazo de conservación y contacto. Debe enlazarse desde el footer y desde el propio formulario.
 
+## Mapa de Google en la sección de sede
+
+La sección de sede embebe un mapa de Google (`Sede.tsx`). Es el embed público, sin clave de API, pero **igual carga recursos de Google y deja cookies de terceros** en el navegador de quien visita, antes de cualquier consentimiento.
+
+No es dato personal recolectado por la AIF —el sitio no recibe nada—, pero sí es seguimiento de un tercero en un sitio cuyo responsable es un organismo público. Es una decisión de la AIF, no técnica.
+
+Tres caminos, de menor a mayor fricción:
+
+1. **Dejarlo como está.** Es lo que hace la mayoría de los sitios públicos argentinos. Cero fricción para el visitante.
+2. **Carga con clic.** Mostrar una imagen estática del mapa y cargar el iframe solo si la persona lo pide. Nada de Google hasta que haya una acción explícita.
+3. **Sin Google.** Reemplazar por OpenStreetMap, que no rastrea. Menos familiar de usar y con menos detalle en Ushuaia.
+
+Ya está aplicado `loading="lazy"`, así que el mapa no se descarga hasta que alguien scrollea cerca: quien no llega a esa sección nunca contacta a Google. Eso reduce el alcance, pero no lo elimina.
+
+**Pregunta para la AIF:** ¿alcanza con la carga diferida o se prefiere carga con clic?
+
 ## Checklist previo a publicar el formulario
 
 - [ ] Texto de consentimiento validado por legales de la AIF

@@ -100,15 +100,13 @@ export function Navbar() {
           <Link
             href="/"
             onClick={() => setMenuAbierto(false)}
-            className={`flex items-center gap-2.5 transition-colors duration-300 ${
+            className={`flex items-center transition-colors duration-300 ${
               enBlanco ? "text-white" : "text-fg"
             }`}
             aria-label="COPAT 3D - inicio"
           >
-            <Logo className="size-11" />
-            <span className="font-display text-xl font-extrabold tracking-tight">
-              COPAT 3D
-            </span>
+            {/* El wordmark ya trae "COPAT 3D" dibujado: no repetirlo en texto. */}
+            <Logo className="h-9 w-auto" />
           </Link>
 
           <ul

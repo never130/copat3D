@@ -9,6 +9,7 @@ import {
 } from "@/components/shapes/wire";
 import { Ejes } from "@/components/sections/Ejes";
 import { Hero } from "@/components/sections/Hero";
+import { Sede } from "@/components/sections/Sede";
 import { Sponsors } from "@/components/sections/Sponsors";
 
 /**
@@ -128,12 +129,7 @@ export default function Home() {
         <div className="paper-page">
           <NavbarSentinel />
           <Ejes />
-          <Proximamente
-            id="talentos"
-            titulo="Fábrica de Talentos"
-            texto="La sede del congreso y el motor de formación técnica de la provincia."
-            figura="piramide"
-          />
+          <Sede />
           <Sponsors />
           <Proximamente
             id="contacto"

@@ -40,6 +40,7 @@ Sitio del **Congreso Patagónico de Impresión 3D, Fabricación Digital e Innova
 | Formulario de contacto → Resend | ❌ Pendiente |
 | Base de datos (Neon) | ❌ Pendiente |
 | Página `/privacidad` | ❌ Pendiente (bloqueante para publicar) |
+| Sección de sede con mapa de Google | ✅ Hecho (ver nota de privacidad en [docs/04](docs/04-datos-y-legales.md)) |
 | Agenda real, speakers, logos de sponsors | ❌ Falta contenido de terceros |
 | DNS en NIC.ar → Cloudflare | ❌ Pendiente (tarda 24-48hs, urgente) |
 

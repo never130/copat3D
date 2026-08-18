@@ -162,6 +162,16 @@ Del arte original: grillas de puntos, ondas, llaves `{`, arcos, triángulos pequ
 | Duración ambiental | 9s–23s (figuras) |
 | Entrada de sección | fade + `translateY(24px)`, escalonado 60ms |
 | Transición de vista | 620ms (hoja) |
+| Entrada del hero | fade + `translateY(18px)`, escalonado 80-90ms por bloque |
+
+### Entrada del hero
+
+Los seis bloques del hero (eyebrow, título, bajada, eslogan, chips, CTAs) entran escalonados al cargar la página, vía `.hero-rise` + `--hero-delay` por elemento — mismo patrón que `--sheet-delay` en las tarjetas de Ejes, pero corre **una sola vez al montar**, no por scroll: el hero es lo primero que se ve, así que no hace falta un IntersectionObserver.
+
+Dos acentos que se suman ahí, elegidos con datos y no a ojo:
+
+- **"capa a capa" en amarillo** dentro del eslogan. El coral se descartó: medido con el método de canvas de la trampa 16, da **2.3:1 sobre el magenta claro** — insuficiente para texto grande (mínimo 3:1). El amarillo da **3.7:1 en claro y 13:1 en oscuro**.
+- **Resplandor radial** (`.hero-glow`) detrás del wordmark, **en los dos modos, pero con color distinto**. La primera versión lo dejaba solo en oscuro asumiendo que el degradé magenta de por sí alcanzaba en claro; una captura real mostró que no — el corte central del hero se veía plano en los dos casos. En oscuro va coral con `mix-blend-mode: screen` (suma luz sin lavar el icosaedro); en claro **no puede ser el mismo coral** — un cálido similar al fondo magenta se pierde por falta de contraste de tono, no de opacidad — así que va blanco con `soft-light`. Contraste del `h1` contra el punto más claro del realce, medido compositando un recorte real (no a mano): **4.13:1**, sobre el piso de 3:1 para texto grande.
 
 ## Transición de hoja entre vistas
 

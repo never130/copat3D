@@ -3,7 +3,12 @@ import { ShapeField } from "@/components/shapes/ShapeField";
 
 function Chip({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-2.5 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm">
+    // Padding y texto más chicos en mobile: los dos chips juntos ("2 y 3 de
+    // octubre" + "Ushuaia, Tierra del Fuego") no entraban en una fila hasta
+    // los 412px de ancho —envolvían en TODOS los anchos móviles comunes—, lo
+    // que agregaba una fila de alto no contemplada en el ajuste de espaciado
+    // vertical de la trampa 14.
+    <div className="flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-2.5 py-1.5 text-xs font-medium text-white backdrop-blur-sm sm:gap-2.5 sm:px-4 sm:py-2 sm:text-sm">
       <span className="text-white/80">{icon}</span>
       {children}
     </div>
@@ -22,8 +27,17 @@ export function Hero() {
     <section className="brand-canvas sticky top-0 z-0 flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 pt-20 pb-9 sm:pt-28 sm:pb-16">
       <ShapeField />
 
+      {/* Realce detrás del wordmark: blanco tipo "luz suave" en claro,
+          coral en oscuro (ver globals.css). No es el mismo color en los dos
+          modos — un coral sobre magenta se pierde por falta de contraste de
+          tono, no alcanzaba con la opacidad. */}
+      <div className="hero-glow" aria-hidden="true" />
+
       <div className="relative z-10 flex flex-col items-center text-center">
-        <p className="mb-3 font-mono text-xs font-medium tracking-[0.25em] text-white/85 uppercase sm:mb-6">
+        <p
+          className="hero-rise mb-3 font-mono text-xs font-medium tracking-[0.25em] text-white/85 uppercase sm:mb-6"
+          style={{ "--hero-delay": "0ms" } as React.CSSProperties}
+        >
           Fin del Mundo · Tierra del Fuego AeIAS
         </p>
 
@@ -31,20 +45,36 @@ export function Hero() {
             ventana de 1024 y dejaba 151px de margen lateral, insuficiente
             para las figuras. Arriba de ~1467px no cambia nada porque el
             clamp ya topeaba en 11rem; solo alivia el rango apretado. */}
-        <h1 className="font-display text-[clamp(3.5rem,12vw,11rem)] leading-[0.85] font-black text-white">
+        <h1
+          className="hero-rise font-display text-[clamp(3.5rem,12vw,11rem)] leading-[0.85] font-black text-white"
+          style={{ "--hero-delay": "90ms" } as React.CSSProperties}
+        >
           COPAT&nbsp;3D
         </h1>
 
-        <p className="mt-3 max-w-2xl text-balance text-base text-white/90 sm:mt-6 sm:text-lg">
+        <p
+          className="hero-rise mt-3 max-w-2xl text-balance text-base text-white/90 sm:mt-6 sm:text-lg"
+          style={{ "--hero-delay": "180ms" } as React.CSSProperties}
+        >
           Congreso Patagónico de Impresión 3D, Fabricación Digital e Innovación
           Aplicada
         </p>
 
-        <p className="font-display mt-4 text-[clamp(1.25rem,3.6vw,2.25rem)] font-bold text-white italic sm:mt-8">
-          Diseñando el futuro capa a capa
+        {/* "capa a capa" en amarillo: es el acento de marca con mejor
+            contraste sobre el lienzo en los dos modos (medido: 3.7:1 en
+            claro, 13:1 en oscuro — coral no llega a 3:1 en claro). */}
+        <p
+          className="hero-rise font-display mt-4 text-[clamp(1.25rem,3.6vw,2.25rem)] font-bold text-white italic sm:mt-8"
+          style={{ "--hero-delay": "260ms" } as React.CSSProperties}
+        >
+          Diseñando el futuro{" "}
+          <span className="text-copat-yellow not-italic">capa a capa</span>
         </p>
 
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:mt-10">
+        <div
+          className="hero-rise mt-6 flex flex-wrap items-center justify-center gap-2 sm:mt-10 sm:gap-3"
+          style={{ "--hero-delay": "340ms" } as React.CSSProperties}
+        >
           <Chip
             icon={
               <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -67,7 +97,10 @@ export function Hero() {
           </Chip>
         </div>
 
-        <div className="mt-6 flex flex-col gap-3 sm:mt-11 sm:flex-row">
+        <div
+          className="hero-rise mt-6 flex flex-col gap-3 sm:mt-11 sm:flex-row"
+          style={{ "--hero-delay": "420ms" } as React.CSSProperties}
+        >
           <Link
             href="/registro"
             className="text-canvas-ink rounded-full bg-white px-8 py-4 text-base font-bold transition-transform duration-200 hover:scale-[1.03]"

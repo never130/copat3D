@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>COPAT 3D · Congreso Patagónico de Impresión 3D</title>
+<style>
+  :root {
+    --pink: #ef2d74;
+    --pink-light: #ff7a92;
+    --pink-dark: #a80f4c;
+    --bg-a: #150a13;
+    --bg-b: #1c0f1c;
+    --bg-footer: #0c0509;
+    --text: #ffffff;
+    --text-muted: rgba(255,255,255,0.62);
+    --orange: #f6a828;
+    --green: #7ed957;
+    --blue: #6ec3f4;
+    --purple: #e07ce8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body {
+    background: var(--bg-a);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  img, svg { max-width: 100%; }
+  a { color: inherit; }
+
+  /* =========================================================
+     HERO — zona de scroll con el objeto 3D rotando (350vh)
+     ========================================================= */
+  #hero-zone { position: relative; height: 350vh; }
+
+  #world {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ff7a92 0%, #ef2d74 45%, #a80f4c 100%);
+    perspective: 1300px;
+    perspective-origin: 50% 46%;
+    z-index: 1;
+  }
+
+  #decor { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+  #decor .shape { position: absolute; will-change: transform; }
+  #decor svg { display: block; overflow: visible; }
+  .dotgrid {
+    width: 90px; height: 90px;
+    background-image: radial-gradient(rgba(255,255,255,0.55) 2px, transparent 2.5px);
+    background-size: 15px 15px;
+  }
+
+  #room { position: absolute; top: 50%; left: 50%; width: 0; height: 0; transform-style: preserve-3d; pointer-events: none; }
+  .contact-shadow {
+    position: absolute; top: 0; left: 0; width: 320px; height: 320px; margin: -160px 0 0 -160px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(50,5,25,0.7) 0%, rgba(50,5,25,0.35) 45%, rgba(50,5,25,0) 72%);
+    transform: rotateX(90deg) translateZ(-115px);
+  }
+
+  #rotator { position: absolute; top: 50%; left: 50%; width: 0; height: 0; transform-style: preserve-3d; will-change: transform; }
+  .object { position: absolute; top: 0; left: 0; width: 210px; height: 210px; margin: -105px 0 0 -105px; transform-style: preserve-3d; }
+  .face {
+    position: absolute; width: 210px; height: 210px;
+    border: 1px solid rgba(90,10,40,0.25);
+    background: linear-gradient(135deg, #f4aebb 0%, #dd6f8d 55%, #c14f70 100%);
+    box-shadow: inset 0 0 50px rgba(255,255,255,0.2);
+    backface-visibility: hidden;
+  }
+  .face-front  { transform: translateZ(105px); }
+  .face-back   { transform: rotateY(180deg) translateZ(105px); }
+  .face-right  { transform: rotateY(90deg) translateZ(105px); }
+  .face-left   { transform: rotateY(-90deg) translateZ(105px); }
+  .face-top    { transform: rotateX(90deg) translateZ(105px); }
+  .face-bottom { transform: rotateX(-90deg) translateZ(105px); }
+  .shade { position: absolute; inset: 0; pointer-events: none; opacity: 0; will-change: opacity; }
+  .shade-dark { background: #3d0621; }
+  .shade-light { background: #fff; }
+
+  #hero {
+    position: absolute; inset: 0; z-index: 6;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; padding: 0 24px; pointer-events: none;
+  }
+  #hero .eyebrow { color: rgba(255,255,255,0.85); font-size: 12px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 20px; }
+  #hero h1 { color: #fff; font-size: clamp(48px, 9vw, 96px); font-weight: 900; letter-spacing: -0.01em; line-height: 1; margin-bottom: 18px; text-shadow: 0 6px 30px rgba(0,0,0,0.15); }
+  #hero p { color: rgba(255,255,255,0.9); font-size: 16px; font-weight: 600; max-width: 520px; margin-bottom: 26px; }
+  #hero .meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+  #hero .meta .badge { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.35); padding: 9px 16px; border-radius: 999px; color: #fff; font-size: 13px; font-weight: 700; }
+  #hero .meta .badge svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  #hint { position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); color: rgba(255,255,255,0.85); font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: opacity 0.6s ease; pointer-events: none; z-index: 5; }
+  #hint .arrow { width: 16px; height: 16px; border-right: 2px solid rgba(255,255,255,0.85); border-bottom: 2px solid rgba(255,255,255,0.85); transform: rotate(45deg); animation: bounce 1.6s infinite ease-in-out; }
+  @keyframes bounce { 0%, 100% { transform: translateY(0) rotate(45deg); opacity: 0.4; } 50% { transform: translateY(8px) rotate(45deg); opacity: 1; } }
+
+  #frame-indicator { position: absolute; top: 92px; left: 50%; transform: translateX(-50%); color: #fff; font-family: 'SF Mono', 'Courier New', monospace; font-size: 12px; letter-spacing: 0.2em; background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.35); padding: 6px 14px; border-radius: 999px; backdrop-filter: blur(6px); z-index: 5; }
+  #progress-track { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); width: 3px; height: 220px; background: rgba(255,255,255,0.2); border-radius: 3px; z-index: 5; overflow: hidden; }
+  #progress-fill { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: #ffffff; border-radius: 3px; }
+  #vignette { position: absolute; inset: 0; pointer-events: none; z-index: 4; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(70,5,30,0.45) 100%); }
+  /* se enciende sobre el final del scroll, cuando el objeto "cae" y la página
+     pasa a la sección oscura de abajo */
+  #fall-fade { position: absolute; inset: 0; pointer-events: none; z-index: 8; background: var(--bg-a); opacity: 0; }
+
+  /* =========================================================
+     NAVBAR
+     ========================================================= */
+  #navbar { position: fixed; top: 0; left: 0; right: 0; height: 76px; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; background: rgba(21,10,19,0.45); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.12); z-index: 50; color: #fff; }
+  #navbar .brand { display: flex; align-items: center; gap: 12px; }
+  #navbar .brand-name { font-weight: 800; font-size: 17px; letter-spacing: 0.02em; }
+  #navbar nav { display: flex; gap: 28px; }
+  #navbar nav a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: 0.03em; }
+  #navbar nav a:hover { color: #fff; }
+  #navbar .cta { background: #fff; color: #c81558; border: none; padding: 10px 20px; border-radius: 999px; font-size: 12px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; text-decoration: none; }
+  #navbar .nav-links, #navbar .cta { display: none; }
+  @media (min-width: 760px) { #navbar .nav-links, #navbar .cta { display: flex; } }
+
+  /* =========================================================
+     SECCIONES GENERALES
+     ========================================================= */
+  .section-wrap { width: 100%; }
+  .section-wrap.bg-a { background: var(--bg-a); }
+  .section-wrap.bg-b { background: var(--bg-b); }
+  .section { max-width: 1120px; margin: 0 auto; padding: 110px 28px; }
+  .eyebrow-tag { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: var(--pink-light); margin-bottom: 16px; }
+  .section h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 900; letter-spacing: -0.01em; margin-bottom: 18px; }
+  .section .lead { color: var(--text-muted); font-size: 16px; max-width: 640px; line-height: 1.6; margin-bottom: 10px; }
+
+  /* ---- About + stats ---- */
+  #about .about-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 60px; align-items: start; margin-top: 50px; }
+  .stat-tile { padding: 22px 0; border-top: 1px solid rgba(255,255,255,0.12); }
+  .stat-tile .num { font-size: 40px; font-weight: 900; line-height: 1; margin-bottom: 6px; }
+  .stat-tile .label { color: var(--text-muted); font-size: 13px; font-weight: 600; }
+  .stat-tile:nth-child(1) .num { color: var(--pink-light); }
+  .stat-tile:nth-child(2) .num { color: var(--orange); }
+  .stat-tile:nth-child(3) .num { color: var(--green); }
+  .stat-tile:nth-child(4) .num { color: var(--blue); }
+  @media (max-width: 760px) { #about .about-grid { grid-template-columns: 1fr; } }
+
+  /* ---- Programa ---- */
+  .program-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 50px; }
+  .program-day h3 { font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 22px; }
+  .program-item { display: flex; gap: 18px; padding: 16px 0; border-top: 1px solid rgba(255,255,255,0.1); }
+  .program-item .time { flex: 0 0 66px; font-weight: 800; font-size: 13px; color: var(--pink-light); padding-top: 2px; }
+  .program-item .dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+  .program-item .title { font-weight: 700; font-size: 15px; }
+  .program-item .sub { color: var(--text-muted); font-size: 13px; margin-top: 2px; }
+  @media (max-width: 760px) { .program-grid { grid-template-columns: 1fr; } }
+
+  /* ---- Oradores ---- */
+  .speakers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 22px; margin-top: 50px; }
+  .speaker-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 22px; }
+  .speaker-avatar { width: 54px; height: 54px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 17px; color: #1a0a14; margin-bottom: 16px; }
+  .speaker-card h4 { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+  .speaker-card p { color: var(--text-muted); font-size: 13px; }
+
+  /* ---- Sede ---- */
+  .venue-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; margin-top: 50px; }
+  .venue-map { position: relative; aspect-ratio: 4/3; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); background: #170a16; }
+  .map-frame { width: 100%; height: 100%; border: 0; display: block; filter: grayscale(0.15) contrast(1.05); }
+  .map-fallback {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .map-fallback:hover { background: rgba(0,0,0,0.75); }
+  .venue-list { list-style: none; margin-top: 22px; display: flex; flex-direction: column; gap: 12px; }
+  .venue-list li { display: flex; gap: 10px; align-items: flex-start; color: var(--text-muted); font-size: 14px; }
+  .venue-list li svg { flex-shrink: 0; margin-top: 2px; }
+  @media (max-width: 760px) { .venue-grid { grid-template-columns: 1fr; } }
+
+  /* ---- Sponsors ---- */
+  .sponsor-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 44px; }
+  .sponsor-chip { padding: 16px 26px; border: 1px solid rgba(255,255,255,0.18); border-radius: 10px; color: var(--text-muted); font-weight: 700; font-size: 13px; letter-spacing: 0.03em; }
+
+  /* ---- Inscripción ---- */
+  #register.section-wrap { background: linear-gradient(135deg, #ff7a92 0%, #ef2d74 45%, #a80f4c 100%); }
+  #register .section { padding-top: 100px; padding-bottom: 110px; }
+  .register-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; margin-top: 40px; align-items: start; }
+  .ticket-list { display: flex; flex-direction: column; gap: 14px; margin-top: 28px; }
+  .ticket-card { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.35); border-radius: 12px; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .ticket-card .name { font-weight: 800; font-size: 14px; }
+  .ticket-card .feat { color: rgba(255,255,255,0.8); font-size: 12px; margin-top: 4px; }
+  .ticket-card .price { font-weight: 900; font-size: 16px; white-space: nowrap; }
+  .note-small { color: rgba(255,255,255,0.75); font-size: 12px; margin-top: 14px; }
+
+  .form-card { background: #fff; color: #1a0a14; border-radius: 16px; padding: 32px; }
+  .form-card h3 { font-size: 19px; font-weight: 900; margin-bottom: 6px; }
+  .form-card .sub { color: #7a4a5c; font-size: 13px; margin-bottom: 22px; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: #4a2333; }
+  .field input, .field select { width: 100%; padding: 11px 13px; border-radius: 8px; border: 1.5px solid #e7c3d0; font-size: 14px; font-family: inherit; background: #fdf6f8; }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--pink); }
+  .checkline { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #6b3a4d; margin-bottom: 20px; }
+  .submit-btn { width: 100%; background: #c81558; color: #fff; border: none; padding: 14px; border-radius: 999px; font-weight: 800; font-size: 14px; letter-spacing: 0.03em; cursor: pointer; }
+  .submit-btn:hover { background: #a80f4c; }
+  .thanks { display: none; text-align: center; padding: 30px 0; }
+  .thanks .check { width: 52px; height: 52px; border-radius: 50%; background: #e6f7ea; color: #2f9e52; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
+  .form-card.submitted form { display: none; }
+  .form-card.submitted .thanks { display: block; }
+
+  /* ---- FAQ ---- */
+  .faq-list { margin-top: 40px; display: flex; flex-direction: column; gap: 10px; }
+  .faq-list details { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 18px 20px; }
+  .faq-list summary { cursor: pointer; font-weight: 700; font-size: 15px; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+  .faq-list summary::-webkit-details-marker { display: none; }
+  .faq-list summary::after { content: '+'; font-size: 20px; color: var(--pink-light); font-weight: 400; }
+  .faq-list details[open] summary::after { content: '–'; }
+  .faq-list .answer { color: var(--text-muted); font-size: 14px; margin-top: 12px; line-height: 1.6; }
+
+  /* ---- Footer ---- */
+  #site-footer { background: var(--bg-footer); padding: 70px 28px 30px; }
+  .footer-grid { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .footer-grid .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .footer-grid .brand span { font-weight: 800; font-size: 16px; }
+  .footer-grid p.tag { color: var(--text-muted); font-size: 13px; max-width: 280px; line-height: 1.6; }
+  .footer-grid h5 { font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+  .footer-grid ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-grid ul a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 13px; }
+  .footer-grid ul a:hover { color: #fff; }
+  .footer-bottom { max-width: 1120px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding-top: 24px; flex-wrap: wrap; gap: 12px; }
+  .footer-bottom p { color: rgba(255,255,255,0.4); font-size: 12px; }
+  .social-row { display: flex; gap: 12px; }
+  .social-row a { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; }
+  @media (max-width: 760px) { .footer-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header id="navbar">
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#fff" stroke-width="5"/>
+      <circle cx="50" cy="50" r="34" fill="none" stroke="#fff" stroke-width="5"/>
+      <circle cx="50" cy="50" r="22" fill="none" stroke="#fff" stroke-width="5"/>
+      <path d="M50,38 a12,12 0 0 1 0,24 z" fill="#fff"/>
+    </svg>
+    <span class="brand-name">COPAT 3D</span>
+  </div>
+  <nav class="nav-links">
+    <a href="#about">Qué es</a>
+    <a href="#program">Programa</a>
+    <a href="#speakers">Oradores</a>
+    <a href="#venue">Sede</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <a class="cta" href="#register">Inscribite</a>
+</header>
+
+<section id="hero-zone">
+  <div id="world">
+    <div id="room"><div class="contact-shadow"></div></div>
+
+    <div id="rotator">
+      <div class="object" id="object">
+        <div class="face face-front"  data-normal="0,0,1"></div>
+        <div class="face face-back"   data-normal="0,0,-1"></div>
+        <div class="face face-right"  data-normal="1,0,0"></div>
+        <div class="face face-left"   data-normal="-1,0,0"></div>
+        <div class="face face-top"    data-normal="0,-1,0"></div>
+        <div class="face face-bottom" data-normal="0,1,0"></div>
+      </div>
+    </div>
+
+    <div id="decor">
+      <div class="shape dotgrid" data-speed="0.15" style="top:8%; right:5%;"></div>
+      <div class="shape dotgrid" data-speed="0.1" style="bottom:6%; left:4%;"></div>
+
+      <div class="shape" data-speed="0.25" style="top:12%; left:6%;">
+        <svg width="120" height="70" viewBox="0 0 120 70">
+          <polyline points="6,55 6,40 30,40 30,25 54,25 54,10 78,10" fill="none" stroke="#c9820f" stroke-width="16" stroke-linejoin="round" stroke-linecap="round" transform="translate(0,4)"/>
+          <polyline points="6,55 6,40 30,40 30,25 54,25 54,10 78,10" fill="none" stroke="#f6a828" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="shape" data-speed="0.3" style="top:9%; left:23%;">
+        <svg width="90" height="70" viewBox="0 0 90 70">
+          <polyline points="6,60 6,42 26,42 26,24 46,24 46,6" fill="none" stroke="#3f9e2b" stroke-width="14" stroke-linejoin="round" stroke-linecap="round" transform="translate(0,4)"/>
+          <polyline points="6,60 6,42 26,42 26,24 46,24 46,6" fill="none" stroke="#7ed957" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="shape" data-speed="0.2" style="bottom:14%; right:16%;">
+        <svg width="90" height="70" viewBox="0 0 90 70">
+          <polyline points="6,60 6,42 26,42 26,24 46,24 46,6 66,6" fill="none" stroke="#3f9e2b" stroke-width="14" stroke-linejoin="round" stroke-linecap="round" transform="translate(0,4)"/>
+          <polyline points="6,60 6,42 26,42 26,24 46,24 46,6 66,6" fill="none" stroke="#7ed957" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="shape" data-speed="0.35" style="bottom:16%; left:38%;">
+        <svg width="90" height="80" viewBox="0 0 90 80">
+          <path d="M20,10 h20 v20 h20 v20 h-20 a10,10 0 0 1 -10,-10 v-10 h-10 a10,10 0 0 1 -10,-10 v0 a10,10 0 0 1 10,-10 z" fill="#c9820f" transform="translate(0,5)"/>
+          <path d="M20,10 h20 v20 h20 v20 h-20 a10,10 0 0 1 -10,-10 v-10 h-10 a10,10 0 0 1 -10,-10 v0 a10,10 0 0 1 10,-10 z" fill="#f6a828"/>
+        </svg>
+      </div>
+
+      <div class="shape" data-speed="0.22" style="top:16%; right:24%;">
+        <svg width="60" height="60" viewBox="0 0 60 60">
+          <rect x="22" y="4" width="16" height="52" rx="6" fill="#a83fc4" transform="translate(0,4)"/>
+          <rect x="4" y="22" width="52" height="16" rx="6" fill="#a83fc4" transform="translate(0,4)"/>
+          <rect x="22" y="4" width="16" height="52" rx="6" fill="#e07ce8"/>
+          <rect x="4" y="22" width="52" height="16" rx="6" fill="#e07ce8"/>
+        </svg>
+      </div>
+
+      <div class="shape" data-speed="0.28" style="bottom:22%; left:22%;">
+        <svg width="46" height="46" viewBox="0 0 46 46">
+          <rect x="16" y="2" width="14" height="42" rx="5" fill="#a83fc4" transform="translate(0,3)"/>
+          <rect x="2" y="16" width="42" height="14" rx="5" fill="#a83fc4" transform="translate(0,3)"/>
+          <rect x="16" y="2" width="14" height="42" rx="5" fill="#e07ce8"/>
+          <rect x="2" y="16" width="42" height="14" rx="5" fill="#e07ce8"/>
+        </svg>
+      </div>
+
+      <div class="shape" data-speed="0.18" style="top:22%; right:8%;">
+        <svg width="110" height="130" viewBox="0 0 110 130">
+          <polygon points="55,10 100,55 68,120 15,95" fill="#4f9fd8" transform="translate(0,5)"/>
+          <polygon points="55,10 100,55 68,120 15,95" fill="#8fd0f2"/>
+          <polygon points="55,10 68,120 15,95" fill="#6ec3f4" opacity="0.55"/>
+        </svg>
+      </div>
+
+      <div class="shape" data-speed="0.12" style="top:6%; right:32%;">
+        <svg width="90" height="30" viewBox="0 0 90 30">
+          <path d="M2,15 q9,-14 18,0 t18,0 t18,0 t18,0 t18,0" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="shape" data-speed="0.16" style="top:38%; right:6%;">
+        <svg width="70" height="70" viewBox="0 0 70 70">
+          <path d="M8,4 A50,50 0 0 1 8,66" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="shape" data-speed="0.14" style="bottom:32%; right:22%;">
+        <svg width="70" height="30" viewBox="0 0 70 30">
+          <path d="M4,4 A40,40 0 0 0 4,26" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="shape" data-speed="0.24" style="top:5%; left:16%;">
+        <svg width="26" height="26" viewBox="0 0 26 26">
+          <path d="M13,3 v20 M3,13 h20" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="shape" data-speed="0.24" style="top:44%; left:2%;">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <path d="M10,2 v16 M2,10 h16" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="shape" data-speed="0.2" style="top:38%; left:5%;">
+        <svg width="18" height="60" viewBox="0 0 18 60">
+          <path d="M9,2 q7,7 0,14 t0,14 t0,14 t0,14" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="shape" data-speed="0.19" style="bottom:8%; left:14%;">
+        <svg width="18" height="18" viewBox="0 0 18 18">
+          <polygon points="2,4 16,4 9,15" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <div class="shape" data-speed="0.26" style="bottom:20%; right:35%;">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <rect x="4" y="4" width="12" height="12" fill="none" stroke="#ffffff" stroke-width="2.5" transform="rotate(45 10 10)"/>
+        </svg>
+      </div>
+    </div>
+
+    <div id="vignette"></div>
+    <div id="fall-fade"></div>
+
+    <div id="hero">
+      <div class="eyebrow">Congreso Patagónico de Impresión 3D</div>
+      <h1>COPAT 3D</h1>
+      <p>Fabricación Digital e Innovación Aplicada — dos días para explorar el futuro de la manufactura en la Patagonia.</p>
+      <div class="meta">
+        <div class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+          2 y 3 de octubre
+        </div>
+        <div class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          Tierra del Fuego, Ushuaia
+        </div>
+      </div>
+    </div>
+
+    <div id="frame-indicator">FRAME 01 / 45</div>
+    <div id="progress-track"><div id="progress-fill"></div></div>
+    <div id="hint"><span>Scroll para rotar</span><div class="arrow"></div></div>
+  </div>
+</section>
+
+<main>
+
+  <div class="section-wrap bg-a">
+    <section id="about" class="section">
+      <div class="eyebrow-tag">Qué es COPAT 3D</div>
+      <div class="about-grid">
+        <div>
+          <h2>Manufactura aditiva, en el fin del mundo</h2>
+          <p class="lead">COPAT 3D reúne a makers, ingenieros, diseñadores y estudiantes de toda la Patagonia para
+            compartir lo último en impresión 3D, fabricación digital y manufactura aditiva aplicada a la industria,
+            la salud y la educación. Dos días de charlas, talleres prácticos y espacios de networking en Ushuaia.</p>
+          <p class="lead">Texto de ejemplo — reemplazalo por la descripción real del congreso, objetivos y a quién
+            está dirigido.</p>
+        </div>
+        <div>
+          <div class="stat-tile"><div class="num">2</div><div class="label">Días de contenido</div></div>
+          <div class="stat-tile"><div class="num">+40</div><div class="label">Expositores</div></div>
+          <div class="stat-tile"><div class="num">12</div><div class="label">Talleres prácticos</div></div>
+          <div class="stat-tile"><div class="num">300+</div><div class="label">Asistentes esperados</div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="section-wrap bg-b">
+    <section id="program" class="section">
+      <div class="eyebrow-tag">Agenda</div>
+      <h2>Programa del congreso</h2>
+      <p class="lead">Horarios de ejemplo — ajustalos cuando tengas la grilla definitiva confirmada.</p>
+      <div class="program-grid">
+        <div class="program-day">
+          <h3>Día 1 · 2 de octubre</h3>
+          <div class="program-item"><div class="time">09:00</div><div class="dot" style="background:var(--pink-light)"></div><div><div class="title">Acreditación y bienvenida</div><div class="sub">Hall principal</div></div></div>
+          <div class="program-item"><div class="time">10:00</div><div class="dot" style="background:var(--orange)"></div><div><div class="title">Apertura oficial</div><div class="sub">Organización COPAT 3D</div></div></div>
+          <div class="program-item"><div class="time">10:30</div><div class="dot" style="background:var(--green)"></div><div><div class="title">Keynote: el futuro de la manufactura aditiva</div><div class="sub">Orador invitado</div></div></div>
+          <div class="program-item"><div class="time">12:00</div><div class="dot" style="background:var(--blue)"></div><div><div class="title">Charlas técnicas: materiales y procesos</div><div class="sub">Sala 1</div></div></div>
+          <div class="program-item"><div class="time">13:30</div><div class="dot" style="background:var(--purple)"></div><div><div class="title">Almuerzo libre</div></div></div>
+          <div class="program-item"><div class="time">15:00</div><div class="dot" style="background:var(--pink-light)"></div><div><div class="title">Talleres prácticos — grupo A</div><div class="sub">Cupos limitados</div></div></div>
+          <div class="program-item"><div class="time">17:00</div><div class="dot" style="background:var(--orange)"></div><div><div class="title">Espacio de networking</div></div></div>
+          <div class="program-item"><div class="time">19:00</div><div class="dot" style="background:var(--green)"></div><div><div class="title">Cierre del día</div></div></div>
+        </div>
+        <div class="program-day">
+          <h3>Día 2 · 3 de octubre</h3>
+          <div class="program-item"><div class="time">09:30</div><div class="dot" style="background:var(--blue)"></div><div><div class="title">Charlas: 3D aplicado a la industria</div><div class="sub">Sala 1</div></div></div>
+          <div class="program-item"><div class="time">11:00</div><div class="dot" style="background:var(--purple)"></div><div><div class="title">Panel: innovación en la Patagonia</div><div class="sub">Sala principal</div></div></div>
+          <div class="program-item"><div class="time">12:30</div><div class="dot" style="background:var(--pink-light)"></div><div><div class="title">Almuerzo libre</div></div></div>
+          <div class="program-item"><div class="time">14:00</div><div class="dot" style="background:var(--orange)"></div><div><div class="title">Talleres prácticos — grupo B</div><div class="sub">Cupos limitados</div></div></div>
+          <div class="program-item"><div class="time">16:30</div><div class="dot" style="background:var(--green)"></div><div><div class="title">Casos de éxito y demos en vivo</div></div></div>
+          <div class="program-item"><div class="time">18:00</div><div class="dot" style="background:var(--blue)"></div><div><div class="title">Cierre y entrega de certificados</div></div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="section-wrap bg-a">
+    <section id="speakers" class="section">
+      <div class="eyebrow-tag">Oradores</div>
+      <h2>Oradores confirmados</h2>
+      <p class="lead">Nombres de ejemplo — reemplazalos por los oradores reales a medida que confirmen su participación.</p>
+      <div class="speakers-grid">
+        <div class="speaker-card"><div class="speaker-avatar" style="background:var(--pink-light)">MS</div><h4>Marina Sosa</h4><p>Ingeniera en Manufactura Aditiva, TecnoSur</p></div>
+        <div class="speaker-card"><div class="speaker-avatar" style="background:var(--orange)">FI</div><h4>Federico Ibarra</h4><p>Fundador, MakerLab Patagonia</p></div>
+        <div class="speaker-card"><div class="speaker-avatar" style="background:var(--green)">LF</div><h4>Lucía Fernández</h4><p>Investigadora, CONICET</p></div>
+        <div class="speaker-card"><div class="speaker-avatar" style="background:var(--blue)">TB</div><h4>Tomás Beltrán</h4><p>Diseñador de producto, Estudio Austral</p></div>
+        <div class="speaker-card"><div class="speaker-avatar" style="background:var(--purple)">VR</div><h4>Valentina Ríos</h4><p>Impulsora de FabLab educativo</p></div>
+        <div class="speaker-card"><div class="speaker-avatar" style="background:var(--pink-light)">ND</div><h4>Nicolás Duarte</h4><p>CTO, Impresiones del Sur</p></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="section-wrap bg-b">
+    <section id="venue" class="section">
+      <div class="eyebrow-tag">Sede</div>
+      <div class="venue-grid">
+        <div class="venue-map">
+          <iframe
+            class="map-frame"
+            src="https://www.google.com/maps?q=Maipu+1255,+Ushuaia,+Tierra+del+Fuego,+Argentina&output=embed"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Mapa de Maipú 1255, Ushuaia, Tierra del Fuego"></iframe>
+          <a class="map-fallback" href="https://www.google.com/maps/search/?api=1&query=Maipu+1255%2C+Ushuaia%2C+Tierra+del+Fuego%2C+Argentina" target="_blank" rel="noopener">
+            Abrir en Google Maps ↗
+          </a>
+        </div>
+        <div>
+          <h2>Centro de Convenciones del Fin del Mundo</h2>
+          <p class="lead">Maipú 1255, Ushuaia, Tierra del Fuego.</p>
+          <ul class="venue-list">
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7ed957" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Wifi gratuito en todo el predio</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7ed957" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Estacionamiento disponible</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7ed957" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Acceso para personas con movilidad reducida</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7ed957" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Catering incluido en la acreditación</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="section-wrap bg-a">
+    <section id="sponsors" class="section">
+      <div class="eyebrow-tag">Auspician</div>
+      <h2>Con el apoyo de</h2>
+      <p class="lead">Logos y nombres de ejemplo — reemplazalos por tus auspiciantes reales.</p>
+      <div class="sponsor-row">
+        <div class="sponsor-chip">Empresa Alfa</div>
+        <div class="sponsor-chip">TecnoSur</div>
+        <div class="sponsor-chip">MakerLab</div>
+        <div class="sponsor-chip">Fundación Patagonia Digital</div>
+        <div class="sponsor-chip">Gobierno de Tierra del Fuego</div>
+        <div class="sponsor-chip">Cámara de Industria 3D</div>
+      </div>
+    </section>
+  </div>
+
+  <div id="register" class="section-wrap">
+    <section class="section">
+      <div class="register-grid">
+        <div>
+          <div class="eyebrow-tag" style="color:#fff;">Inscripción</div>
+          <h2>Asegurá tu lugar en COPAT 3D</h2>
+          <p class="lead" style="color:rgba(255,255,255,0.85);">Cupos limitados. Al inscribirte accedés a todas las
+            charlas, paneles y talleres prácticos del congreso.</p>
+          <div class="ticket-list">
+            <div class="ticket-card"><div><div class="name">Entrada general</div><div class="feat">Charlas + paneles + networking</div></div><div class="price">$XX.XXX</div></div>
+            <div class="ticket-card"><div><div class="name">Estudiantes</div><div class="feat">Con acreditación vigente</div></div><div class="price">$XX.XXX</div></div>
+            <div class="ticket-card"><div><div class="name">Talleres + Congreso</div><div class="feat">Incluye talleres prácticos con cupo limitado</div></div><div class="price">$XX.XXX</div></div>
+          </div>
+          <p class="note-small">Precios de ejemplo, a confirmar. Certificado de asistencia incluido en todas las categorías.</p>
+        </div>
+
+        <div class="form-card" id="form-card">
+          <form id="register-form">
+            <h3>Formulario de inscripción</h3>
+            <p class="sub">Completá tus datos y te contactamos con los siguientes pasos.</p>
+            <div class="field"><label>Nombre completo</label><input type="text" placeholder="Tu nombre" required></div>
+            <div class="field"><label>Email</label><input type="email" placeholder="tuemail@ejemplo.com" required></div>
+            <div class="field"><label>Organización (opcional)</label><input type="text" placeholder="Empresa, universidad, FabLab..."></div>
+            <div class="field">
+              <label>Tipo de entrada</label>
+              <select>
+                <option>Entrada general</option>
+                <option>Estudiantes</option>
+                <option>Talleres + Congreso</option>
+              </select>
+            </div>
+            <label class="checkline"><input type="checkbox"> Acepto recibir novedades sobre COPAT 3D por email.</label>
+            <button type="submit" class="submit-btn">Confirmar inscripción</button>
+          </form>
+          <div class="thanks">
+            <div class="check">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <h3>¡Listo, ya casi!</h3>
+            <p class="sub">Gracias por inscribirte. Te vamos a escribir a tu email con los próximos pasos.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="section-wrap bg-b">
+    <section id="faq" class="section">
+      <div class="eyebrow-tag">Preguntas frecuentes</div>
+      <h2>¿Tenés dudas?</h2>
+      <div class="faq-list">
+        <details open>
+          <summary>¿Necesito llevar mi propia impresora 3D?</summary>
+          <div class="answer">No es necesario. Los talleres prácticos cuentan con equipamiento provisto por la organización, aunque si querés traer la tuya podés coordinarlo previamente.</div>
+        </details>
+        <details>
+          <summary>¿Hay certificado de asistencia?</summary>
+          <div class="answer">Sí, todas las categorías de entrada incluyen certificado digital de asistencia al finalizar el congreso.</div>
+        </details>
+        <details>
+          <summary>¿El evento es apto para principiantes?</summary>
+          <div class="answer">Totalmente. Hay charlas introductorias y talleres para todos los niveles, desde quienes recién empiezan hasta perfiles más técnicos.</div>
+        </details>
+        <details>
+          <summary>¿Cómo llego a Ushuaia?</summary>
+          <div class="answer">Ushuaia cuenta con aeropuerto internacional (USH) con vuelos regulares desde las principales ciudades del país. Más información de traslados, próximamente.</div>
+        </details>
+        <details>
+          <summary>¿Se puede participar de forma virtual?</summary>
+          <div class="answer">Las charlas principales se transmitirán en vivo. Los talleres prácticos son exclusivamente presenciales por la naturaleza del contenido.</div>
+        </details>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<footer id="site-footer">
+  <div class="footer-grid">
+    <div>
+      <div class="brand">
+        <svg width="30" height="30" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#fff" stroke-width="6"/>
+          <circle cx="50" cy="50" r="34" fill="none" stroke="#fff" stroke-width="6"/>
+          <circle cx="50" cy="50" r="22" fill="none" stroke="#fff" stroke-width="6"/>
+          <path d="M50,38 a12,12 0 0 1 0,24 z" fill="#fff"/>
+        </svg>
+        <span>COPAT 3D</span>
+      </div>
+      <p class="tag">Congreso Patagónico de Impresión 3D, Fabricación Digital e Innovación Aplicada. Ushuaia, Tierra del Fuego.</p>
+    </div>
+    <div>
+      <h5>Navegación</h5>
+      <ul>
+        <li><a href="#about">Qué es</a></li>
+        <li><a href="#program">Programa</a></li>
+        <li><a href="#speakers">Oradores</a></li>
+        <li><a href="#venue">Sede</a></li>
+        <li><a href="#register">Inscripción</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Contacto</h5>
+      <ul>
+        <li><a href="mailto:info@copat3d.com.ar">info@copat3d.com.ar</a></li>
+        <li><a href="#">+54 9 2901 000-000</a></li>
+      </ul>
+      <div class="social-row" style="margin-top:16px;">
+        <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 11v5M8 8v.01M12 16v-5M12 11c0-1.5 3-2 3 .5V16"/></svg></a>
+        <a href="#" aria-label="X"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M4 4l16 16M20 4L4 20"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 COPAT 3D — Congreso Patagónico de Impresión 3D. Sitio de ejemplo, contenido a confirmar.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const heroZone = document.getElementById('hero-zone');
+  const rotator = document.getElementById('rotator');
+  const frameLabel = document.getElementById('frame-indicator');
+  const hint = document.getElementById('hint');
+  const hero = document.getElementById('hero');
+  const progressFill = document.getElementById('progress-fill');
+  const shadowEl = document.querySelector('.contact-shadow');
+  const fallFade = document.getElementById('fall-fade');
+  const faceEls = Array.prototype.slice.call(document.querySelectorAll('.face'));
+  const decorShapes = Array.prototype.slice.call(document.querySelectorAll('#decor .shape')).map(function (el) {
+    return { el: el, speed: parseFloat(el.getAttribute('data-speed')) || 0.2 };
+  });
+
+  const TOTAL_FRAMES = 45;
+  const TOTAL_TURNS = 1;
+  const LIGHT_DIR = { x: 0.15, y: -0.35, z: 1 };
+
+  (function normalize(v) {
+    const len = Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+    v.x /= len; v.y /= len; v.z /= len;
+  })(LIGHT_DIR);
+
+  const faces = faceEls.map(function (el) {
+    const n = el.getAttribute('data-normal').split(',').map(Number);
+    const dark = document.createElement('div');
+    dark.className = 'shade shade-dark';
+    const light = document.createElement('div');
+    light.className = 'shade shade-light';
+    el.appendChild(dark);
+    el.appendChild(light);
+    return { nx: n[0], ny: n[1], nz: n[2], dark: dark, light: light };
+  });
+
+  let currentAngle = 0;
+  let currentTilt = 6;
+  let currentPathX = 0;
+  let currentPathY = 0;
+  let currentFallFade = 0;
+  let lastFrameShown = -1;
+
+  // Recorrido del objeto por la pantalla mientras gira, en tres tramos del scroll:
+  //  1) 0 → ARC_END: arco de izquierda a derecha (sube en el medio, como si volara)
+  //  2) ARC_END → HOLD_END: se queda quieto, apoyado "en el borde"
+  //  3) HOLD_END → 1: cae, tumbando, y la pantalla se funde a negro hacia la sección de abajo
+  const PATH_AMPLITUDE_X = 170; // px hacia cada lado durante el arco
+  const PATH_ARC_HEIGHT = 100;  // px que "sube" en el punto medio del arco
+  const ARC_END = 0.68;
+  const HOLD_END = 0.84;
+  const FALL_DISTANCE = 900;    // px que cae, de sobra para salir de la pantalla
+  const FALL_SPIN = 620;        // grados extra de vuelco durante la caída
+  const FALL_TILT = 55;         // inclinación extra durante la caída
+
+  // el progreso se calcula solo en base a la zona del hero (350vh), no de toda la página
+  function getScrollProgress() {
+    const rect = heroZone.getBoundingClientRect();
+    const scrollable = heroZone.offsetHeight - window.innerHeight;
+    if (scrollable <= 0) return 0;
+    const scrolled = -rect.top;
+    return Math.min(1, Math.max(0, scrolled / scrollable));
+  }
+
+  let hasScrolled = false;
+  window.addEventListener('scroll', function () {
+    if (!hasScrolled) {
+      hasScrolled = true;
+      hint.style.opacity = '0';
+    }
+  }, { passive: true });
+
+  function applyLighting(angleRad) {
+    const cos = Math.cos(angleRad);
+    const sin = Math.sin(angleRad);
+    for (let i = 0; i < faces.length; i++) {
+      const f = faces[i];
+      const rx = f.nx * cos + f.nz * sin;
+      const rz = -f.nx * sin + f.nz * cos;
+      const dot = rx * LIGHT_DIR.x + f.ny * LIGHT_DIR.y + rz * LIGHT_DIR.z;
+      f.dark.style.opacity = dot < 0 ? String(Math.min(0.55, -dot * 0.55)) : '0';
+      f.light.style.opacity = dot > 0 ? String(Math.min(0.4, dot * 0.4)) : '0';
+    }
+  }
+
+  function tick() {
+    const progress = getScrollProgress();
+
+    let targetPathX, targetPathY, extraSpinDeg = 0, extraTiltDeg = 0, fallProgress = 0;
+
+    if (progress <= ARC_END) {
+      // tramo 1: arco de izquierda a derecha
+      const p = ARC_END > 0 ? progress / ARC_END : 0;
+      targetPathX = (p - 0.5) * PATH_AMPLITUDE_X * 2;
+      targetPathY = -Math.sin(p * Math.PI) * PATH_ARC_HEIGHT;
+    } else if (progress <= HOLD_END) {
+      // tramo 2: quieto, apoyado en el borde derecho
+      targetPathX = PATH_AMPLITUDE_X;
+      targetPathY = 0;
+    } else {
+      // tramo 3: cae, tumbando
+      fallProgress = Math.min(1, Math.max(0, (progress - HOLD_END) / (1 - HOLD_END)));
+      const eased = fallProgress * fallProgress; // aceleración tipo gravedad
+      targetPathX = PATH_AMPLITUDE_X + eased * 30;
+      targetPathY = eased * FALL_DISTANCE;
+      extraSpinDeg = eased * FALL_SPIN;
+      extraTiltDeg = eased * FALL_TILT;
+    }
+
+    const targetAngle = (progress * TOTAL_TURNS * Math.PI * 2) + (extraSpinDeg * Math.PI / 180);
+    const targetTilt = 6 - Math.sin(Math.min(progress, ARC_END) / ARC_END * Math.PI) * 14 + extraTiltDeg;
+
+    currentAngle += (targetAngle - currentAngle) * 0.28;
+    currentTilt += (targetTilt - currentTilt) * 0.28;
+    currentPathX += (targetPathX - currentPathX) * 0.16;
+    currentPathY += (targetPathY - currentPathY) * 0.16;
+    currentFallFade += (fallProgress - currentFallFade) * 0.12;
+
+    const angleDeg = currentAngle * 180 / Math.PI;
+    rotator.style.transform =
+      'translate3d(' + currentPathX.toFixed(2) + 'px,' + currentPathY.toFixed(2) + 'px,0) ' +
+      'rotateX(' + currentTilt.toFixed(2) + 'deg) rotateY(' + angleDeg.toFixed(2) + 'deg)';
+    applyLighting(currentAngle);
+
+    if (fallFade) fallFade.style.opacity = currentFallFade.toFixed(2);
+
+    // la sombra de contacto acompaña al objeto en X, y se achica/desvanece
+    // cuando el objeto "sube" en el arco, como una sombra real
+    if (shadowEl) {
+      const heightFactor = Math.min(1, Math.abs(currentPathY) / PATH_ARC_HEIGHT);
+      const shadowScale = 1 - heightFactor * 0.4;
+      const shadowOpacity = 0.85 * (1 - heightFactor * 0.5);
+      shadowEl.style.transform =
+        'translate3d(' + currentPathX.toFixed(2) + 'px,0,0) rotateX(90deg) translateZ(-115px) scale(' + shadowScale.toFixed(2) + ')';
+      shadowEl.style.opacity = shadowOpacity.toFixed(2);
+    }
+
+    for (let i = 0; i < decorShapes.length; i++) {
+      const s = decorShapes[i];
+      const offset = progress * -260 * s.speed;
+      s.el.style.transform = 'translateY(' + offset.toFixed(1) + 'px) rotate(' + (progress * 40 * s.speed).toFixed(1) + 'deg)';
+    }
+
+    const frame = Math.min(TOTAL_FRAMES - 1, Math.floor(progress * TOTAL_FRAMES));
+    if (frame !== lastFrameShown) {
+      lastFrameShown = frame;
+      frameLabel.textContent = 'FRAME ' + String(frame + 1).padStart(2, '0') + ' / ' + TOTAL_FRAMES;
+    }
+    progressFill.style.height = (progress * 100) + '%';
+
+    // el título y la bajada se mantienen visibles durante todo el scroll del hero
+    // (ya no se desvanecen), el objeto y la sombra se mueven de fondo alrededor del texto
+
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  // formulario de inscripción: solo mockup visual, no envía datos a ningún lado
+  const form = document.getElementById('register-form');
+  const formCard = document.getElementById('form-card');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    formCard.classList.add('submitted');
+  });
+})();
+</script>
+</body>
+</html>

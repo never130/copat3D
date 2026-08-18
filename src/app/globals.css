@@ -339,8 +339,12 @@
 /* En ventanas bajas el bloque de texto del hero (~510px) no deja espacio
    sobre el eyebrow, y el icosaedro —que al girar ocupa 166px— se le monta
    encima. Se prefiere ocultarlo antes que achicarlo o sacarlo del centro:
-   arriba del wordmark es su lugar en el arte oficial. */
-@media (max-height: 740px) {
+   arriba del wordmark es su lugar en el arte oficial.
+
+   768px (no 740): a 740 quedaban apenas 7px de aire en laptops de 1366×768,
+   una resolución real y común, no un caso límite — subido para que tenga
+   margen de verdad. */
+@media (max-height: 768px) {
   .solo-alto {
     display: none;
   }
@@ -380,6 +384,81 @@
     animation: drift-front linear both;
     animation-timeline: scroll();
   }
+}
+
+/* ============================================================
+   ENTRADA DEL HERO
+
+   A diferencia de `.sheet` (que reacciona al scroll vía observer), esto
+   corre una sola vez al montar: el hero es lo primero que se ve, siempre
+   está en pantalla desde el arranque, así que no hace falta observarlo.
+
+   `animation-delay` con una custom property por bloque, mismo patrón que
+   `--sheet-delay` en las tarjetas de Ejes.
+   ============================================================ */
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero-rise {
+  animation: hero-rise 0.8s var(--ease-out-expo) both;
+  animation-delay: var(--hero-delay, 0ms);
+}
+
+/* Resplandor detrás del wordmark, solo en oscuro: en claro el degradé
+   magenta ya aporta riqueza tonal; en oscuro la retícula queda plana sin
+   este acento. `screen` para que sume luz sin lavar el icosaedro que
+   flota justo ahí encima. */
+.hero-glow {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  width: 780px;
+  height: 780px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  pointer-events: none;
+  /* Base = claro: un realce blanco tipo "luz suave", no el mismo coral que
+     usa oscuro. Un acento cálido similar al magenta de fondo se pierde por
+     falta de contraste de tono, no de opacidad — hacía falta otro color,
+     no más de lo mismo. `soft-light` aclara sin lavar el degradé. */
+  mix-blend-mode: soft-light;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.62) 0%, transparent 62%);
+}
+
+.dark .hero-glow {
+  mix-blend-mode: screen;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-copat-coral) 32%, transparent) 0%,
+    transparent 65%
+  );
+}
+
+/* ============================================================
+   MAPA DE LA SEDE
+
+   Google no ofrece tema oscuro en el embed sin clave de API, así que en
+   modo oscuro el mapa entra como un rectángulo blanco brillante en medio
+   del fondo negro. Se invierte y se rota el matiz 180° para devolver los
+   colores a su lugar: es el mismo truco que usan los mapas "dark mode"
+   caseros, y evita depender de la API con clave.
+
+   Saturación y contraste bajados a propósito: el mapa es referencia, no
+   protagonista, y a plena saturación compite con las figuras de la marca.
+   ============================================================ */
+
+.dark .mapa-sede {
+  filter: invert(0.92) hue-rotate(180deg) saturate(0.65) contrast(0.9)
+    brightness(0.95);
 }
 
 /* ============================================================

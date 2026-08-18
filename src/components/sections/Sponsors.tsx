@@ -8,16 +8,23 @@ import { Plus, Zigzag } from "@/components/shapes";
  * Diseñado para verse bien con 4 logos o con 20 (ver docs/06-roadmap.md).
  */
 
-// Placeholders hasta que lleguen los logos reales (semana 4 del roadmap).
-const EMPRESAS = [
-  "Gobierno de Tierra del Fuego",
-  "AIF",
-  "Fábrica de Talentos",
-  "UNTDF",
-  "UTN",
-  "Polos Creativos",
-  "Parque Industrial Río Grande",
-  "INTI",
+type Empresa = {
+  nombre: string;
+  /** Ruta del logo real en `public/`. Sin esto la tarjeta cae al placeholder
+   *  de texto (ver docs/06-roadmap.md: "logos de sponsors" sigue pendiente
+   *  para el resto — estos dos son los únicos con arte institucional). */
+  logo?: string;
+};
+
+const EMPRESAS: Empresa[] = [
+  { nombre: "Gobierno de Tierra del Fuego", logo: "/logos/gobierno-tdf.svg" },
+  { nombre: "AIF", logo: "/logos/aif-blanco.svg" },
+  { nombre: "Fábrica de Talentos" },
+  { nombre: "UNTDF" },
+  { nombre: "UTN" },
+  { nombre: "Polos Creativos" },
+  { nombre: "Parque Industrial Río Grande" },
+  { nombre: "INTI" },
 ];
 
 export function Sponsors() {
@@ -43,17 +50,40 @@ export function Sponsors() {
           nombres. La regla vive en globals.css junto a .marquee-track. */}
       <div className="sheet marquee-mask mt-14 flex overflow-hidden">
         <div className="marquee-track flex gap-4">
-          {track.map((nombre, i) => (
-            <div
-              key={`${nombre}-${i}`}
-              className="border-border bg-surface text-muted hover:text-fg hover:border-magenta/40 relative grid h-24 w-56 shrink-0 place-items-center rounded-2xl rounded-br-none border px-6 text-center text-sm font-semibold transition-colors duration-300"
-              // Solo la primera mitad se anuncia: la segunda es duplicado visual.
-              aria-hidden={i >= EMPRESAS.length}
-            >
-              <span className="bg-magenta/50 absolute inset-x-6 bottom-0 h-px" />
-              {nombre}
-            </div>
-          ))}
+          {track.map((empresa, i) =>
+            empresa.logo ? (
+              // Logo institucional real: tarjeta en magenta fijo (no según
+              // tema) porque el arte de marca provisto es la versión blanca,
+              // pensada para fondo oscuro — mismo recurso que .hero-gradient
+              // usa en el CTA de abajo y en el menú móvil.
+              <div
+                key={`${empresa.nombre}-${i}`}
+                className="bg-magenta-deep relative grid h-32 w-72 shrink-0 place-items-center overflow-hidden rounded-2xl rounded-br-none px-8 py-7 transition-[filter] duration-300 hover:brightness-110"
+                aria-hidden={i >= EMPRESAS.length}
+              >
+                {/* `object-contain` sobre la caja completa y no `max-h/max-w`:
+                    los lockups institucionales son muy apaisados (el de
+                    Gobierno es 4:1) y con un alto máximo chico quedaban
+                    diminutos, sin aprovechar el ancho disponible. */}
+                <img
+                  src={empresa.logo}
+                  alt={empresa.nombre}
+                  loading="lazy"
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            ) : (
+              <div
+                key={`${empresa.nombre}-${i}`}
+                className="border-border bg-surface text-muted hover:text-fg hover:border-magenta/40 relative grid h-32 w-72 shrink-0 place-items-center rounded-2xl rounded-br-none border px-6 text-center text-base font-semibold transition-colors duration-300"
+                // Solo la primera mitad se anuncia: la segunda es duplicado visual.
+                aria-hidden={i >= EMPRESAS.length}
+              >
+                <span className="bg-magenta/50 absolute inset-x-6 bottom-0 h-px" />
+                {empresa.nombre}
+              </div>
+            ),
+          )}
         </div>
       </div>
 

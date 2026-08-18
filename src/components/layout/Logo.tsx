@@ -1,73 +1,52 @@
 /**
- * Isotipo COPAT 3D.
+ * Isotipo + wordmark oficial de COPAT 3D.
  *
- * Anillos concéntricos poligonales partidos por el eje vertical, con las dos
- * mitades **desfasadas media separación de anillo**. Ese escalón en la costura
- * es la lectura "capa a capa": una pieza cortada al medio donde se ven las
- * capas de impresión desplazadas.
+ * Trazado tal cual del arte de marca provisto por la AIF (`copat 3d.svg`,
+ * viewBox 593.39×132.1: anillo partido "capa a capa" + texto "COPAT 3D").
+ * Reemplaza al isotipo generado proceduralmente que se usaba antes.
  *
- * La geometría se genera, no se dibuja a mano: así lados, radios y desfase se
- * ajustan cambiando una constante en vez de reescribir 40 coordenadas.
+ * Dos cambios respecto del original:
+ *
+ * - El arte fuente fija `fill: #fff` (pensado para fondo oscuro). Acá se usa
+ *   `currentColor` para que Navbar y Footer sigan controlando el color según
+ *   el tema y el estado del navbar, exactamente como hacían con el isotipo
+ *   anterior — sin esto el logo quedaría blanco fijo e invisible sobre el
+ *   footer en modo claro.
+ * - Se omite el subtítulo del arte original ("Congreso Patagónico de
+ *   Impresión 3D..."): a los tamaños en que vive este componente (navbar,
+ *   footer) queda ilegible, y ambos lugares ya tienen su propia bajada en
+ *   texto real y editable.
  */
-
-const LADOS = 10;
-const CENTRO = 50;
-/** Radios de los anillos, de afuera hacia adentro. */
-const ANILLOS = [45, 33.5, 22];
-/** Radio del núcleo relleno. */
-const NUCLEO = 10.5;
-/** Desplazamiento vertical de la mitad derecha: media separación de anillo. */
-const DESFASE = 5.5;
-/** Trazo apenas menor que la mitad de la separación entre anillos: a 36px del
- *  navbar, con el trazo más grueso el anillo interno y el núcleo se empastan
- *  en un solo bulto. */
-const TRAZO = 5;
-
-/** Puntos de un polígono regular. `giro` en grados; -108° deja un lado plano arriba. */
-function poligono(radio: number, cy = CENTRO, giro = -108) {
-  return Array.from({ length: LADOS }, (_, i) => {
-    const a = ((giro + (360 / LADOS) * i) * Math.PI) / 180;
-    return `${(CENTRO + radio * Math.cos(a)).toFixed(2)},${(cy + radio * Math.sin(a)).toFixed(2)}`;
-  }).join(" ");
-}
-
-function Mitad({ cy }: { cy: number }) {
-  return (
-    <>
-      <g
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={TRAZO}
-        strokeLinejoin="round"
-      >
-        {ANILLOS.map((r) => (
-          <polygon key={r} points={poligono(r, cy)} />
-        ))}
-      </g>
-      <polygon points={poligono(NUCLEO, cy)} fill="currentColor" />
-    </>
-  );
-}
-
 export function Logo({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 100 100" className={className} aria-hidden="true">
-      <defs>
-        {/* Mitades exactas: el corte va justo en el eje, sin separación, para
-            que el escalón del desfase sea el único quiebre visible. */}
-        <clipPath id="copat-izq">
-          <rect x="0" y="0" width={CENTRO} height="100" />
-        </clipPath>
-        <clipPath id="copat-der">
-          <rect x={CENTRO} y="0" width={CENTRO} height="100" />
-        </clipPath>
-      </defs>
-
-      <g clipPath="url(#copat-izq)">
-        <Mitad cy={CENTRO - DESFASE / 2} />
+    <svg
+      viewBox="0 0 593.39 132.1"
+      className={className}
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      {/* Isotipo: anillo partido en espiral, la misma idea de "capa a capa"
+          que .paper-page/.paper/.sheet llevan al scroll. */}
+      <g>
+        <polygon points="47.33 117.75 18 96.69 6.65 62.41 17.61 28 46.71 6.61 65.63 6.5 65.63 .18 44.62 .3 12.21 24.12 0 62.44 12.64 100.63 45.32 124.09 65.63 123.97 65.63 117.65 47.33 117.75" />
+        <polygon points="51.55 104.52 29.19 88.46 20.54 62.33 28.9 36.1 51.08 19.8 65.63 19.71 65.63 13.37 48.98 13.47 23.48 32.21 13.87 62.37 23.82 92.41 49.53 110.87 65.63 110.78 65.63 104.44 51.55 104.52" />
+        <polygon points="55.81 91.15 40.49 80.15 34.56 62.25 40.29 44.28 55.49 33.11 65.63 33.05 65.63 26.48 53.31 26.54 34.67 40.25 27.65 62.29 34.92 84.25 53.71 97.74 65.63 97.68 65.63 91.1 55.81 91.15" />
+        <polygon points="59.33 80.1 49.84 73.29 46.16 62.19 49.71 51.04 59.13 44.12 65.63 44.08 65.63 37.93 57.1 37.98 44.45 47.27 39.69 62.22 44.62 77.12 57.37 86.27 65.63 86.22 65.63 80.07 59.33 80.1" />
+        <polygon points="80.63 13.29 106.34 31.75 116.29 61.79 106.68 91.95 81.18 110.69 65.63 110.78 65.63 117.65 83.45 117.55 112.54 96.16 123.51 61.75 112.16 27.47 82.82 6.41 65.63 6.5 65.63 13.37 80.63 13.29" />
+        <polygon points="76.45 26.41 95.24 39.91 102.51 61.87 95.48 83.91 76.85 97.61 65.63 97.68 65.63 104.44 79.08 104.36 101.26 88.06 109.62 61.83 100.97 35.7 78.6 19.64 65.63 19.71 65.63 26.48 76.45 26.41" />
+        <polygon points="72.79 37.89 85.54 47.04 90.47 61.94 85.7 76.89 73.06 86.18 65.63 86.22 65.63 91.1 74.67 91.05 89.87 79.88 95.59 61.91 89.67 44 74.35 33 65.63 33.05 65.63 37.93 72.79 37.89" />
+        <polygon points="71.03 80.04 80.45 73.11 84 61.97 80.32 50.87 70.82 44.05 65.63 44.08 65.63 80.07 71.03 80.04" />
       </g>
-      <g clipPath="url(#copat-der)">
-        <Mitad cy={CENTRO + DESFASE / 2} />
+
+      {/* Wordmark "COPAT 3D" */}
+      <g>
+        <path d="M155.69,32.34c0-19.91,12-32.34,30.87-32.34,14.69,0,26.87,8.09,29.3,23.56h-14.87c-1.91-7.22-7.48-10.78-14.43-10.78-10,0-15.56,7.39-15.56,19.56s5.56,19.56,15.56,19.56c7.3,0,13.39-4.26,14.78-12.43h14.69c-1.91,16.52-14.26,25.21-29.47,25.21-18.43,0-30.87-12.43-30.87-32.34Z" />
+        <path d="M220.64,32.34c0-19.56,12.78-32.34,31.73-32.34s31.74,12.78,31.74,32.34-12.87,32.34-31.74,32.34-31.73-12.78-31.73-32.34ZM268.89,32.34c0-12.26-6.61-19.56-16.52-19.56s-16.43,7.3-16.43,19.56,6.52,19.56,16.43,19.56,16.52-7.3,16.52-19.56Z" />
+        <path d="M342.45,22.26c0,12.52-8.26,20.87-22.87,20.87h-13.48v20.17h-14.69V1.39h28.17c14.61,0,22.87,8.35,22.87,20.87ZM318.63,30.69c5.65,0,9.13-2.87,9.13-8.43s-3.48-8.43-9.13-8.43h-12.52v16.87h12.52Z" />
+        <path d="M385.41,63.3l-3.65-10.78h-25.74l-3.57,10.78h-15.04L360.19,1.39h17.48l23.3,61.9h-15.56ZM360.11,40.25h17.48l-3.56-10.61c-1.65-4.61-3.48-10.26-5.22-15.65-1.74,5.39-3.56,11.04-5.13,15.65l-3.56,10.61Z" />
+        <path d="M446.36,1.39v13.13h-19.04v48.78h-14.78V14.52h-18.95V1.39h52.78Z" />
+        <path d="M526.53,44.95c0,11.13-10,19.74-27.39,19.74s-27.3-8.61-28.08-24.34h19.3c.35,6.09,2.78,8.78,8.26,8.78,5.04,0,7.56-1.91,7.56-5.48s-2.61-5.48-7.48-5.48h-4.35v-13.04h4.35c4.87,0,7.48-1.48,7.48-4.96s-2.52-4.87-6.69-4.87c-4.78,0-6.87,2.09-7.13,6.17h-19.21c.78-14.26,9.82-21.48,26.69-21.48s25.13,6.69,25.13,16.95c0,6.26-4,10.96-10.52,13.13,7.83,2.09,12.09,7.48,12.09,14.87Z" />
+        <path d="M593.39,32.34c0,20.52-12,30.95-32.34,30.95h-27.21V1.39h27.47c20.17,0,32.08,10.43,32.08,30.95ZM560.09,46.95c8.09,0,12.95-3.91,12.95-14.61s-4.87-14.61-12.95-14.61h-6.61v29.21h6.61Z" />
       </g>
     </svg>
   );

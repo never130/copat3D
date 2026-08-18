@@ -6,11 +6,9 @@ export function Footer() {
     <footer className="border-border border-t">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:grid-cols-2 lg:grid-cols-4">
         <div className="lg:col-span-2">
-          <div className="text-accent-text dark:text-white flex items-center gap-2.5">
-            <Logo className="size-11" />
-            <span className="font-display text-xl font-extrabold tracking-tight">
-              COPAT 3D
-            </span>
+          <div className="text-accent-text dark:text-white">
+            {/* El wordmark ya trae "COPAT 3D" dibujado: no repetirlo en texto. */}
+            <Logo className="h-10 w-auto" />
           </div>
           <p className="text-muted mt-4 max-w-sm text-sm leading-relaxed">
             Congreso Patagónico de Impresión 3D, Fabricación Digital e
