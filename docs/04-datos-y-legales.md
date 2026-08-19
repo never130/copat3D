@@ -98,6 +98,37 @@ Ya está aplicado `loading="lazy"`, así que el mapa no se descarga hasta que al
 
 **Pregunta para la AIF:** ¿alcanza con la carga diferida o se prefiere carga con clic?
 
+## Formulario de contacto (publicado)
+
+A diferencia del de registro, el formulario de contacto **sí está publicado**.
+La diferencia no es de criterio sino de datos: solo pide nombre, correo, asunto
+y mensaje. No hay DNI, no hay fecha de nacimiento, no hay dato sensible, y la
+finalidad —responder la consulta— se agota en el propio acto de responder.
+
+Decisiones tomadas ahí:
+
+- **Nada se guarda en base.** El mensaje viaja por Resend a la casilla
+  institucional y no queda copia en el sitio. Sin base, no hay base que
+  registrar ni que dar de baja.
+- **Antispam sin captcha.** Se usa un campo trampa (*honeypot*) invisible en
+  lugar de reCAPTCHA. Un captcha manda datos del visitante a un tercero —
+  justamente lo que esta política trata de minimizar— y es una carga de
+  accesibilidad para quien usa lector de pantalla.
+- **El límite de envíos es por instancia**, en memoria. Frena el reenvío
+  accidental, no a un atacante decidido. Un límite real necesita almacén
+  compartido (Upstash Redis); queda como decisión, no se agregó un servicio
+  más por cuenta propia.
+
+## Estado de la página `/privacidad`
+
+Está **escrita y publicable, pero es un borrador técnico**: cubre la estructura
+que pide la ley y describe con exactitud lo que el sitio hace hoy, con la
+cláusula del art. 14 inc. 3 incluida.
+
+⛔ **Falta que el área legal de la AIF la valide antes de darla por definitiva.**
+No describe el registro de inscriptos porque todavía no existe; cuando se
+habilite hay que agregar esa sección *antes* de recolectar el primer dato.
+
 ## Checklist previo a publicar el formulario
 
 - [ ] Texto de consentimiento validado por legales de la AIF

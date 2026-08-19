@@ -37,9 +37,9 @@ Sitio del **Congreso Patagónico de Impresión 3D, Fabricación Digital e Innova
 | SEO: metadata, sitemap, robots, JSON-LD, favicon, Open Graph | ✅ Hecho |
 | Documentación `docs/01` a `docs/06` | ✅ Hecho |
 | Formulario de registro | ⛔ Bloqueado por legales |
-| Formulario de contacto → Resend | ❌ Pendiente |
+| Formulario de contacto → Resend | ✅ Hecho (falta cargar `RESEND_API_KEY` y verificar el dominio) |
 | Base de datos (Neon) | ❌ Pendiente |
-| Página `/privacidad` | ❌ Pendiente (bloqueante para publicar) |
+| Página `/privacidad` | ⚠️ Borrador publicable — **requiere validación de legales de la AIF** |
 | Sección de sede con mapa de Google | ✅ Hecho (ver nota de privacidad en [docs/04](docs/04-datos-y-legales.md)) |
 | Logo oficial de COPAT 3D (arte de la AIF) | ✅ Hecho |
 | Logos institucionales (Gobierno TDF, AIF) en el carrousel | ✅ Hecho |

@@ -2,12 +2,11 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site";
 
 /**
- * Sitemap del sitio. Son cuatro URLs: no hace falta generarlo dinámicamente
+ * Sitemap del sitio. Son pocas URLs: no hace falta generarlo dinámicamente
  * mientras no haya contenido por base de datos.
  *
- * `/privacidad` todavía no existe (es bloqueante para publicar el formulario,
- * ver docs/04) y por eso no figura acá: listar una URL que devuelve 404
- * perjudica el rastreo.
+ * Solo se listan rutas que existen: una URL que devuelve 404 perjudica el
+ * rastreo.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const hoy = new Date();
@@ -25,6 +24,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: hoy,
       changeFrequency: "weekly",
       priority: 0.9,
+    },
+    {
+      // Prioridad baja a propósito: tiene que ser accesible e indexable, pero
+      // no compite por posicionamiento con las páginas del congreso.
+      url: `${SITE_URL}/privacidad`,
+      lastModified: hoy,
+      changeFrequency: "yearly",
+      priority: 0.3,
     },
   ];
 }
