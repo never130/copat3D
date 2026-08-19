@@ -41,7 +41,9 @@ Sitio del **Congreso Patagónico de Impresión 3D, Fabricación Digital e Innova
 | Base de datos (Neon) | ❌ Pendiente |
 | Página `/privacidad` | ❌ Pendiente (bloqueante para publicar) |
 | Sección de sede con mapa de Google | ✅ Hecho (ver nota de privacidad en [docs/04](docs/04-datos-y-legales.md)) |
-| Agenda real, speakers, logos de sponsors | ❌ Falta contenido de terceros |
+| Logo oficial de COPAT 3D (arte de la AIF) | ✅ Hecho |
+| Logos institucionales (Gobierno TDF, AIF) en el carrousel | ✅ Hecho |
+| Agenda real, speakers, logos del resto de sponsors | ❌ Falta contenido de terceros |
 | DNS en NIC.ar → Cloudflare | ❌ Pendiente (tarda 24-48hs, urgente) |
 
 ## Comandos
@@ -239,6 +241,27 @@ Contraste medido contra el fondo: **1.5 a 2.12 en ambos modos**. Para decoració
 ### 17. Helvetica Now Display es paga
 
 Es de Monotype y requiere licencia web. El sitio usa **Inter Tight** como sustituto libre. No la sirvas desde un CDN ni la copies de otro sitio. Si aparece la licencia, se cambia en `layout.tsx` y en `--font-display`.
+
+### 18. El arte institucional que nos dieron es la versión BLANCA
+
+Los logos de Gobierno de Tierra del Fuego y de la AIF (`public/logos/`) son las
+versiones monocromáticas en blanco, pensadas para fondo oscuro. Por eso sus
+tarjetas del carrousel van en **magenta fijo** (`bg-magenta-deep`) y no en la
+superficie del tema como las demás.
+
+Si alguna vez se "corrige" eso para que la tarjeta siga el modo, en modo claro
+la superficie es blanca y **los logos desaparecen por completo**. No es un
+detalle estético: es blanco sobre blanco.
+
+Para unificarlas con el resto habría que pedirle a la AIF las versiones a color
+o en negativo. Hasta entonces, el fondo de marca es lo que garantiza contraste
+en los dos modos — el mismo recurso que usan `.hero-gradient` en el CTA de
+sponsors y en el menú móvil.
+
+> Los lockups institucionales son muy **apaisados** (el de Gobierno es 4:1). Con
+> un `max-h` chico quedaban diminutos, sin aprovechar el ancho de la tarjeta.
+> Van con `object-contain` sobre la caja completa: así el limitante es el ancho,
+> que es la dimensión que sobra.
 
 ## Convenciones
 

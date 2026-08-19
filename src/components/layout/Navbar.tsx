@@ -23,11 +23,18 @@ const LINKS = [
  * Los contenedores flotantes (píldora del menú, botón de tema, hamburguesa)
  * comparten un único set de clases para que no diverjan.
  */
-/** Alto del navbar en estado overlay (76px medidos: isotipo de 44 + py-4),
- *  más un margen. Es el punto donde se considera que la cabecera magenta ya
- *  pasó por debajo. Si cambia el tamaño del isotipo o el padding, se
- *  recalcula: con un umbral menor al alto real, el cambio a sólido se
- *  dispara cuando el contenido todavía está tapado por el propio navbar. */
+/** Alto del navbar en estado overlay, más un margen. Es el punto donde se
+ *  considera que la cabecera magenta ya pasó por debajo.
+ *
+ *  Medido: **78px** (`py-4` = 32 + el hijo más alto = 46). Ojo con cuál es ese
+ *  hijo: **no es el logo** (36px) sino la píldora del menú de escritorio
+ *  —`py-1.5` sobre links que ya traen `py-1.5` y su propio borde—. Agrandar el
+ *  logo no mueve el alto hasta pasar los 46px; cambiar el padding de la
+ *  píldora sí, y en silencio.
+ *
+ *  Con un umbral menor al alto real, el cambio a sólido se dispara cuando el
+ *  contenido todavía está tapado por el propio navbar. Hoy el margen es de
+ *  apenas 2px: si tocás cualquiera de esos paddings, volvé a medir. */
 const LINEA_NAVBAR = 80;
 
 export function Navbar() {

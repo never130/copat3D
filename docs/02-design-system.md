@@ -58,17 +58,35 @@ La distinción importa: el CTA de sponsors y el menú móvil son superficies que
 
 El negro del lienzo (`#050508`) es deliberadamente **más oscuro que `--bg`** (`#0b0410`): la hoja de página que se desliza por encima es más clara, y esa diferencia —junto con el canto de luz— es lo que hace legible la transición.
 
-### Isotipo
+### Logotipo
 
-Anillos concéntricos poligonales (decágonos) partidos por el eje vertical, con las dos mitades **desfasadas media separación de anillo**. Ese escalón en la costura es la lectura "capa a capa": una pieza cortada al medio donde se ven las capas de impresión desplazadas.
+Anillo partido en espiral (mitades desfasadas: la lectura "capa a capa", una
+pieza cortada al medio donde se ven las capas de impresión desplazadas) seguido
+del wordmark **COPAT 3D**.
 
-La geometría se **genera** en `Logo.tsx` a partir de cinco constantes (`LADOS`, `ANILLOS`, `NUCLEO`, `DESFASE`, `TRAZO`) en vez de estar dibujada a mano. Ajustar la proporción es cambiar un número, no reescribir cuarenta coordenadas.
+Es el **arte oficial provisto por la AIF**, trazado tal cual. Antes había un
+isotipo generado por código a partir de constantes (`LADOS`, `ANILLOS`,
+`DESFASE`…); se reemplazó cuando llegó el arte real. Los originales quedaron en
+`public/logos/` como referencia, incluido `copat-3d-completo.svg`, que además
+trae el subtítulo del congreso.
 
-Usa `currentColor`, así que hereda el color del contenedor: blanco sobre el lienzo de marca, `--accent-text` en el footer en modo claro.
+> **El arte fuente fija `fill: #fff`; el componente usa `currentColor`.** El
+> logo vive sobre tres fondos distintos —el lienzo magenta del hero, el navbar
+> sólido y el footer— y en dos modos. Con el blanco del original quedaría
+> invisible en el footer en modo claro. Heredando el color, Navbar y Footer lo
+> siguen controlando con `text-white` / `text-fg` / `--accent-text` como antes.
 
-> **El trazo está limitado por el tamaño de uso, no por el arte.** `TRAZO` es algo menor que la mitad de la separación entre anillos porque con un trazo más grueso el anillo interno y el núcleo se empastan en un solo bulto. Verificado renderizando al tamaño real de uso, no a tamaño de manual de marca.
+**El subtítulo del arte no se usa en el componente.** A los tamaños de navbar y
+footer queda ilegible, y ambos lugares ya tienen la bajada en texto real —
+seleccionable, traducible y editable sin tocar un SVG.
 
-En navbar y footer se usa a **44px** (`size-11`). A 36px los anillos se comprimían demasiado. Al cambiarlo hay que **recalcular `LINEA_NAVBAR`** en `Navbar.tsx`: ese umbral tiene que ser mayor que el alto real del navbar (isotipo + `py-4`), porque si no el cambio a estado sólido se dispara cuando el contenido todavía está tapado por el propio navbar.
+Se usa a **36px de alto** en el navbar (`h-9 w-auto`) y **40px** en el footer,
+con el ancho libre: el lockup es apaisado (~4.5:1), así que fijar el alto y
+dejar correr el ancho es lo único que preserva la proporción. Al cambiar el
+alto del navbar hay que **recalcular `LINEA_NAVBAR`** en `Navbar.tsx`: ese
+umbral tiene que ser mayor que el alto real del navbar, porque si no el cambio
+a estado sólido se dispara cuando el contenido todavía está tapado por el
+propio navbar.
 
 ### Las figuras van a color pleno en los dos modos
 
