@@ -18,43 +18,41 @@ import { EJES } from "@/content/ejes";
 /**
  * Acentos por eje.
  *
- * `borderHover` usa `hover:` y NO `group-hover:`: la clase `group` está en la
- * misma tarjeta, y Tailwind compila `group-hover:` a `.group:hover .hijo`, que
- * solo alcanza a los descendientes. Puesto sobre el propio `.group` no aplica
- * nunca — el borde de acento estuvo apagado hasta que se midió.
- *
- * `glow` y `luz` no son clases sino colores: se inyectan como custom
- * properties porque Tailwind no puede generar una utilidad por cada mezcla.
+ * `borde`, `glow` y `luz` no son clases sino colores: se inyectan como custom
+ * properties. Dos motivos: Tailwind no puede generar una utilidad por cada
+ * mezcla, y sobre todo hacen falta en DOS estados —el hover del escritorio y
+ * el estado por defecto en táctil, donde no hay hover posible—. Como clase de
+ * Tailwind solo servirían para uno de los dos.
  */
 const ACCENT: Record<
   string,
-  { text: string; bg: string; borderHover: string; glow: string; luz: string }
+  { text: string; bg: string; borde: string; glow: string; luz: string }
 > = {
   "copat-coral": {
     text: "text-copat-coral",
     bg: "bg-copat-coral",
-    borderHover: "hover:border-copat-coral/45",
+    borde: "color-mix(in srgb, var(--color-copat-coral) 45%, transparent)",
     glow: "color-mix(in srgb, var(--color-copat-coral) 26%, var(--paper-shadow))",
     luz: "color-mix(in srgb, var(--color-copat-coral) 15%, transparent)",
   },
   "copat-sky": {
     text: "text-copat-sky",
     bg: "bg-copat-sky",
-    borderHover: "hover:border-copat-sky/45",
+    borde: "color-mix(in srgb, var(--color-copat-sky) 45%, transparent)",
     glow: "color-mix(in srgb, var(--color-copat-sky) 26%, var(--paper-shadow))",
     luz: "color-mix(in srgb, var(--color-copat-sky) 15%, transparent)",
   },
   "copat-yellow": {
     text: "text-copat-yellow",
     bg: "bg-copat-yellow",
-    borderHover: "hover:border-copat-yellow/45",
+    borde: "color-mix(in srgb, var(--color-copat-yellow) 45%, transparent)",
     glow: "color-mix(in srgb, var(--color-copat-yellow) 26%, var(--paper-shadow))",
     luz: "color-mix(in srgb, var(--color-copat-yellow) 15%, transparent)",
   },
   "copat-green": {
     text: "text-copat-green",
     bg: "bg-copat-green",
-    borderHover: "hover:border-copat-green/45",
+    borde: "color-mix(in srgb, var(--color-copat-green) 45%, transparent)",
     glow: "color-mix(in srgb, var(--color-copat-green) 26%, var(--paper-shadow))",
     luz: "color-mix(in srgb, var(--color-copat-green) 15%, transparent)",
   },
@@ -71,7 +69,7 @@ function Capas({ color }: { color: string }) {
       {[0, 1, 2, 3, 4].map((n) => (
         <span
           key={n}
-          className={`block h-[3px] rounded-full ${color} w-[var(--w)] transition-[width,opacity] duration-500 ease-[var(--ease-out-expo)] group-hover:w-[calc(var(--w)*1.7)] group-hover:opacity-100`}
+          className={`capa-tarjeta block h-[3px] rounded-full ${color} w-[var(--w)] transition-[width,opacity] duration-500 ease-[var(--ease-out-expo)] group-hover:w-[calc(var(--w)*1.7)] group-hover:opacity-100`}
           style={
             {
               "--w": `${12 + n * 7}px`,
@@ -163,8 +161,14 @@ export function Ejes() {
                   // que al estar fuera de `@layer` le gana igual a las utilidades
                   // (trampa 10). Tenerlas en los dos lados dejaba la mitad sin
                   // efecto en silencio.
-                  style={{ "--luz-color": a.luz } as React.CSSProperties}
-                  className={`group border-border bg-surface relative h-full overflow-hidden rounded-3xl rounded-br-none border pt-8 pr-8 pb-10 pl-8 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_var(--paper-shadow)] ${a.borderHover}`}
+                  style={
+                    {
+                      "--luz-color": a.luz,
+                      "--glow": a.glow,
+                      "--borde-activo": a.borde,
+                    } as React.CSSProperties
+                  }
+                  className="tarjeta-eje group border-border bg-surface relative h-full overflow-hidden rounded-3xl rounded-br-none border pt-8 pr-8 pb-10 pl-8 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_var(--glow)]"
                 >
                   {/* Luz que sigue al puntero, con el acento del eje */}
                   <span
@@ -179,7 +183,7 @@ export function Ejes() {
                     tarjeta —que es el que recorta el número— fuerza a aplanar
                     el contexto 3D. */}
                   <span
-                    className={`font-display pointer-events-none absolute -top-6 -right-2 text-[8rem] leading-none font-black ${a.text} opacity-[0.07] transition-opacity duration-500 group-hover:opacity-[0.16]`}
+                    className={`num-tarjeta font-display pointer-events-none absolute -top-6 -right-2 text-[8rem] leading-none font-black ${a.text} opacity-[0.07] transition-opacity duration-500 group-hover:opacity-[0.16]`}
                     style={{
                       translate:
                         "calc(var(--ry, 0deg) / 1deg * -1.1px) calc(var(--rx, 0deg) / 1deg * 1.1px)",
@@ -200,10 +204,19 @@ export function Ejes() {
                       {eje.descripcion}
                     </p>
                     <ul className="mt-6 flex max-w-[38ch] flex-wrap gap-2">
-                      {eje.temas.map((tema) => (
+                      {eje.temas.map((tema, j) => (
                         <li
                           key={tema}
-                          className="border-border bg-surface-2 text-muted rounded-full border px-3 py-1.5 text-xs font-medium"
+                          // Los chips NO llevan hover propio: no son clickeables, y darles
+                          // uno prometería una interacción que no existe. Se encienden
+                          // escalonados cuando el mouse pasa por la TARJETA, como una
+                          // capa más que termina de imprimirse.
+                          style={
+                            {
+                              "--chip-delay": `${j * 55}ms`,
+                            } as React.CSSProperties
+                          }
+                          className="chip-tema border-border bg-surface-2 text-muted rounded-full border px-3 py-1.5 text-xs font-medium"
                         >
                           {tema}
                         </li>
@@ -216,7 +229,7 @@ export function Ejes() {
                   {/* Plato de la impresora: la base de color sobre la que se
                     apoya la pieza. Crece de un lado al pasar el mouse. */}
                   <span
-                    className={`absolute inset-x-0 bottom-0 h-[3px] ${a.bg} origin-left scale-x-[0.18] transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-x-100`}
+                    className={`plato-tarjeta absolute inset-x-0 bottom-0 h-[3px] ${a.bg} origin-left scale-x-[0.18] transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-x-100`}
                     aria-hidden="true"
                   />
                 </article>

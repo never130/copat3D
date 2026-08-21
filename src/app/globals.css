@@ -569,6 +569,74 @@
 }
 
 /* ============================================================
+   TARJETAS DE EJE: BORDE DE ACENTO Y ESTADO EN TÁCTIL
+   ============================================================ */
+
+.tarjeta-eje:hover {
+  border-color: var(--borde-activo);
+}
+
+/* Sin puntero, la tarjeta muestra su estado ACTIVO de entrada.
+   Todo lo que le da vida —las capas desplegadas, el plato de la impresora
+   completo, el número presente, el borde de acento— colgaba del hover, así que
+   en un celular no se veía nunca: quedaba una caja plana. Y es donde va a
+   entrar la mayor parte de la gente.
+
+   No es "hover simulado": es cómo se ve la tarjeta cuando no hay puntero que
+   pueda revelarla. */
+@media (hover: none), (pointer: coarse) {
+  .tarjeta-eje {
+    border-color: var(--borde-activo);
+  }
+
+  .capa-tarjeta {
+    width: calc(var(--w) * 1.7) !important;
+    opacity: 1 !important;
+  }
+
+  .plato-tarjeta {
+    scale: 1 1;
+  }
+
+  .num-tarjeta {
+    opacity: 0.16;
+  }
+}
+
+/* Chips de temas: se encienden escalonados con el hover de la tarjeta.
+   El retardo lo pone cada chip con --chip-delay, así el encendido recorre la
+   lista en vez de prenderse todo junto. */
+.chip-tema {
+  transition:
+    border-color 380ms ease-out,
+    color 380ms ease-out;
+  transition-delay: var(--chip-delay, 0ms);
+}
+
+.group:hover .chip-tema {
+  border-color: var(--borde-activo);
+  color: var(--fg);
+}
+
+/* Sin puntero se muestran ya encendidos, igual que el resto de la tarjeta. */
+@media (hover: none), (pointer: coarse) {
+  .chip-tema {
+    border-color: var(--borde-activo);
+    color: var(--fg);
+  }
+}
+
+/* El panel lateral de contacto se inclina pero no cambia de color: no es un
+   destino al que se navega, es una referencia que se consulta. */
+.tarjeta-quieta {
+  transition: box-shadow 300ms ease-out;
+}
+
+.tarjeta-quieta:hover {
+  box-shadow: 0 22px 44px -22px var(--paper-shadow);
+}
+
+/* ============================================================
    TÍTULO QUE SE IMPRIME
    El h2 se revela con un barrido propio, más lento que el del
    bloque y arrancando después. Como la máscara sube cruzando un

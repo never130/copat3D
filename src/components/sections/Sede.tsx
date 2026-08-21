@@ -194,7 +194,11 @@ export function Sede() {
           </a>
         </div>
 
-        <div className="sheet border-border bg-surface overflow-hidden rounded-3xl rounded-tl-none border">
+        {/* Sin inclinación 3D, a diferencia del resto de las tarjetas: el mapa
+            es interactivo —se arrastra y se hace zoom— y torcerlo mientras
+            alguien lo usa estorba. Responde con borde y sombra, que señalan
+            lo mismo sin meterse en el gesto. */}
+        <div className="sheet border-border bg-surface hover:border-magenta/40 overflow-hidden rounded-3xl rounded-tl-none border transition-[border-color,box-shadow] duration-300 hover:shadow-[0_22px_44px_-22px_var(--paper-shadow)]">
           <iframe
             src={mapaSrc}
             title={`Mapa de ubicación: ${SEDE.nombre}, ${SEDE.direccion}`}

@@ -12,7 +12,8 @@ export function Footer() {
           </div>
           <p className="text-muted mt-4 max-w-sm text-sm leading-relaxed">
             Congreso Patagónico de Impresión 3D, Fabricación Digital e
-            Innovación Aplicada. Organizado por la Agencia de Innovación Fueguina.
+            Innovación Aplicada. Organizado por la Agencia de Innovación
+            Fueguina.
           </p>
           <p className="font-display mt-5 text-lg font-bold italic">
             Diseñando el futuro capa a capa
@@ -23,11 +24,46 @@ export function Footer() {
           <h4 className="font-display text-sm font-bold tracking-wide uppercase">
             El congreso
           </h4>
-          <ul className="text-muted mt-4 space-y-2.5 text-sm">
-            <li><a href="#ejes" className="hover:text-fg transition-colors">Ejes temáticos</a></li>
-            <li><a href="#agenda" className="hover:text-fg transition-colors">Agenda</a></li>
-            <li><a href="#empresas" className="hover:text-fg transition-colors">Empresas</a></li>
-            <li><a href="#registro" className="hover:text-fg transition-colors">Inscripción</a></li>
+          {/* Los links van en bloque con padding propio: como texto suelto
+              medían 17px de alto, por debajo de los 24px que pide la WCAG
+              2.5.8 (AA) para un objetivo táctil que no es texto dentro de una
+              oración. Con `py-2.5` quedan en ~37px.
+
+              El `-my-2.5` de la lista devuelve el espacio que agrega el
+              padding, para que el pie no se estire. */}
+          <ul className="text-muted mt-4 -my-2.5 space-y-0 text-sm">
+            <li>
+              <a
+                href="#ejes"
+                className="hover:text-fg block py-2.5 transition-colors"
+              >
+                Ejes temáticos
+              </a>
+            </li>
+            <li>
+              <a
+                href="#agenda"
+                className="hover:text-fg block py-2.5 transition-colors"
+              >
+                Agenda
+              </a>
+            </li>
+            <li>
+              <a
+                href="#empresas"
+                className="hover:text-fg block py-2.5 transition-colors"
+              >
+                Empresas
+              </a>
+            </li>
+            <li>
+              <a
+                href="#registro"
+                className="hover:text-fg block py-2.5 transition-colors"
+              >
+                Inscripción
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -35,16 +71,22 @@ export function Footer() {
           <h4 className="font-display text-sm font-bold tracking-wide uppercase">
             Contacto
           </h4>
-          <ul className="text-muted mt-4 space-y-2.5 text-sm">
+          <ul className="text-muted mt-4 -my-2.5 space-y-0 text-sm">
             <li>
-              <a href="mailto:copat3d@aif.gob.ar" className="hover:text-fg transition-colors">
+              <a
+                href="mailto:copat3d@aif.gob.ar"
+                className="hover:text-fg block py-2.5 transition-colors"
+              >
                 copat3d@aif.gob.ar
               </a>
             </li>
-            <li>Ushuaia, Tierra del Fuego</li>
-            <li>2 y 3 de octubre de 2026</li>
+            <li className="py-2.5">Ushuaia, Tierra del Fuego</li>
+            <li className="py-2.5">2 y 3 de octubre de 2026</li>
             <li>
-              <Link href="/privacidad" className="hover:text-fg transition-colors">
+              <Link
+                href="/privacidad"
+                className="hover:text-fg block py-2.5 transition-colors"
+              >
                 Política de privacidad
               </Link>
             </li>

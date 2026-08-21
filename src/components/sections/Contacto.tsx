@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { enviarContacto, type EstadoContacto } from "@/actions/contacto";
 import { WireMargins, WirePlus, WirePyramid } from "@/components/shapes/wire";
+import { Tarjeta3D } from "@/components/ui/Tarjeta3D";
 import { LIMITES } from "@/lib/validation";
 import { EVENTO } from "@/lib/site";
 
@@ -12,7 +13,7 @@ const ESTADO_INICIAL: EstadoContacto = { ok: false };
 /** Clases compartidas de los campos: si divergen, un input queda con otro
  *  foco o con otro borde y se nota enseguida. */
 const CAMPO =
-  "border-border bg-bg text-fg placeholder:text-muted/70 focus:border-magenta focus:ring-magenta/30 w-full rounded-xl border px-4 py-3 outline-none transition-colors duration-200 focus:ring-2";
+  "border-border bg-bg text-fg placeholder:text-muted/70 hover:border-muted/40 focus:border-magenta focus:ring-magenta/30 w-full rounded-xl border px-4 py-3 outline-none transition-colors duration-200 focus:ring-2";
 
 /** Íconos del panel lateral. Mismo tratamiento que los servicios de la sede:
  *  el relleno vive solo en el ícono, la fila va sin caja propia. */
@@ -279,32 +280,39 @@ export function Contacto() {
           </p>
         </form>
 
-        <aside className="sheet border-border bg-surface rounded-3xl rounded-tl-none border p-6 sm:p-9">
-          <h3 className="font-display text-xl font-bold">Otros canales</h3>
-          <p className="text-muted mt-2 text-sm leading-relaxed">
-            Si preferís escribir desde tu propio correo, también llegás.
-          </p>
+        <div className="sheet">
+          {/* El tilt va en un envoltorio y no en el `.sheet`: ese anima
+              `transform` 0.7s para el pase de hoja, y un hover sobre la misma
+              propiedad hereda esa duración (trampa 6). */}
+          <Tarjeta3D>
+            <aside className="tarjeta-quieta border-border bg-surface group rounded-3xl rounded-tl-none border p-6 sm:p-9">
+              <h3 className="font-display text-xl font-bold">Otros canales</h3>
+              <p className="text-muted mt-2 text-sm leading-relaxed">
+                Si preferís escribir desde tu propio correo, también llegás.
+              </p>
 
-          <div className="mt-7 space-y-6">
-            <Dato icono={ICONOS.correo} etiqueta="Correo">
-              <a
-                href={`mailto:${EVENTO.email}`}
-                className="hover:text-accent-text transition-colors"
-              >
-                {EVENTO.email}
-              </a>
-            </Dato>
-            <Dato icono={ICONOS.organiza} etiqueta="Organiza">
-              {EVENTO.organiza}
-            </Dato>
-            <Dato icono={ICONOS.sede} etiqueta="Sede">
-              {EVENTO.sede} · {EVENTO.ciudad}
-            </Dato>
-            <Dato icono={ICONOS.cuando} etiqueta="Cuándo">
-              2 y 3 de octubre de 2026
-            </Dato>
-          </div>
-        </aside>
+              <div className="mt-7 space-y-6">
+                <Dato icono={ICONOS.correo} etiqueta="Correo">
+                  <a
+                    href={`mailto:${EVENTO.email}`}
+                    className="hover:text-accent-text -my-2 inline-block py-2 transition-colors"
+                  >
+                    {EVENTO.email}
+                  </a>
+                </Dato>
+                <Dato icono={ICONOS.organiza} etiqueta="Organiza">
+                  {EVENTO.organiza}
+                </Dato>
+                <Dato icono={ICONOS.sede} etiqueta="Sede">
+                  {EVENTO.sede} · {EVENTO.ciudad}
+                </Dato>
+                <Dato icono={ICONOS.cuando} etiqueta="Cuándo">
+                  2 y 3 de octubre de 2026
+                </Dato>
+              </div>
+            </aside>
+          </Tarjeta3D>
+        </div>
       </div>
     </section>
   );
