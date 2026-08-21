@@ -42,7 +42,7 @@ Sitio del **Congreso Patagónico de Impresión 3D, Fabricación Digital e Innova
 | Página `/privacidad` | ⚠️ Borrador publicable — **requiere validación de legales de la AIF** |
 | Sección de sede con mapa de Google | ✅ Hecho (ver nota de privacidad en [docs/04](docs/04-datos-y-legales.md)) |
 | Logo oficial de COPAT 3D (arte de la AIF) | ✅ Hecho |
-| Logos institucionales (Gobierno TDF, AIF) en el carrousel | ✅ Hecho |
+| Logos en el carrousel: Gobierno TDF, AIF, Buena Mezcla, Rayuela | ✅ Hecho |
 | Agenda real, speakers, logos del resto de sponsors | ❌ Falta contenido de terceros |
 | DNS en NIC.ar → Cloudflare | ❌ Pendiente (tarda 24-48hs, urgente) |
 
@@ -242,7 +242,7 @@ Contraste medido contra el fondo: **1.5 a 2.12 en ambos modos**. Para decoració
 
 Es de Monotype y requiere licencia web. El sitio usa **Inter Tight** como sustituto libre. No la sirvas desde un CDN ni la copies de otro sitio. Si aparece la licencia, se cambia en `layout.tsx` y en `--font-display`.
 
-### 18. El arte institucional que nos dieron es la versión BLANCA
+### 18. Cada logo de sponsor necesita el fondo que pide su arte
 
 Los logos de Gobierno de Tierra del Fuego y de la AIF (`public/logos/`) son las
 versiones monocromáticas en blanco, pensadas para fondo oscuro. Por eso sus
@@ -262,6 +262,45 @@ sponsors y en el menú móvil.
 > un `max-h` chico quedaban diminutos, sin aprovechar el ancho de la tarjeta.
 > Van con `object-contain` sobre la caja completa: así el limitante es el ancho,
 > que es la dimensión que sobra.
+
+
+**Los JPG de sponsors comerciales son el caso inverso.** Buena Mezcla y Rayuela
+son tinta de color sobre blanco, y al ser JPEG **no existe la transparencia**:
+el blanco está incrustado en el archivo. Sobre la superficie del tema (oscura)
+o sobre el magenta, se vería un recuadro blanco recortado.
+
+Por eso llevan `fondo: "blanco"` y la tarjeta va en `bg-white` **exacto**, no
+`bg-surface`: se midieron las cuatro esquinas de ambos archivos y son
+`#FFFFFF` puro. Con cualquier otro tono se marca el borde del rectángulo.
+
+Ese blanco exacto es además lo que permite el campo `escala`: Rayuela trae un
+34% de margen blanco incrustado arriba y abajo (la tinta es 840×216 dentro de
+un archivo de 1024×683), así que sin ampliarlo se vería a un tercio del tamaño
+de los demás. Lo que se recorta al ampliar es blanco puro contra tarjeta
+blanca: invisible.
+
+### 19. `h-full w-full object-contain` funciona con SVG por accidente
+
+Las tarjetas del carrousel usaban esa combinación y andaba bien… hasta que
+entró el primer JPG y se desbordó 227px fuera de la tarjeta.
+
+El motivo: un SVG sin `width`/`height` en píxeles **no tiene tamaño
+intrínseco**, así que `h-full` resuelve contra el contenedor. Un JPG sí lo
+tiene, y dentro de un contenedor de alto automático —una celda de grid con
+`place-items-center`— `height: 100%` no tiene contra qué resolver y el
+navegador cae al alto natural del archivo.
+
+La forma que funciona con los dos:
+
+1. Una caja interna `absolute inset-0` sobre la tarjeta, que **sí** tiene alto
+   definido porque lo hereda del `h-32` de la tarjeta.
+2. `max-h-full max-w-full` en la imagen, no `h-full w-full`. Así el limitante
+   lo elige la proporción de cada logo, que en este carrousel van desde 4:1
+   hasta casi cuadrado.
+
+> Al agregar un logo nuevo, medí la caja renderizada de la `<img>` contra la de
+> la tarjeta. Que *parezca* bien en una captura no alcanza: el desborde puede
+> quedar oculto por el `overflow-hidden` y aparecer recién con otra proporción.
 
 ## Convenciones
 

@@ -11,14 +11,49 @@ import { Plus, Zigzag } from "@/components/shapes";
 type Empresa = {
   nombre: string;
   /** Ruta del logo real en `public/`. Sin esto la tarjeta cae al placeholder
-   *  de texto (ver docs/06-roadmap.md: "logos de sponsors" sigue pendiente
-   *  para el resto — estos dos son los únicos con arte institucional). */
+   *  de texto (ver docs/06-roadmap.md: los logos del resto siguen pendientes). */
   logo?: string;
+  /**
+   * Tratamiento de la tarjeta, que lo decide el arte del logo y no el gusto:
+   *
+   * - `magenta`: el arte es la versión BLANCA sobre transparente (los SVG
+   *   institucionales). Necesita fondo de marca o desaparece en modo claro.
+   *   Ver trampa 18 de AGENTS.md.
+   * - `blanco`: el arte es tinta de color sobre blanco OPACO (los JPG de los
+   *   sponsors comerciales). Al ser JPEG no hay transparencia posible, así que
+   *   la única forma de que no se vea un recuadro blanco recortado es que la
+   *   tarjeta sea exactamente del mismo blanco que el archivo (#FFFFFF
+   *   medido en las cuatro esquinas de ambos).
+   */
+  fondo?: "magenta" | "blanco";
+  /** Texto alternativo, cuando el nombre corto no describe al sponsor. */
+  alt?: string;
+  /**
+   * Amplía el logo dentro de la tarjeta para compensar el margen en blanco
+   * que trae incrustado el archivo. Solo tiene sentido con `fondo: "blanco"`:
+   * lo que se recorta al ampliar es blanco puro, que se funde con la tarjeta.
+   */
+  escala?: number;
 };
 
 const EMPRESAS: Empresa[] = [
-  { nombre: "Gobierno de Tierra del Fuego", logo: "/logos/gobierno-tdf.svg" },
-  { nombre: "AIF", logo: "/logos/aif-blanco.svg" },
+  { nombre: "Gobierno de Tierra del Fuego", logo: "/logos/gobierno-tdf.svg", fondo: "magenta" },
+  { nombre: "AIF", logo: "/logos/aif-blanco.svg", fondo: "magenta" },
+  {
+    nombre: "Buena Mezcla",
+    alt: "Buena Mezcla — Pastelería y catering gourmet",
+    logo: "/logos/buena_mezcla.jpg",
+    fondo: "blanco",
+  },
+  {
+    nombre: "Rayuela",
+    logo: "/logos/rayuela.jpg",
+    fondo: "blanco",
+    // El archivo mide 1024×683 pero la tinta ocupa apenas 840×216 centrados:
+    // un 34% del alto es margen blanco arriba y otro tanto abajo. Sin ampliar,
+    // el logotipo se vería a un tercio del tamaño de los demás.
+    escala: 2.4,
+  },
   { nombre: "Fábrica de Talentos" },
   { nombre: "UNTDF" },
   { nombre: "UTN" },
@@ -50,40 +85,65 @@ export function Sponsors() {
           nombres. La regla vive en globals.css junto a .marquee-track. */}
       <div className="sheet marquee-mask mt-14 flex overflow-hidden">
         <div className="marquee-track flex gap-4">
-          {track.map((empresa, i) =>
-            empresa.logo ? (
-              // Logo institucional real: tarjeta en magenta fijo (no según
-              // tema) porque el arte de marca provisto es la versión blanca,
-              // pensada para fondo oscuro — mismo recurso que .hero-gradient
-              // usa en el CTA de abajo y en el menú móvil.
+          {track.map((empresa, i) => {
+            // Solo la primera mitad se anuncia: la segunda es duplicado visual.
+            const duplicada = i >= EMPRESAS.length;
+            const clave = `${empresa.nombre}-${i}`;
+            const CAJA =
+              "relative grid h-32 w-72 shrink-0 place-items-center overflow-hidden rounded-2xl rounded-br-none";
+
+            if (!empresa.logo) {
+              return (
+                <div
+                  key={clave}
+                  className={`${CAJA} border-border bg-surface text-muted hover:text-fg hover:border-magenta/40 border px-6 text-center text-base font-semibold transition-colors duration-300`}
+                  aria-hidden={duplicada}
+                >
+                  <span className="bg-magenta/50 absolute inset-x-6 bottom-0 h-px" />
+                  {empresa.nombre}
+                </div>
+              );
+            }
+
+            const enBlanco = empresa.fondo === "blanco";
+
+            return (
               <div
-                key={`${empresa.nombre}-${i}`}
-                className="bg-magenta-deep relative grid h-32 w-72 shrink-0 place-items-center overflow-hidden rounded-2xl rounded-br-none px-8 py-7 transition-[filter] duration-300 hover:brightness-110"
-                aria-hidden={i >= EMPRESAS.length}
+                key={clave}
+                className={`${CAJA} transition-[filter] duration-300 hover:brightness-105 ${
+                  enBlanco
+                    ? // Blanco exacto, no `bg-surface`: el JPG trae su propio
+                      // blanco opaco y cualquier otro tono deja ver el recuadro.
+                      "border-border border bg-white"
+                    : "bg-magenta-deep"
+                }`}
+                aria-hidden={duplicada}
               >
-                {/* `object-contain` sobre la caja completa y no `max-h/max-w`:
-                    los lockups institucionales son muy apaisados (el de
-                    Gobierno es 4:1) y con un alto máximo chico quedaban
-                    diminutos, sin aprovechar el ancho disponible. */}
-                <img
-                  src={empresa.logo}
-                  alt={empresa.nombre}
-                  loading="lazy"
-                  className="h-full w-full object-contain"
-                />
+                {/* La caja interna va `absolute inset-0` para tener alto
+                    DEFINIDO. Con el padding directamente en la tarjeta, el
+                    alto quedaba automático y `max-h-full` no tenía contra qué
+                    resolver: los SVG zafaban por no traer tamaño intrínseco,
+                    pero los JPG se plantaban en su alto natural y se salían de
+                    la tarjeta —Rayuela se desbordaba 227px—. */}
+                <div className="absolute inset-0 flex items-center justify-center px-8 py-7">
+                  {/* `max-h/max-w` y no `h-full w-full`: así el limitante es
+                      el que corresponda según la proporción de cada logo, que
+                      van desde 4:1 (Gobierno) hasta casi cuadrado. */}
+                  <img
+                    src={empresa.logo}
+                    alt={empresa.alt ?? empresa.nombre}
+                    loading="lazy"
+                    className="max-h-full max-w-full object-contain"
+                    style={
+                      empresa.escala
+                        ? { scale: String(empresa.escala) }
+                        : undefined
+                    }
+                  />
+                </div>
               </div>
-            ) : (
-              <div
-                key={`${empresa.nombre}-${i}`}
-                className="border-border bg-surface text-muted hover:text-fg hover:border-magenta/40 relative grid h-32 w-72 shrink-0 place-items-center rounded-2xl rounded-br-none border px-6 text-center text-base font-semibold transition-colors duration-300"
-                // Solo la primera mitad se anuncia: la segunda es duplicado visual.
-                aria-hidden={i >= EMPRESAS.length}
-              >
-                <span className="bg-magenta/50 absolute inset-x-6 bottom-0 h-px" />
-                {empresa.nombre}
-              </div>
-            ),
-          )}
+            );
+          })}
         </div>
       </div>
 
