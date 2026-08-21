@@ -91,10 +91,13 @@ function DesktopShapes() {
           size={62}
           className="anim-tumble absolute top-[36%] right-[11%]"
         />
+        {/* solo-alto: cae dentro del ancho del wordmark, así que lo único
+            que lo separa del texto es el aire de arriba. Con el hero ajustado
+            para entrar en ventanas bajas ese aire desaparece. */}
         <Zigzag
           color="green"
           size={70}
-          className="anim-sway-reverse absolute top-[9%] left-[22%]"
+          className="anim-sway-reverse solo-alto absolute top-[9%] left-[22%]"
         />
         <div className="absolute top-[6%] right-[26%] text-white/85">
           <Squiggle className="w-14" />
@@ -112,11 +115,16 @@ function DesktopShapes() {
           className="anim-sway absolute top-[11%] left-[6%]"
         />
         {/* Subido de top-[13%]: en ventanas de 700px de alto el título arranca
-            en y=169 y esta pieza le entraba por abajo. */}
+            en y=169 y esta pieza le entraba por abajo.
+
+            solo-alto: al girar mide 104px y su caja siempre pisa el ancho del
+            wordmark —la relación es la misma en todo ancho, porque el h1 es
+            12vw y el offset un %—, así que lo único que los separa es el aire
+            vertical. A 593px de alto no queda nada de ese aire. */}
         <Plus
           color="lilac"
           size={74}
-          className="anim-float-spin absolute top-[6%] right-[19%]"
+          className="anim-float-spin solo-alto absolute top-[6%] right-[19%]"
         />
         <Plus
           color="lilac"

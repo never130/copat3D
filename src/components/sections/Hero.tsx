@@ -30,7 +30,25 @@ export function Hero() {
     // medía 698px contra los 667 de un iPhone SE y no entraba, lo que dejaba
     // su parte inferior inalcanzable al quedar pegado. Con pt-24/pb-12 entra
     // y el efecto funciona en todos los tamaños.
-    <section className="brand-canvas sticky top-0 z-0 flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 pt-20 pb-9 sm:pt-28 sm:pb-16">
+    //
+    // Arriba de sm el espaciado va en svh y no en valores fijos: la notebook
+    // es ANCHA pero BAJA (1366×768 deja ~625px de viewport, y 1920×1080 al
+    // 150% de escalado deja ~590), así que los `sm:` fijos daban un hero de
+    // 675px que tampoco entraba — el mismo bug que en mobile pero por el lado
+    // que nadie mira. Los máximos de cada clamp son los valores de antes: en
+    // una ventana de 1080px de alto no cambia absolutamente nada.
+    //
+    // Los dos paddings NO son simétricos ni fluidos, y no es un descuido:
+    // cada uno reserva algo concreto. Arriba, los 78px del navbar fijo (por
+    // eso el mínimo del clamp es 5rem y no puede bajar). Abajo, los 63px del
+    // indicador de scroll, que está en `absolute` y no ocupa lugar en el
+    // flujo: como el bloque de texto se centra en la caja de padding, si pb
+    // se achica el texto BAJA y se le monta encima. A 1280×593 quedaban 1px.
+    //
+    // Abajo de 560px de alto el indicador se oculta (ver más abajo), así que
+    // reservarle lugar sería regalar 72px que ahí no sobran: pb vuelve al
+    // valor de mobile.
+    <section className="brand-canvas sticky top-0 z-0 flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 pt-20 pb-9 sm:pt-[clamp(5rem,11svh,7rem)] sm:pb-18 sm:[@media(max-height:560px)]:pb-9">
       <ShapeField />
 
       {/* Realce detrás del wordmark: blanco tipo "luz suave" en claro,
@@ -41,7 +59,7 @@ export function Hero() {
 
       <div className="relative z-10 flex flex-col items-center text-center">
         <p
-          className="hero-rise mb-3 font-mono text-xs font-medium tracking-[0.25em] text-white/85 uppercase sm:mb-6"
+          className="hero-rise mb-3 font-mono text-xs font-medium tracking-[0.25em] text-white/85 uppercase sm:mb-[clamp(0.75rem,2.4svh,1.5rem)]"
           style={{ "--hero-delay": "0ms" } as React.CSSProperties}
         >
           Fin del Mundo · Tierra del Fuego AeIAS
@@ -59,7 +77,7 @@ export function Hero() {
         </h1>
 
         <p
-          className="hero-rise mt-3 max-w-2xl text-balance text-base text-white/90 sm:mt-6 sm:text-lg"
+          className="hero-rise mt-3 max-w-2xl text-balance text-base text-white/90 sm:mt-[clamp(0.75rem,2.4svh,1.5rem)] sm:text-lg"
           style={{ "--hero-delay": "180ms" } as React.CSSProperties}
         >
           Congreso Patagónico de Impresión 3D, Fabricación Digital e Innovación
@@ -70,7 +88,7 @@ export function Hero() {
             contraste sobre el lienzo en los dos modos (medido: 3.7:1 en
             claro, 13:1 en oscuro — coral no llega a 3:1 en claro). */}
         <p
-          className="hero-rise font-display mt-4 text-[clamp(1.25rem,3.6vw,2.25rem)] font-bold text-white italic sm:mt-8"
+          className="hero-rise font-display mt-4 text-[clamp(1.25rem,3.6vw,2.25rem)] font-bold text-white italic sm:mt-[clamp(1rem,3.2svh,2rem)]"
           style={{ "--hero-delay": "260ms" } as React.CSSProperties}
         >
           Diseñando el futuro{" "}
@@ -78,7 +96,7 @@ export function Hero() {
         </p>
 
         <div
-          className="hero-rise mt-6 flex flex-wrap items-center justify-center gap-2 sm:mt-10 sm:gap-3"
+          className="hero-rise mt-6 flex flex-wrap items-center justify-center gap-2 sm:mt-[clamp(1.5rem,4svh,2.5rem)] sm:gap-3"
           style={{ "--hero-delay": "340ms" } as React.CSSProperties}
         >
           <Chip
@@ -118,7 +136,7 @@ export function Hero() {
         </div>
 
         <div
-          className="hero-rise mt-6 flex flex-col gap-3 sm:mt-11 sm:flex-row"
+          className="hero-rise mt-6 flex flex-col gap-3 sm:mt-[clamp(1.5rem,4.4svh,2.75rem)] sm:flex-row"
           style={{ "--hero-delay": "420ms" } as React.CSSProperties}
         >
           <Link
@@ -138,8 +156,14 @@ export function Hero() {
 
       {/* Indicador de scroll. Antes era el contorno de un mouse, que no se
           entendía a ese tamaño y encima no significa nada en un celular.
-          Un chevron con la acción escrita se lee en cualquier dispositivo. */}
-      <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 text-white/75">
+          Un chevron con la acción escrita se lee en cualquier dispositivo.
+
+          Por debajo de 560px de alto se oculta: ahí el navbar (78px) más el
+          bloque de texto ya no dejan lugar para los 63px del indicador, y
+          prefiere desaparecer antes que pisar los botones. Son ventanas más
+          bajas que cualquier notebook (la más chica, 1080p al 150%, da 590);
+          el caso real es un celular acostado. */}
+      <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 text-white/75 [@media(max-height:560px)]:hidden">
         <span className="font-mono text-[10px] tracking-[0.2em] uppercase">
           Seguí bajando
         </span>

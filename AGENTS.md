@@ -218,6 +218,17 @@ Mismo problema que el alto (trampa ya conocida) pero en los *paddings verticales
 
 **Piso de soporte: 360px de ancho** (el mínimo real del mercado hoy; iPhone SE 1ª gen y otros de 320px están discontinuados desde 2018 y se aceptan como degradación conocida, no como bug a perseguir). Al tocar el contenido del hero, volvé a correr `hero-movil.mjs` o equivalente en 375×667 como mínimo — no alcanza con mirarlo en desktop achicando la ventana, porque `svh` se comporta distinto en un navegador de escritorio que en uno móvil real.
 
+**Y el mismo problema existe en notebook, que es donde nadie lo busca.** La notebook es ANCHA pero BAJA: un 1366×768 deja ~625px de viewport y un 1920×1080 al 150% de escalado de Windows deja ~590. Con el espaciado `sm:` fijo el hero medía 675px, así que no entraba — y como es `sticky top-0`, un hero más alto que la ventana **queda pegado arriba y su parte inferior no se puede ver nunca**: los dos botones y el indicador de scroll quedaban cortados. Por eso el espaciado `sm:` va en `svh` con `clamp()` y no en valores fijos; los máximos son los de siempre, o sea que en 1920×1080 no cambia nada.
+
+Los dos paddings del hero **no son simétricos**, y no es un descuido: cada uno reserva algo concreto.
+
+- `pt` (mínimo 5rem) reserva los **78px del navbar fijo**. No puede bajar de ahí.
+- `pb` (4.5rem) reserva los **63px del indicador de scroll**. El indicador es `absolute` y no ocupa lugar en el flujo, pero el bloque de texto se **centra** en la caja de padding: si `pb` se achica, el texto BAJA y se le monta encima. A 1280×593 llegaron a quedar 1px.
+
+**Piso de soporte en alto: 560px.** Abajo de eso el indicador se oculta —no hay lugar para navbar + texto + indicador— y el hero puede pasarse unos pocos píxeles. Es más bajo que cualquier notebook; el caso real es un celular acostado.
+
+Y al ajustar el hero, **volvé a medir las figuras**: mover el bloque de texto cambia todas las holguras. Las que están en la banda superior fueron las primeras en chocar (trampa 0.b), y las dos que caen dentro del ancho del wordmark terminaron con `solo-alto`.
+
 ### 15. Figuras de margen: `overflow-x: clip`, nunca `hidden`
 
 Las wireframe de `WireMargins` se posicionan **fuera** de la caja del contenido (`-left-32` / `-right-32`), así que el ancestro necesita recortar o generan scroll horizontal.
@@ -273,11 +284,28 @@ Por eso llevan `fondo: "blanco"` y la tarjeta va en `bg-white` **exacto**, no
 `bg-surface`: se midieron las cuatro esquinas de ambos archivos y son
 `#FFFFFF` puro. Con cualquier otro tono se marca el borde del rectángulo.
 
-Ese blanco exacto es además lo que permite el campo `escala`: Rayuela trae un
-34% de margen blanco incrustado arriba y abajo (la tinta es 840×216 dentro de
-un archivo de 1024×683), así que sin ampliarlo se vería a un tercio del tamaño
-de los demás. Lo que se recorta al ampliar es blanco puro contra tarjeta
-blanca: invisible.
+Ese blanco exacto es además lo que permite el campo `escala`, que amplía el
+logo para compensar el margen que trae incrustado el archivo: lo que se recorta
+al ampliar es blanco puro contra tarjeta blanca, o sea invisible.
+
+**Pero ampliar por CSS es el plan B, no el primero.** El arte que manda un
+sponsor suele venir con las dos cosas juntas —margen incrustado *y* un fondo
+que no es blanco puro—, y ahí la escala juega en contra: agrandar un fondo
+#F7F7F7 solo agranda el recuadro gris. Pasó con el logo de Rayuela Río Grande:
+1600×900 con el badge ocupando el 42% del alto y fondo #F7F7F7 uniforme.
+
+Lo que se hace es **normalizar el archivo**, no compensarlo desde el componente:
+
+1. Recortar a la caja de tinta (mide los píxeles, no lo hagas a ojo).
+2. Pasar el fondo a #FFFFFF con un **relleno por inundación desde el borde**,
+   nunca con un test de color global: el texto claro de adentro del logo puede
+   estar a menos de 30 de distancia del gris de fondo y un test global le hace
+   agujeros. Desde el borde no puede llegar ahí si el arte lo encierra.
+3. Bajar la resolución a ~3x de lo que se muestra (la tarjeta lo pinta a 224px
+   de ancho; 1228px eran 5,5x y triplicaban el peso del archivo).
+
+Al terminar, verificá las cuatro esquinas: si no dan #FFFFFF, la tarjeta va a
+mostrar el recuadro.
 
 ### 19. `h-full w-full object-contain` funciona con SVG por accidente
 
@@ -302,6 +330,27 @@ La forma que funciona con los dos:
 > la tarjeta. Que *parezca* bien en una captura no alcanza: el desborde puede
 > quedar oculto por el `overflow-hidden` y aparecer recién con otra proporción.
 
+### 20. `animation-timeline: none` en el reset de `prefers-reduced-motion` apaga el sitio entero
+
+Es la trampa más cara de todas: la página quedaba **completamente en blanco** —solo el fondo, con el navbar y el footer visibles— en cualquier máquina con el movimiento reducido activado. Windows lo prende solo al entrar en ahorro de batería, así que pasaba en notebooks y no en la PC de escritorio ni en el celular. Se reportó como "en algunas pantallas no cargan los elementos".
+
+El reset global tenía, además de acortar duraciones, esto:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  * { animation-timeline: none !important; }  /* ❌ */
+}
+```
+
+Una animación **sin línea de tiempo tiene tiempo actual nulo: no corre nunca**. Y con relleno `both`, lo que el navegador pinta mientras tanto es su fotograma **inicial**, no el final. Como `.paper` —el contenedor de toda la vista, en `template.tsx`— entra desde `opacity: 0`, se quedaba en 0 para siempre. Lo mismo `.hero-rise` y el menú móvil. Navbar y footer se salvaban solo porque viven en `layout.tsx`, fuera del `.paper`.
+
+Lo que queda de esto:
+
+1. **Las animaciones atadas al scroll se anulan una por una** (`.plane-*`, `.wire-dibujo svg`), con `animation: none !important` más su propiedad de reposo. Nunca con un `animation-timeline` global.
+2. **Las animaciones de entrada escriben su estado final explícito** bajo movimiento reducido, en vez de confiar en que una duración de 0.01ms las haga llegar sola. Cualquier cosa que impida que la animación corra deja el fotograma inicial, que en todas ellas es opacidad 0.
+3. `animation-delay: 0s !important` también va en el reset: con relleno `both`, mientras dura el delay el elemento sigue invisible. Los 420ms escalonados del hero se veían como un parpadeo en blanco.
+4. **Toda verificación visual se corre en los dos modos.** Con Playwright, `newContext({ reducedMotion: "reduce" })`. Un chequeo que solo mira el modo normal no habría visto nada de esto.
+
 ## Convenciones
 
 - **Tailwind v4 con configuración CSS-first.** No hay `tailwind.config.js`; los tokens se definen en `@theme` dentro de `globals.css`.
@@ -324,6 +373,11 @@ const browser = await chromium.launch({ channel: "msedge", headless: true });
 ```
 
 Sirve para leer clases, opacidad computada y posición durante el scroll. No está instalado como dependencia; instalalo fuera del repo si lo necesitás puntualmente.
+
+**Dos ejes que hay que cubrir sí o sí**, porque ahí se escondieron los dos bugs que llegaron a producción:
+
+- **`reducedMotion: "reduce"`** además del modo normal (trampa 20).
+- **Ventanas anchas y BAJAS**, no solo angostas: 1366×625 y 1280×593 son notebooks reales (trampa 14). Achicar el ancho en el escritorio no las reproduce.
 
 ## Decisiones abiertas (requieren respuesta de la AIF)
 

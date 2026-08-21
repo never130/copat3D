@@ -712,10 +712,10 @@
   }
 }
 
-/* La deriva se anula explícitamente y no alcanza con el
-   `animation-timeline: none` global: sin línea de tiempo, la animación pasa a
-   ser temporal con duración ~0 y relleno `both`, o sea que salta al fotograma
-   final y deja las figuras corridas para siempre. */
+/* La deriva se anula explícitamente: el reset de `prefers-reduced-motion`
+   fuerza `animation-duration: 0.01ms`, que en una animación atada a `view()`
+   —y sin duración propia— la vuelve temporal, salta al fotograma final y deja
+   las figuras corridas para siempre. Mismo caso que `.plane-*`. */
 @media (prefers-reduced-motion: reduce) {
   .wire-dibujo svg {
     animation: none !important;
@@ -1027,14 +1027,56 @@
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
+  /* ⚠️ Acá NO va `animation-timeline: none`, por más que parezca la forma
+     correcta de desactivar el scroll-driven. Una animación sin línea de tiempo
+     tiene tiempo actual nulo: no corre NUNCA y, con relleno `both`, el
+     navegador muestra su fotograma INICIAL para siempre. Como `.paper` —el
+     contenedor de la vista entera— entra desde `opacity: 0`, la página
+     quedaba invisible salvo el navbar y el footer, que viven en el layout.
+     Las animaciones atadas al scroll se anulan una por una más abajo. */
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    /* El retardo también: con relleno `both`, mientras dura el delay el
+       elemento sigue en su fotograma inicial. Los 420ms escalonados del hero
+       se veían como un parpadeo en blanco. */
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.12s !important;
     scroll-behavior: auto !important;
-    animation-timeline: none !important;
+  }
+
+  /* Animaciones de ENTRADA: se anulan y el elemento queda en su estado final,
+     visible. No alcanza con acortar la duración —cualquier cosa que impida que
+     la animación corra deja el fotograma inicial, que en todas estas es
+     opacidad 0—, así que el estado visible se escribe explícito en vez de
+     depender de que el relleno haga su trabajo. */
+  .paper,
+  .hero-rise,
+  .menu-movil,
+  .menu-movil li {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* El canto de luz es puro movimiento y termina en opacidad 0: sin animación
+     no tiene nada que mostrar. */
+  .paper::before {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+
+  /* Parallax del hero: atado a `animation-timeline: scroll()`. Sin anularlo,
+     el reset de duración de arriba lo vuelve una animación temporal de 0.01ms
+     que salta al fotograma final y deja las figuras corridas hasta 280px de su
+     lugar. Mismo caso que `.wire-dibujo svg`. */
+  .plane-back,
+  .plane-mid,
+  .plane-front {
+    animation: none !important;
+    transform: none !important;
   }
 
   /* Las hojas quedan apoyadas y a plena opacidad: sin movimiento, pero

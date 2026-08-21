@@ -51,12 +51,15 @@ const EMPRESAS: Empresa[] = [
   },
   {
     nombre: "Rayuela",
+    alt: "Rayuela Río Grande",
     logo: "/logos/rayuela.jpg",
     fondo: "blanco",
-    // El archivo mide 1024×683 pero la tinta ocupa apenas 840×216 centrados:
-    // un 34% del alto es margen blanco arriba y otro tanto abajo. Sin ampliar,
-    // el logotipo se vería a un tercio del tamaño de los demás.
-    escala: 2.4,
+    // Sin `escala`: el archivo viene recortado al borde del badge rojo, así
+    // que `object-contain` ya lo lleva al ancho completo de la tarjeta. El
+    // arte original (rayuela2.jpg, 1600×900) trae el badge centrado con 58%
+    // de margen y fondo #F7F7F7 — no blanco puro. Los dos problemas se
+    // resolvieron en el archivo y no acá: ampliar por CSS un fondo gris solo
+    // agranda el recuadro gris. Ver trampa 18.
   },
   { nombre: "Fábrica de Talentos" },
   { nombre: "UNTDF" },
