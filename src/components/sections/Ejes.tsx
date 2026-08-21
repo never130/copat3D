@@ -5,6 +5,7 @@ import {
   WireOctahedron,
   WirePrism,
 } from "@/components/shapes/wire";
+import { Tarjeta3D } from "@/components/ui/Tarjeta3D";
 import { EJES } from "@/content/ejes";
 
 /**
@@ -16,31 +17,35 @@ import { EJES } from "@/content/ejes";
  */
 const ACCENT: Record<
   string,
-  { text: string; bg: string; borderHover: string; glow: string }
+  { text: string; bg: string; borderHover: string; glow: string; luz: string }
 > = {
   "copat-coral": {
     text: "text-copat-coral",
     bg: "bg-copat-coral",
     borderHover: "group-hover:border-copat-coral/45",
     glow: "group-hover:shadow-copat-coral/20",
+    luz: "color-mix(in srgb, var(--color-copat-coral) 15%, transparent)",
   },
   "copat-sky": {
     text: "text-copat-sky",
     bg: "bg-copat-sky",
     borderHover: "group-hover:border-copat-sky/45",
     glow: "group-hover:shadow-copat-sky/20",
+    luz: "color-mix(in srgb, var(--color-copat-sky) 15%, transparent)",
   },
   "copat-yellow": {
     text: "text-copat-yellow",
     bg: "bg-copat-yellow",
     borderHover: "group-hover:border-copat-yellow/45",
     glow: "group-hover:shadow-copat-yellow/20",
+    luz: "color-mix(in srgb, var(--color-copat-yellow) 15%, transparent)",
   },
   "copat-green": {
     text: "text-copat-green",
     bg: "bg-copat-green",
     borderHover: "group-hover:border-copat-green/45",
     glow: "group-hover:shadow-copat-green/20",
+    luz: "color-mix(in srgb, var(--color-copat-green) 15%, transparent)",
   },
 };
 
@@ -140,54 +145,71 @@ export function Ejes() {
               className="sheet"
               style={{ "--sheet-delay": `${i * 90}ms` } as React.CSSProperties}
             >
-              <article
-                // `translate` y no `transform` en la lista de transición:
-                // Tailwind v4 anima -translate-y con la propiedad `translate`,
-                // así que declarar `transform` deja el lift SIN transición y
-                // el hover salta de golpe. Ver trampa 11 de AGENTS.md.
-                // Curva `ease-out` y no out-expo: la expo arranca demasiado
-                // rápido y en un gesto de hover se siente brusca.
-                className={`group border-border bg-surface relative h-full overflow-hidden rounded-3xl rounded-br-none border pt-8 pr-8 pb-10 pl-8 transition-[translate,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_var(--paper-shadow)] ${a.borderHover}`}
-              >
-                {/* Número sangrando fuera del recorte, como en el afiche */}
-                <span
-                  className={`font-display pointer-events-none absolute -top-6 -right-2 text-[8rem] leading-none font-black ${a.text} opacity-[0.07] transition-opacity duration-500 group-hover:opacity-[0.16]`}
-                  aria-hidden="true"
+              <Tarjeta3D>
+                <article
+                  // Sin clases `transition-*` de Tailwind: las transiciones de
+                  // esta tarjeta se declaran en `.tarjeta-3d > *` de globals.css,
+                  // que al estar fuera de `@layer` le gana igual a las utilidades
+                  // (trampa 10). Tenerlas en los dos lados dejaba la mitad sin
+                  // efecto en silencio.
+                  style={{ "--luz-color": a.luz } as React.CSSProperties}
+                  className={`group border-border bg-surface relative h-full overflow-hidden rounded-3xl rounded-br-none border pt-8 pr-8 pb-10 pl-8 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_var(--paper-shadow)] ${a.borderHover}`}
                 >
-                  {eje.numero}
-                </span>
+                  {/* Luz que sigue al puntero, con el acento del eje */}
+                  <span
+                    className="luz-tarjeta pointer-events-none absolute inset-0"
+                    aria-hidden="true"
+                  />
 
-                <div className="relative">
-                  <p
-                    className={`font-mono text-xs font-bold tracking-[0.2em] ${a.text}`}
+                  {/* Número sangrando fuera del recorte, como en el afiche.
+                    Se corre en sentido CONTRARIO a la inclinación: ese desfase
+                    entre planos es lo que se lee como profundidad. No puede
+                    hacerse con `translateZ` porque el `overflow-hidden` de la
+                    tarjeta —que es el que recorta el número— fuerza a aplanar
+                    el contexto 3D. */}
+                  <span
+                    className={`font-display pointer-events-none absolute -top-6 -right-2 text-[8rem] leading-none font-black ${a.text} opacity-[0.07] transition-opacity duration-500 group-hover:opacity-[0.16]`}
+                    style={{
+                      translate:
+                        "calc(var(--ry, 0deg) / 1deg * -1.1px) calc(var(--rx, 0deg) / 1deg * 1.1px)",
+                    }}
+                    aria-hidden="true"
                   >
-                    EJE {eje.numero}
-                  </p>
-                  <h3 className="mt-3 max-w-[15ch] text-2xl">{eje.titulo}</h3>
-                  <p className="text-muted mt-3 max-w-[42ch] leading-relaxed">
-                    {eje.descripcion}
-                  </p>
-                  <ul className="mt-6 flex max-w-[38ch] flex-wrap gap-2">
-                    {eje.temas.map((tema) => (
-                      <li
-                        key={tema}
-                        className="border-border bg-surface-2 text-muted rounded-full border px-3 py-1.5 text-xs font-medium"
-                      >
-                        {tema}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                    {eje.numero}
+                  </span>
 
-                <Capas color={a.bg} />
+                  <div className="relative">
+                    <p
+                      className={`font-mono text-xs font-bold tracking-[0.2em] ${a.text}`}
+                    >
+                      EJE {eje.numero}
+                    </p>
+                    <h3 className="mt-3 max-w-[15ch] text-2xl">{eje.titulo}</h3>
+                    <p className="text-muted mt-3 max-w-[42ch] leading-relaxed">
+                      {eje.descripcion}
+                    </p>
+                    <ul className="mt-6 flex max-w-[38ch] flex-wrap gap-2">
+                      {eje.temas.map((tema) => (
+                        <li
+                          key={tema}
+                          className="border-border bg-surface-2 text-muted rounded-full border px-3 py-1.5 text-xs font-medium"
+                        >
+                          {tema}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
 
-                {/* Plato de la impresora: la base de color sobre la que se
+                  <Capas color={a.bg} />
+
+                  {/* Plato de la impresora: la base de color sobre la que se
                     apoya la pieza. Crece de un lado al pasar el mouse. */}
-                <span
-                  className={`absolute inset-x-0 bottom-0 h-[3px] ${a.bg} origin-left scale-x-[0.18] transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-x-100`}
-                  aria-hidden="true"
-                />
-              </article>
+                  <span
+                    className={`absolute inset-x-0 bottom-0 h-[3px] ${a.bg} origin-left scale-x-[0.18] transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-x-100`}
+                    aria-hidden="true"
+                  />
+                </article>
+              </Tarjeta3D>
             </div>
           );
         })}

@@ -57,14 +57,14 @@ Decisiones explícitas de recorte, con su motivo:
 | Descartado del MVP | Motivo |
 |---|---|
 | Sincronización bidireccional con API de Eventbrite | Alto costo de integración y debugging para beneficio marginal. Se resuelve con enlace/embed. Ver [03-arquitectura](03-arquitectura.md). |
-| Motor WebGL (React Three Fiber) con física por figura | Semanas de ajuste fino + costo de performance en mobile. Se logra el mismo impacto visual con SVG + CSS. Ver [02-design-system](02-design-system.md). |
+| Motor WebGL (React Three Fiber) con física por figura | Semanas de ajuste fino + costo de performance en mobile. Se logra el mismo impacto visual con SVG + CSS. **Medido (ago/2026):** R3F con drei agrega 261 KB gzip sobre los 247 KB que pesa hoy el sitio entero — lo más que duplica. Y como el arte de marca es facetado plano, se vería casi igual pero con un loop de render permanente. Ver [02-design-system](02-design-system.md). |
 | Panel de administración de contenido (CMS) | Con un solo evento y contenido acotado, el contenido vive en archivos versionados. |
 | Login / cuentas de usuario | El registro no requiere sesión persistente. |
 | Streaming propio | Se delega en plataforma externa (YouTube / Meet). |
 
 ## Restricción dominante: el calendario
 
-Hoy es **15 de agosto de 2026**. El evento es el **2 de octubre**. Son **~7 semanas**, y en ese plazo no solo hay que programar: hay que **cargar contenido real** (speakers confirmados, agenda definitiva, logos de sponsors) que depende de terceros y llega tarde por naturaleza.
+Hoy es **20 de agosto de 2026**. El evento es el **2 de octubre**. Son **6 semanas**, y en ese plazo no solo hay que programar: hay que **cargar contenido real** (speakers confirmados, agenda definitiva, logos de sponsors) que depende de terceros y llega tarde por naturaleza.
 
 Consecuencia de diseño: **el sitio debe funcionar y verse bien con contenido incompleto**. Estados como "Agenda en construcción" o "Speakers próximamente" son parte del diseño, no un error.
 

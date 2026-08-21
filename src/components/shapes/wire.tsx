@@ -6,8 +6,14 @@
  * lectura de plano CAD / modelado 3D. Las figuras rellenas solo tienen las
  * caras visibles, así que necesitan geometría propia.
  *
- * Son ESTÁTICAS a propósito: viven al costado del contenido mientras se lee,
- * y cualquier movimiento ahí distrae. Las animadas son las del hero.
+ * No tienen movimiento continuo, a propósito: viven al costado del contenido
+ * mientras se lee, y algo que se mueve ahí distrae. Las que flotan sin parar
+ * son las del hero.
+ *
+ * Sí se **dibujan una vez** al entrar en pantalla, con el trazo avanzando como
+ * el cabezal de una impresora —la metáfora de la marca—. Es un gesto de una
+ * sola vía: termina y queda quieto, así que no compite con la lectura. El
+ * disparador es el mismo `.sheet-in` del pase de hojas.
  *
  * Usan `currentColor`, así que el color se controla desde el padre con
  * utilidades `text-*`.
@@ -220,7 +226,7 @@ export function WireMargins({
     // (que no se solape con texto ni genere scroll horizontal).
     <div
       data-wire
-      className={`pointer-events-none absolute inset-0 ${className}`}
+      className={`wire-dibujo pointer-events-none absolute inset-0 ${className}`}
       aria-hidden="true"
     >
       {children}

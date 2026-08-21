@@ -70,7 +70,7 @@ Es la **decisión abierta #1** de [01-visión](01-vision-y-alcance.md) y define 
 |---|---|---|
 | **A. Nativo (implementado)** | Form propio → Neon. Control total de los datos, métricas provinciales, export CSV. Requiere resolver acreditación en puerta a mano o con QR propio. | La AIF quiere la base de contactos para networking y estadística provincial. |
 | **B. Solo Eventbrite** | Embed del widget. Cero backend, QR y check-in resueltos. Los datos quedan en una plataforma externa (EE.UU.). | Solo importa gestionar el acceso el día del evento. |
-| **C. Dual sincronizado** | Ambos + webhooks. **Descartada para el MVP**: el costo de integración y debugging no se justifica en 7 semanas. | Nunca, en este plazo. |
+| **C. Dual sincronizado** | Ambos + webhooks. **Descartada para el MVP**: el costo de integración y debugging no se justifica en el plazo que queda. | Nunca, en este plazo. |
 
 **Implementación actual: opción A**, con un botón secundario que enlaza a Eventbrite como canal alternativo. Es la decisión reversible: si la AIF define que alcanza Eventbrite, se borra una Server Action y una tabla. Al revés (empezar con Eventbrite y después querer los datos) implica perder todos los registros ya cargados.
 

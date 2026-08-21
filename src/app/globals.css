@@ -532,6 +532,111 @@
 }
 
 /* ============================================================
+   TRAZADO DE LAS FIGURAS WIREFRAME
+   Se dibujan una vez al entrar en pantalla, como el cabezal de
+   una impresora recorriendo el contorno. Una sola vía: terminan
+   y quedan quietas, sin competir con la lectura.
+   ============================================================ */
+
+/* `stroke-dasharray` grande y fijo en lugar de `pathLength="1"`: normalizar
+   exige el atributo en CADA <path>, y son decenas repartidos en seis figuras.
+   Con los viewBox de 100-120 unidades ningún trazo llega a 1000, así que
+   alcanza de sobra. Efecto lateral bienvenido: los trazos cortos terminan
+   antes que los largos, y el dibujo se siente hecho a mano en vez de
+   sincronizado. */
+.js-sheets .wire-dibujo path:not([stroke-dasharray]) {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  transition: stroke-dashoffset 1.5s var(--ease-out-expo);
+}
+
+.js-sheets .wire-dibujo.sheet-in path:not([stroke-dasharray]) {
+  stroke-dashoffset: 0;
+}
+
+/* Las aristas ocultas ya usan `stroke-dasharray` para verse punteadas, así
+   que no se pueden trazar sin perder el punteado. Aparecen atenuándose
+   DESPUÉS del contorno: primero la silueta, después la estructura interna,
+   que es el orden en que se lee un plano. */
+.js-sheets .wire-dibujo path[stroke-dasharray] {
+  opacity: 0;
+  transition: opacity 0.7s ease-out 0.85s;
+}
+
+.js-sheets .wire-dibujo.sheet-in path[stroke-dasharray] {
+  /* Mismo valor que el atributo `opacity` de `oculta` en wire.tsx. */
+  opacity: 0.5;
+}
+
+/* ============================================================
+   TARJETAS CON INCLINACIÓN 3D
+   La tarjeta se inclina siguiendo al puntero y una luz se mueve
+   con él. El JS solo escribe --rx/--ry/--mx/--my; todo lo demás
+   lo resuelve el compositor.
+   Ver components/ui/Tarjeta3D.tsx
+   ============================================================ */
+
+.tarjeta-3d {
+  /* Sin `perspective` la rotación es una deformación plana, no una
+     inclinación. Cuanto más chico el valor, más exagerada la fuga: 1000px
+     sobre una tarjeta de ~560px da profundidad sin que se note el truco. */
+  perspective: 1000px;
+  height: 100%;
+}
+
+/* Las transiciones de la tarjeta se declaran ACÁ y no con utilidades de
+   Tailwind, por la trampa 10: esta regla está fuera de todo `@layer` y le
+   gana a cualquier utilidad. Tenerlas en los dos lados dejaba la mitad sin
+   efecto de forma silenciosa. */
+.tarjeta-3d > * {
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition:
+    transform 520ms var(--ease-out-expo),
+    translate 300ms ease-out,
+    border-color 300ms ease-out,
+    box-shadow 300ms ease-out;
+}
+
+/* Mientras el puntero está encima, el seguimiento tiene que ser inmediato.
+   Con la transición larga la tarjeta persigue al mouse con retraso y se
+   siente elástica, no sólida. La transición vuelve al salir, y por eso el
+   atributo se saca ANTES de poner los ángulos en cero. */
+.tarjeta-3d[data-siguiendo="true"] > * {
+  transition:
+    transform 90ms linear,
+    translate 300ms ease-out,
+    border-color 300ms ease-out,
+    box-shadow 300ms ease-out;
+}
+
+/* Luz que sigue al puntero. Queda por debajo del contenido —el contenido va
+   en un contexto `relative`— así que ilumina sin lavar el texto. */
+.luz-tarjeta {
+  background: radial-gradient(
+    380px circle at var(--mx, 50%) var(--my, 50%),
+    var(--luz-color, transparent),
+    transparent 62%
+  );
+  opacity: 0;
+  transition: opacity 320ms ease-out;
+}
+
+.group:hover .luz-tarjeta {
+  opacity: 1;
+}
+
+/* Sin puntero fino no hay inclinación posible: en una pantalla táctil el
+   hover ocurre recién al tocar, o sea justo cuando el dedo tapa la tarjeta. */
+@media (hover: none), (pointer: coarse) {
+  .tarjeta-3d > * {
+    transform: none;
+  }
+  .luz-tarjeta {
+    display: none;
+  }
+}
+
+/* ============================================================
    CARROUSEL DE SPONSORS
    ============================================================ */
 
@@ -786,5 +891,22 @@
     opacity: 1 !important;
     transform: none !important;
     clip-path: none !important;
+  }
+
+  /* La inclinación es movimiento disparado por el puntero, justo lo que esta
+     preferencia pide evitar. La luz se queda: es un cambio de color, no de
+     posición, y no marea a nadie. */
+  .tarjeta-3d > * {
+    transform: none !important;
+  }
+
+  /* Las figuras aparecen dibujadas de entrada. Sin esto quedarían a medio
+     trazar para siempre, que es peor que no tener el efecto. */
+  .js-sheets .wire-dibujo path {
+    stroke-dashoffset: 0 !important;
+    opacity: 1 !important;
+  }
+  .js-sheets .wire-dibujo path[stroke-dasharray] {
+    opacity: 0.5 !important;
   }
 }

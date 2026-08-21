@@ -25,8 +25,11 @@ import { useEffect } from "react";
 export function SheetMotion() {
   useEffect(() => {
     const root = document.documentElement;
+    // Se observan también las figuras wireframe: usan el mismo `.sheet-in`
+    // como disparador, así hay un solo observer para toda la página en vez
+    // de dos recorriendo el DOM por separado.
     const sheets = Array.from(
-      document.querySelectorAll<HTMLElement>(".sheet"),
+      document.querySelectorAll<HTMLElement>(".sheet, .wire-dibujo"),
     );
     if (sheets.length === 0) return;
 
