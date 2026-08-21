@@ -569,6 +569,93 @@
 }
 
 /* ============================================================
+   TÍTULO QUE SE IMPRIME
+   El h2 se revela con un barrido propio, más lento que el del
+   bloque y arrancando después. Como la máscara sube cruzando un
+   renglón por vez, el título aparece línea por línea.
+   ============================================================ */
+
+/* Se resuelve con una máscara y no partiendo el texto en <span> por línea:
+   eso exigiría medir dónde corta cada renglón en JS y volver a medir en cada
+   resize, para un resultado que a simple vista es el mismo. Además el texto
+   queda entero para copiar, traducir y para el lector de pantalla. */
+.js-sheets .titulo-impreso {
+  /* 96% y no 100%: un elemento de área cero rompe cualquier medición del
+     IntersectionObserver que lo contenga (trampa 9). Con 96% queda invisible
+     igual, porque el bloque padre todavía no abrió su propio clip. */
+  clip-path: inset(96% 0 0 0);
+  transition: clip-path 1.15s var(--ease-out-expo);
+  /* Arranca cuando el bloque ya se apoyó: primero llega la hoja, después se
+     imprime encima. Al revés se pisan y no se distingue ninguno de los dos. */
+  transition-delay: calc(var(--sheet-delay, 0ms) + 260ms);
+}
+
+.js-sheets .sheet-in .titulo-impreso,
+.js-sheets .titulo-impreso.sheet-in {
+  clip-path: inset(0 0 0 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-sheets .titulo-impreso {
+    clip-path: none !important;
+  }
+}
+
+/* ============================================================
+   DERIVA DE LAS FIGURAS DE MARGEN
+   Cada figura se desplaza mientras cruza la pantalla. Las pares
+   van en sentido contrario a las impares: el contramovimiento es
+   lo que se lee como planos a distinta profundidad.
+   ============================================================ */
+
+@supports (animation-timeline: view()) {
+  @keyframes deriva-a {
+    from {
+      translate: 0 36px;
+    }
+    to {
+      translate: 0 -36px;
+    }
+  }
+  @keyframes deriva-b {
+    from {
+      translate: 0 -24px;
+    }
+    to {
+      translate: 0 24px;
+    }
+  }
+
+  /* `view()` y no `scroll()`: el hero usa la línea de tiempo del documento
+     porque sus figuras están fijas en pantalla. Estas viven repartidas por
+     toda la página, y cada una tiene que animarse según SU paso por el
+     viewport, no según cuánto se scrolleó en total.
+
+     Sin `animation-range`: el rango por defecto de `view()` ya es el cruce
+     completo, y la trampa 7 avisa que el minificador de Tailwind v4 reescribe
+     esa propiedad de forma difícil de auditar. */
+  .wire-dibujo svg {
+    animation: deriva-a linear both;
+    animation-timeline: view();
+  }
+
+  .wire-dibujo svg:nth-child(even) {
+    animation-name: deriva-b;
+  }
+}
+
+/* La deriva se anula explícitamente y no alcanza con el
+   `animation-timeline: none` global: sin línea de tiempo, la animación pasa a
+   ser temporal con duración ~0 y relleno `both`, o sea que salta al fotograma
+   final y deja las figuras corridas para siempre. */
+@media (prefers-reduced-motion: reduce) {
+  .wire-dibujo svg {
+    animation: none !important;
+    translate: none !important;
+  }
+}
+
+/* ============================================================
    TARJETAS CON INCLINACIÓN 3D
    La tarjeta se inclina siguiendo al puntero y una luz se mueve
    con él. El JS solo escribe --rx/--ry/--mx/--my; todo lo demás

@@ -15,6 +15,17 @@ import { EJES } from "@/content/ejes";
  * a un costado. El número gigante sangra fuera del recorte, como en el arte
  * original del afiche.
  */
+/**
+ * Acentos por eje.
+ *
+ * `borderHover` usa `hover:` y NO `group-hover:`: la clase `group` está en la
+ * misma tarjeta, y Tailwind compila `group-hover:` a `.group:hover .hijo`, que
+ * solo alcanza a los descendientes. Puesto sobre el propio `.group` no aplica
+ * nunca — el borde de acento estuvo apagado hasta que se midió.
+ *
+ * `glow` y `luz` no son clases sino colores: se inyectan como custom
+ * properties porque Tailwind no puede generar una utilidad por cada mezcla.
+ */
 const ACCENT: Record<
   string,
   { text: string; bg: string; borderHover: string; glow: string; luz: string }
@@ -22,29 +33,29 @@ const ACCENT: Record<
   "copat-coral": {
     text: "text-copat-coral",
     bg: "bg-copat-coral",
-    borderHover: "group-hover:border-copat-coral/45",
-    glow: "group-hover:shadow-copat-coral/20",
+    borderHover: "hover:border-copat-coral/45",
+    glow: "color-mix(in srgb, var(--color-copat-coral) 26%, var(--paper-shadow))",
     luz: "color-mix(in srgb, var(--color-copat-coral) 15%, transparent)",
   },
   "copat-sky": {
     text: "text-copat-sky",
     bg: "bg-copat-sky",
-    borderHover: "group-hover:border-copat-sky/45",
-    glow: "group-hover:shadow-copat-sky/20",
+    borderHover: "hover:border-copat-sky/45",
+    glow: "color-mix(in srgb, var(--color-copat-sky) 26%, var(--paper-shadow))",
     luz: "color-mix(in srgb, var(--color-copat-sky) 15%, transparent)",
   },
   "copat-yellow": {
     text: "text-copat-yellow",
     bg: "bg-copat-yellow",
-    borderHover: "group-hover:border-copat-yellow/45",
-    glow: "group-hover:shadow-copat-yellow/20",
+    borderHover: "hover:border-copat-yellow/45",
+    glow: "color-mix(in srgb, var(--color-copat-yellow) 26%, var(--paper-shadow))",
     luz: "color-mix(in srgb, var(--color-copat-yellow) 15%, transparent)",
   },
   "copat-green": {
     text: "text-copat-green",
     bg: "bg-copat-green",
-    borderHover: "group-hover:border-copat-green/45",
-    glow: "group-hover:shadow-copat-green/20",
+    borderHover: "hover:border-copat-green/45",
+    glow: "color-mix(in srgb, var(--color-copat-green) 26%, var(--paper-shadow))",
     luz: "color-mix(in srgb, var(--color-copat-green) 15%, transparent)",
   },
 };
@@ -125,7 +136,7 @@ export function Ejes() {
         <p className="text-accent-text font-mono text-xs font-medium tracking-[0.25em] uppercase">
           Ejes temáticos
         </p>
-        <h2 className="mt-4 text-[clamp(2rem,6vw,3.5rem)]">
+        <h2 className="titulo-impreso mt-4 text-[clamp(2rem,6vw,3.5rem)]">
           Cuatro frentes donde la fabricación digital ya está trabajando
         </h2>
         <p className="text-muted mt-5 text-lg">

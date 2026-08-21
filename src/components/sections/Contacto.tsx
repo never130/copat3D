@@ -137,7 +137,9 @@ export function Contacto() {
         <p className="text-accent-text font-mono text-xs font-medium tracking-[0.25em] uppercase">
           Contacto
         </p>
-        <h2 className="mt-4 text-[clamp(2rem,6vw,3.5rem)]">Escribinos</h2>
+        <h2 className="titulo-impreso mt-4 text-[clamp(2rem,6vw,3.5rem)]">
+          Escribinos
+        </h2>
         {/* Sin el correo acá: está en el panel de la derecha. Repetirlo en los
             dos lugares obliga a mantener dos copias del mismo dato y le resta
             peso al panel, que queda como un apéndice en vez de la referencia. */}

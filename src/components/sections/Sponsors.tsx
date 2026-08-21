@@ -37,7 +37,11 @@ type Empresa = {
 };
 
 const EMPRESAS: Empresa[] = [
-  { nombre: "Gobierno de Tierra del Fuego", logo: "/logos/gobierno-tdf.svg", fondo: "magenta" },
+  {
+    nombre: "Gobierno de Tierra del Fuego",
+    logo: "/logos/gobierno-tdf.svg",
+    fondo: "magenta",
+  },
   { nombre: "AIF", logo: "/logos/aif-blanco.svg", fondo: "magenta" },
   {
     nombre: "Buena Mezcla",
@@ -75,7 +79,7 @@ export function Sponsors() {
           <p className="text-accent-text font-mono text-xs font-medium tracking-[0.25em] uppercase">
             Acompañan
           </p>
-          <h2 className="mt-4 text-[clamp(2rem,6vw,3.5rem)]">
+          <h2 className="titulo-impreso mt-4 text-[clamp(2rem,6vw,3.5rem)]">
             Empresas e instituciones que construyen el ecosistema
           </h2>
         </div>
@@ -149,7 +153,10 @@ export function Sponsors() {
 
       <div className="mx-auto mt-16 max-w-7xl px-5">
         <div className="sheet hero-gradient grain relative overflow-hidden rounded-[2rem] rounded-tr-none px-8 py-16 text-center sm:px-14">
-          <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <div
+            className="pointer-events-none absolute inset-0"
+            aria-hidden="true"
+          >
             <Zigzag
               color="yellow"
               size={86}

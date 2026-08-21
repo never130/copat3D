@@ -92,7 +92,9 @@ export function Sede() {
         <p className="text-accent-text font-mono text-xs font-medium tracking-[0.25em] uppercase">
           La sede
         </p>
-        <h2 className="mt-4 text-[clamp(2rem,6vw,3.5rem)]">{SEDE.nombre}</h2>
+        <h2 className="titulo-impreso mt-4 text-[clamp(2rem,6vw,3.5rem)]">
+          {SEDE.nombre}
+        </h2>
         <p className="text-muted mt-5 text-lg">
           El polo de formación técnica de la provincia, y el lugar donde vas a
           pasar los dos días del congreso.
@@ -137,7 +139,9 @@ export function Sede() {
             {SERVICIOS.map((servicio, i) => (
               <li
                 key={servicio.id}
-                style={{ "--sheet-delay": `${i * 70}ms` } as React.CSSProperties}
+                style={
+                  { "--sheet-delay": `${i * 70}ms` } as React.CSSProperties
+                }
                 // Sin borde ni fondo propio: la fila se apoya directo sobre el
                 // fondo de la sección, y el único relleno queda en el ícono.
                 className="flex items-start gap-4 py-1.5"
