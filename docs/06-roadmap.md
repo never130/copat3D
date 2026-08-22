@@ -44,10 +44,11 @@ Nada de esto lo puede destrabar el equipo técnico solo. **Son cinco pedidos con
 |---|---|---|---|---|
 | 1 | ⏱️ **Delegar DNS en NIC.ar → Cloudflare** | Gestión | Dominio productivo **y** el envío de correo (Resend necesita verificar el dominio con SPF/DKIM/DMARC) | **Ya.** Propaga en 24-48hs y recién después se verifica el dominio |
 | 2 | ⛔ **Texto legal de consentimiento** | Legales AIF | Publicar el formulario de registro | Semana del 31/8 |
-| 3 | ⛔ **Registro propio vs. Eventbrite** | AIF | Toda la mitad de backend: base, Server Action, mail | **Ya.** Es lo que más trabajo destraba |
+| ~~3~~ | ✅ **Registro propio vs. Eventbrite** | AIF | — | **Resuelta el 18/8: base propia**, con el flujo de Eventbrite copiado (código de reserva + mail). Ver [03](03-arquitectura.md) |
 | 4 | **¿Se ceden datos a sponsors?** | AIF | Cambia el texto del consentimiento (va junto con #2) | Semana del 31/8 |
-| 5 | **¿Fecha de nacimiento exacta o rango etario?** | AIF | Diseño del formulario. Se recomienda **rango**: mismo valor estadístico, mucho menos riesgo legal | Semana del 31/8 |
-| 6 | **¿El DNI es necesario?** | AIF | Solo se justifica si hay control de acceso en puerta | Semana del 31/8 |
+| ~~5~~ | ✅ **¿Fecha de nacimiento exacta o rango etario?** | AIF | — | **Resuelta: fecha completa** (decisión de gestión, no la recomendación técnica). Ver [04](04-datos-y-legales.md) |
+| ~~6~~ | ✅ **¿El DNI es necesario?** | AIF | — | **Resuelta: sí, siempre.** Escala la urgencia de la política para menores de edad |
+| 7 | ⛔ **¿Cómo se inscriben los menores de edad?** | AIF + Legales | Diseño del formulario. Ya no se puede posponer: con fecha de nacimiento completa, cualquier inscripto menor de 18 queda identificado individualmente | **Ya.** Antes de recibir el primer registro |
 
 Dos pendientes menores que también son decisión, no tarea:
 
@@ -124,7 +125,7 @@ Dos pendientes menores que también son decisión, no tarea:
 | Riesgo | Prob. | Impacto | Mitigación |
 |---|---|---|---|
 | **El DNS no se delega a tiempo** | **Alta** | **Alto** | Es el único ítem con espera externa que no se puede comprimir, y ahora además bloquea el correo. Iniciarlo ya |
-| **La AIF demora las decisiones de registro** | **Alta** | **Alto** | Cada semana de demora se come una de las cuatro que quedan para construirlo y probarlo. Si llega la semana del 7/9 sin respuesta, ir a Eventbrite por descarte |
+| **La AIF demora el texto de consentimiento** | **Alta** | **Alto** | Con el registro ya definido, el riesgo se corrió: el formulario se construye igual, pero sin ese texto no se publica. Se puede dejar listo y apagado, aunque cada semana sin él es una semana menos para probarlo con gente real |
 | El contenido (speakers, agenda) llega tarde | **Alta** | Medio | Los estados "próximamente" ya están diseñados; no bloquear el deploy esperando contenido |
 | Legales demora el texto de consentimiento | Media | **Alto** | El formulario se puede tener listo y publicarlo detrás de ese texto |
 | Alcance creciente ("agreguemos un blog…") | Media | Alto | [01-visión](01-vision-y-alcance.md) fija el alcance; todo pedido nuevo entra a v2 por defecto |

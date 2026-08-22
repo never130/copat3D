@@ -36,9 +36,9 @@ Sitio del **Congreso Patagónico de Impresión 3D, Fabricación Digital e Innova
 | Docker (dev + producción) | ✅ Verificado corriendo |
 | SEO: metadata, sitemap, robots, JSON-LD, favicon, Open Graph | ✅ Hecho |
 | Documentación `docs/01` a `docs/06` | ✅ Hecho |
-| Formulario de registro | ⛔ Bloqueado por legales |
+| Formulario de registro | ❌ Sin construir — vía definida (base propia), bloqueado solo para **publicar** |
 | Formulario de contacto → Resend | ✅ Hecho (falta cargar `RESEND_API_KEY` y verificar el dominio) |
-| Base de datos (Neon) | ❌ Pendiente |
+| Base de datos (Neon) | ❌ Pendiente — ya se sabe qué guardar, ver [docs/03](docs/03-arquitectura.md) |
 | Página `/privacidad` | ⚠️ Borrador publicable — **requiere validación de legales de la AIF** |
 | Sección de sede con mapa de Google | ✅ Hecho (ver nota de privacidad en [docs/04](docs/04-datos-y-legales.md)) |
 | Logo oficial de COPAT 3D (arte de la AIF) | ✅ Hecho |
@@ -383,11 +383,26 @@ Sirve para leer clases, opacidad computada y posición durante el scroll. No est
 
 Estas bloquean trabajo. No las resuelvas por tu cuenta:
 
-1. **¿Registro con base propia o Eventbrite?** Define la mitad del backend. Ver [docs/03-arquitectura.md](docs/03-arquitectura.md).
-2. **Texto legal de consentimiento.** Sin esto no se publica el formulario.
-3. **¿Se ceden datos a sponsors?** Cambia el texto del consentimiento.
-4. **¿Fecha de nacimiento exacta o rango etario?** Se recomienda rango: mismo valor estadístico, mucho menos riesgo legal.
-5. **¿El DNI es realmente necesario?** Solo se justifica si hay control de acceso en puerta.
+1. **Texto legal de consentimiento.** Sin esto no se publica el formulario.
+2. **¿Se ceden datos a sponsors?** Cambia el texto del consentimiento.
+3. **¿Cómo se controla el acceso en la puerta?** QR, listado o libre — es logística del evento, ya no cambia qué datos se piden (ver más abajo).
+4. **¿Cómo se inscriben los menores de edad?** Urgente: con la fecha de nacimiento completa ya decidida, cualquier inscripto menor de 18 queda identificado individualmente. Ya no se puede posponer.
+5. **¿Quién accede a los datos de inscriptos y cómo se exportan?** "Después procesamos los datos" necesita una vía concreta, y la Ley 25.326 pide limitar el acceso a quien lo necesite.
+
+### Ya decidido
+
+**Registro con base propia** (18/8/2026, Azariel Castillo). Eventbrite se miró
+como referencia del flujo, no como plataforma a contratar. La inscripción es
+**gratuita** —sin pasarela de pago— y el flujo es: la persona completa el
+formulario → el sistema emite un **código de reserva** → el código le llega por
+**correo** → la AIF procesa los datos después.
+
+**El formulario pide DNI y fecha de nacimiento completa** (decisión de
+gestión, distinta de la recomendación técnica de minimizar campos que traía
+este documento — ver [docs/04](docs/04-datos-y-legales.md)). El DNI se pide
+siempre, no solo si hay control de acceso en puerta; la fecha va completa
+(día, mes, año), no en rango. Efecto directo: escala la urgencia del punto 4
+de arriba, que antes se podía posponer.
 
 ## Documentación completa
 

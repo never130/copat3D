@@ -49,6 +49,17 @@ Si los datos se recolectan "para inscripción al congreso", **no pueden después
 
 > **Recomendación técnica:** reemplazar `fecha_nacimiento` (dato exacto) por `rango_etario` (`<18`, `18-25`, `26-40`, `41-60`, `60+`) salvo que exista una razón concreta para la fecha exacta. Si hay menores de edad entre los asistentes, la fecha exacta además dispara la necesidad de **consentimiento de padre/madre/tutor**, lo que complica el flujo considerablemente.
 
+> ✅ **Decidido (gestión, no legales): se piden los dos.** El formulario va a
+> pedir DNI siempre —no solo si hay control de acceso en puerta— y fecha de
+> nacimiento completa, no rango. Es una decisión de negocio, distinta de la
+> recomendación técnica de arriba, que queda documentada porque el
+> razonamiento sigue siendo válido para entender el riesgo que se acepta.
+>
+> Consecuencia directa: con fecha completa, cualquier inscripto menor de 18
+> queda identificado individualmente. Eso saca a **"Menores de edad" (§4) de
+> ser un tema que se cierra solo** si el congreso no convoca secundarios —hay
+> que resolverlo sí o sí antes de recibir el primer registro.
+
 ### 4. Menores de edad
 
 Si el congreso admite estudiantes secundarios, hay inscriptos menores de 18. El consentimiento de un menor **no es válido por sí solo**. Opciones:
@@ -133,9 +144,9 @@ habilite hay que agregar esa sección *antes* de recolectar el primer dato.
 
 - [ ] Texto de consentimiento validado por legales de la AIF
 - [ ] Definido si se ceden datos a sponsors
-- [ ] Decidido: fecha de nacimiento exacta vs. rango etario
-- [ ] Decidido: política para menores de edad
-- [ ] Confirmado si el DNI es realmente necesario
+- [x] ~~Decidido: fecha de nacimiento exacta vs. rango etario~~ → **fecha completa** (ver §3)
+- [ ] Decidido: política para menores de edad — **urgente**, ya no se puede posponer (ver §3)
+- [x] ~~Confirmado si el DNI es realmente necesario~~ → **sí, siempre** (ver §3)
 - [ ] Página `/privacidad` publicada
 - [ ] Base registrada ante la AAIP (o confirmado que ya está cubierta)
 - [ ] Definido plazo de retención

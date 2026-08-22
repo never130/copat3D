@@ -64,7 +64,9 @@ No hay API REST propia. Las Server Actions de Next.js cubren ambos formularios: 
 
 ## Decisión: registro nativo vs. Eventbrite
 
-Es la **decisión abierta #1** de [01-visión](01-vision-y-alcance.md) y define la mitad del backend.
+> ✅ **Resuelta el 18 de agosto de 2026: opción A, base propia.** Eventbrite se
+> miró como referencia del flujo, no como plataforma a contratar. La tabla de
+> abajo queda como registro de por qué, no como pregunta abierta.
 
 | Opción | Implica | Cuándo elegirla |
 |---|---|---|
@@ -72,7 +74,29 @@ Es la **decisión abierta #1** de [01-visión](01-vision-y-alcance.md) y define 
 | **B. Solo Eventbrite** | Embed del widget. Cero backend, QR y check-in resueltos. Los datos quedan en una plataforma externa (EE.UU.). | Solo importa gestionar el acceso el día del evento. |
 | **C. Dual sincronizado** | Ambos + webhooks. **Descartada para el MVP**: el costo de integración y debugging no se justifica en el plazo que queda. | Nunca, en este plazo. |
 
-**Implementación actual: opción A**, con un botón secundario que enlaza a Eventbrite como canal alternativo. Es la decisión reversible: si la AIF define que alcanza Eventbrite, se borra una Server Action y una tabla. Al revés (empezar con Eventbrite y después querer los datos) implica perder todos los registros ya cargados.
+### El flujo, tal como quedó definido
+
+1. La persona completa el formulario en el sitio.
+2. El sistema emite un **código de reserva**.
+3. El código le llega por **correo**.
+4. La AIF procesa los datos después.
+
+**Sin pasarela de pago**: la inscripción es gratuita. Es el flujo de Eventbrite
+sin Eventbrite, que fue exactamente el pedido.
+
+⚠️ **Nada de esto está construido todavía.** Hasta que se escriba, `/registro`
+es una página placeholder, no hay capa de datos en `src/lib/` y la única Server
+Action que existe es la del formulario de contacto. Este documento describe el
+diseño acordado, no el estado del código.
+
+Tres piezas que el flujo agrega y no estaban en el modelo original:
+
+- **El código de reserva.** Corto y legible en voz alta (tipo `COPAT-7K2M`), no un
+  UUID: alguien lo va a tener que dictar por teléfono o buscar en una lista.
+- **El mail al inscripto.** Distinto del de contacto: va al visitante, no a la
+  AIF, así que el dominio verificado en Resend deja de ser un lujo.
+- **La salida de los datos.** "Después procesamos los datos" necesita una vía
+  concreta y con acceso limitado. Es una decisión abierta, ver [04](04-datos-y-legales.md).
 
 ## Modelo de datos
 
