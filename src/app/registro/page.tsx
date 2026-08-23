@@ -28,13 +28,13 @@ export default function RegistroPage() {
       <NavbarSentinel />
 
       {/* El clip va en el envoltorio de ancho completo, no en el contenedor
-          `max-w-3xl`: las figuras se posicionan fuera de la caja de ese
+          `max-w-4xl`: las figuras se posicionan fuera de la caja de ese
           contenedor y quedarían recortadas. */}
       <div className="overflow-x-clip">
-        <div className="relative mx-auto max-w-3xl px-5 py-20">
+        <div className="relative mx-auto max-w-4xl px-5 py-20">
           <WireMargins className="hidden sm:block">
             {/* Offsets más grandes que en la portada: este contenedor es
-                `max-w-3xl`, más angosto que el `max-w-7xl` de la portada, así
+                `max-w-4xl`, más angosto que el `max-w-7xl` de la portada, así
                 que con offsets chicos asoma un borde y se lee como un
                 artefacto. Recalibrados junto con el ancho del formulario. */}
             <WireOctahedron
