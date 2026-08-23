@@ -75,6 +75,6 @@ Ver [06-roadmap](06-roadmap.md) para el plan semanal.
 | # | Decisión | Por qué bloquea |
 |---|---|---|
 | ~~1~~ | ~~¿El registro necesita base de datos propia o alcanza Eventbrite?~~ | ✅ **Resuelta el 18/8/2026: base propia.** Ver [03-arquitectura](03-arquitectura.md). |
-| 2 | Texto legal de consentimiento de datos personales | Sin esto no se puede publicar el formulario. Ver [04-datos-y-legales](04-datos-y-legales.md). |
+| ~~2~~ | ~~Texto legal de consentimiento de datos personales~~ | ✅ **Resuelta el 23/8/2026: publicado**, confirmado por gestión. Ver [04-datos-y-legales](04-datos-y-legales.md). |
 | 3 | ¿La AIF tiene licencia web de Helvetica Now Display? | Es una fuente paga. Ver [02-design-system](02-design-system.md). |
-| 4 | Titularidad del dominio y acceso a NIC.ar | La delegación DNS tarda 24-48hs. Ver [05-infraestructura](05-infraestructura-deploy.md). |
+| ~~4~~ | ~~Titularidad del dominio y acceso a NIC.ar~~ | ✅ **Resuelta el 23/8/2026: dominio delegado y en vivo.** Ver [05-infraestructura](05-infraestructura-deploy.md). |
