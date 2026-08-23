@@ -24,6 +24,14 @@
 | Resend | Free | US$ 0 | 3.000 mails/mes, 100/día. **Verificar el límite diario** si se esperan picos de inscripción |
 | Cloudflare | Free | US$ 0 | DNS, SSL y WAF básico incluidos |
 
+## Región de las funciones de Vercel
+
+`vercel.json` fija `"regions": ["gru1"]` (San Pablo, Brasil) — es el punto de Vercel más cercano a Argentina que existe hoy, y hasta hace poco el plan Hobby ni siquiera lo permitía elegir: quedaba fijo en Virginia (EE. UU.) por defecto.
+
+Importa porque la latencia que pesa no es "visitante → base": el navegador nunca habla directo con Neon, habla con la función de Vercel, y esa función es la que consulta Neon. Si la función corre en Virginia y la base en San Pablo (o viceversa), cada Server Action cruza el Atlántico igual, sin importar dónde esté el visitante.
+
+**El proyecto de Neon tiene que crearse en la misma región (`AWS South America East 1 — São Paulo`)** para que la ganancia sea real. Elegir Neon en Virginia y dejar Vercel en San Pablo (o al revés) es peor que tener las dos en el mismo lado: ahí sí se cruza el océano en cada consulta.
+
 ## Configuración de dominio: copat3d.com.ar
 
 > ⏱️ **Empezar ya.** La delegación de nameservers en NIC.ar puede tardar **24 a 48 horas** en propagar. No dejarlo para la semana del evento.
