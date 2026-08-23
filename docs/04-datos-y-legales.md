@@ -93,7 +93,9 @@ Medidas ya contempladas en la arquitectura:
 - Conexión TLS obligatoria (Vercel + Cloudflare Full Strict).
 - Base de datos con credenciales en variables de entorno, nunca en el repositorio.
 - Sin logging de datos personales: **jamás** un `console.log(formData)` en producción.
-- Acceso a la base limitado a quienes lo necesiten en la AIF.
+- Acceso a la base limitado a quienes lo necesiten en la AIF: no se reparten
+  credenciales de Neon, se accede por `/admin` (protegido con contraseña
+  propia) — ver `src/proxy.ts`. Resuelto el 23/8/2026.
 - Rate limiting en el formulario para evitar scraping y cargas masivas.
 
 ### 6. Registro de la base ante la AAIP

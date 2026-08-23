@@ -44,3 +44,10 @@ CREATE TABLE IF NOT EXISTS inscripciones (
 
   created_at         TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Check-in en la puerta (D12/D13 en docs/04). Van como ALTER y no dentro del
+-- CREATE TABLE de arriba: `CREATE TABLE IF NOT EXISTS` no toca una tabla que
+-- ya existe, así que en Neon (donde la tabla ya está creada) el ALTER es la
+-- única forma de que esto llegue sin borrar los datos ya cargados.
+ALTER TABLE inscripciones ADD COLUMN IF NOT EXISTS asistio BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE inscripciones ADD COLUMN IF NOT EXISTS asistio_at TIMESTAMPTZ;

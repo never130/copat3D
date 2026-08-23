@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { verificarAuthAdmin } from "@/lib/admin-auth";
 
 /**
  * Portón de acceso a `/admin` — la única sección del sitio que no es
@@ -17,36 +18,22 @@ import { NextResponse, type NextRequest } from "next/server";
  * expiración ni CSRF para un panel interno de bajo tráfico — el navegador
  * ya resuelve el diálogo y recuerda la contraseña durante la pestaña.
  *
- * Sin `ADMIN_PASSWORD` cargada, el panel queda **inalcanzable siempre**
- * (nunca "abierto por accidente") — mismo principio que `REGISTRO_HABILITADO`
- * en src/lib/site.ts: el default ausente cae del lado seguro.
+ * La verificación en sí vive en lib/admin-auth.ts: las Server Actions del
+ * panel (marcar asistencia) la vuelven a correr por su cuenta, porque una
+ * Server Function no es una ruta aparte en la cadena del proxy — confiar
+ * solo en el matcher de acá sería un solo punto de falla.
  */
 export function proxy(request: NextRequest) {
-  const clave = process.env.ADMIN_PASSWORD?.trim();
+  const autorizado = verificarAuthAdmin(request.headers.get("authorization"));
 
-  const rechazar = () =>
-    new NextResponse("Acceso restringido.", {
+  if (!autorizado) {
+    return new NextResponse("Acceso restringido.", {
       status: 401,
       // Los valores de header HTTP son ByteString (solo Latin-1): nada de
       // tildes ni rayas largas acá, o la respuesta tira un TypeError.
       headers: { "WWW-Authenticate": 'Basic realm="COPAT 3D - Panel"' },
     });
-
-  if (!clave) return rechazar();
-
-  const cabecera = request.headers.get("authorization");
-  if (!cabecera?.startsWith("Basic ")) return rechazar();
-
-  let decodificado: string;
-  try {
-    decodificado = atob(cabecera.slice(6));
-  } catch {
-    return rechazar();
   }
-
-  // El usuario no importa, es fijo: lo único que protege es la contraseña.
-  const [, intento] = decodificado.split(":");
-  if (intento !== clave) return rechazar();
 
   return NextResponse.next();
 }

@@ -52,6 +52,8 @@ export type InscriptoFila = {
   ciudad: string;
   provincia: string;
   interes: string | null;
+  asistio: boolean;
+  asistio_en: string | null;
   creado: string;
 };
 
@@ -71,9 +73,30 @@ export async function obtenerInscriptos(): Promise<InscriptoFila[]> {
        ciudad,
        provincia,
        interes,
+       asistio,
+       to_char(asistio_at AT TIME ZONE 'America/Argentina/Ushuaia', 'DD/MM/YYYY HH24:MI') AS asistio_en,
        to_char(created_at AT TIME ZONE 'America/Argentina/Ushuaia', 'DD/MM/YYYY HH24:MI') AS creado
      FROM inscripciones
      ORDER BY created_at DESC`,
   );
   return rows;
+}
+
+/** Marca (o desmarca) la asistencia de un inscripto por su código de
+ *  reserva. Devuelve la fila actualizada, o `null` si el código no existe
+ *  — el panel lo usa para avisar "código no encontrado" en vez de fallar
+ *  en silencio. */
+export async function alternarAsistencia(
+  codigo: string,
+): Promise<{ nombre_apellido: string; asistio: boolean } | null> {
+  const pool = getPool();
+  const { rows } = await pool.query<{ nombre_apellido: string; asistio: boolean }>(
+    `UPDATE inscripciones
+       SET asistio = NOT asistio,
+           asistio_at = CASE WHEN NOT asistio THEN now() ELSE NULL END
+     WHERE codigo_reserva = $1
+     RETURNING nombre_apellido, asistio`,
+    [codigo],
+  );
+  return rows[0] ?? null;
 }

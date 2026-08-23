@@ -386,8 +386,6 @@ Sirve para leer clases, opacidad computada y posición durante el scroll. No est
 Estas bloquean trabajo. No las resuelvas por tu cuenta:
 
 1. **Validación legal formal del texto de consentimiento.** Hay un texto cargado y confirmado por gestión (23/8/2026); falta que el área legal de la AIF lo revise antes de darlo por definitivo — sin eso no se publica el formulario.
-2. **¿Cómo se controla el acceso en la puerta?** QR, listado o libre — es logística del evento, ya no cambia qué datos se piden.
-3. **¿Quién accede a los datos de inscriptos y cómo se exportan?** "Después procesamos los datos" necesita una vía concreta, y la Ley 25.326 pide limitar el acceso a quien lo necesite.
 
 ### Ya decidido
 
@@ -408,6 +406,12 @@ mayores de 18** (23/8/2026, Ever Loza). Los menores se coordinan por mail
 con la AIF (inscripción institucional vía colegio); el sistema bloquea el
 guardado de cualquier inscripto menor de edad — ver
 [docs/04](docs/04-datos-y-legales.md) §2 y §4.
+
+**El acceso en la puerta es con QR, y el acceso a los datos es por el panel
+`/admin`** (23/8/2026, Ever Loza). El mail de confirmación incluye un QR con
+el código de reserva; `/admin` (protegido con contraseña, sin repartir
+credenciales de Neon) tiene buscador por código/nombre/DNI, marcado de
+asistencia, y descarga a CSV. Ver `src/proxy.ts` y `src/app/admin/`.
 
 ## Documentación completa
 

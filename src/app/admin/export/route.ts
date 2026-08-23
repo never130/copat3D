@@ -19,13 +19,20 @@ const COLUMNAS = [
   "provincia",
   "interes",
   "creado",
+  "asistio",
+  "asistio_en",
 ] as const;
 
 export async function GET() {
   const inscriptos = await obtenerInscriptos();
 
   const filas = inscriptos.map((fila) =>
-    COLUMNAS.map((columna) => celda(fila[columna] ?? "")).join(","),
+    COLUMNAS.map((columna) => {
+      // `asistio` es boolean, no string: el resto de las columnas pasa
+      // directo por celda(), esta se traduce primero a texto legible.
+      if (columna === "asistio") return celda(fila.asistio ? "Sí" : "No");
+      return celda(fila[columna] ?? "");
+    }).join(","),
   );
 
   // ﻿ (BOM UTF-8) al principio: sin esto, Excel en Windows —el que
