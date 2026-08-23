@@ -124,14 +124,32 @@ export const PROVINCIAS = [
  *  registro cuyo consentimiento no sería legalmente válido. */
 export const EDAD_MINIMA = 18;
 
-/** Años en un mes fijo (0-indexado) y día fijo simplifica de sobra para esto:
- *  no hace falta exactitud al día para decidir "es menor de edad hoy". */
+/**
+ * ⚠️ `new Date("2008-08-22")` parsea la fecha como medianoche **UTC**, pero
+ * `.getDate()`/`.getMonth()`/`.getFullYear()` la leen de vuelta en el huso
+ * horario **local** del servidor. En Argentina (UTC−3, el huso de este
+ * mismo proyecto) esa medianoche UTC cae a las 21hs del día anterior en
+ * hora local: `new Date("2008-08-22").getDate()` devuelve **21**, no 22.
+ *
+ * El efecto es correr el cumpleaños un día para atrás — alguien que cumple
+ * 18 el 22 de agosto queda calculado como ya mayor el 21. Como esta función
+ * es el único freno para no guardar el consentimiento de un menor (Ley
+ * 25.326, D5 en docs/04-datos-y-legales.md), el bug dejaba pasar a alguien
+ * de 17 años un día antes de tiempo.
+ *
+ * Por eso el nacimiento se separa a mano en año/mes/día desde el string
+ * ISO, sin pasar nunca por `Date` para leerlo: así no hay huso horario que
+ * lo corra. Para "hoy" sí alcanza con el reloj local del servidor — no hace
+ * falta exactitud al segundo, solo saber si ya pasó el cumpleaños en el día
+ * de hoy.
+ */
 export function calcularEdad(fechaISO: string): number {
-  const nacimiento = new Date(fechaISO);
+  const [anioNac, mesNac, diaNac] = fechaISO.split("-").map(Number);
   const hoy = new Date();
-  let edad = hoy.getFullYear() - nacimiento.getFullYear();
-  const meses = hoy.getMonth() - nacimiento.getMonth();
-  if (meses < 0 || (meses === 0 && hoy.getDate() < nacimiento.getDate())) {
+  const mesHoy = hoy.getMonth() + 1; // getMonth() es 0-indexado; mesNac no.
+
+  let edad = hoy.getFullYear() - anioNac;
+  if (mesHoy < mesNac || (mesHoy === mesNac && hoy.getDate() < diaNac)) {
     edad--;
   }
   return edad;

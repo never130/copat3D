@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { Resend } from "resend";
 import { generarCodigoReserva, getPool } from "@/lib/db";
 import { envResend } from "@/lib/env";
+import { escaparHtml } from "@/lib/html";
 import { crearLimitador } from "@/lib/rate-limit";
 import { REGISTRO_HABILITADO } from "@/lib/site";
 import {
@@ -116,7 +117,6 @@ export async function registrarInscripcion(
     };
   }
 
-  const pool = getPool();
   let codigo = generarCodigoReserva();
   let reintentosCodigo = 0;
 
@@ -126,6 +126,12 @@ export async function registrarInscripcion(
 
   for (;;) {
     try {
+      // getPool() DENTRO del try: si falta DATABASE_URL, tira sincrónico
+      // (ver src/lib/env.ts) y sin el try alrededor la Server Action entera
+      // explota con el error crudo de Next en vez de la respuesta prolija de
+      // siempre. El catch de abajo no necesita distinguir el caso: cae al
+      // mensaje genérico igual que cualquier otro fallo de base.
+      const pool = getPool();
       await pool.query(
         `INSERT INTO inscripciones
            (codigo_reserva, nombre_apellido, dni, fecha_nacimiento, email,
@@ -186,7 +192,7 @@ export async function registrarInscripcion(
       to: email,
       subject: `Tu inscripción a COPAT 3D — código ${codigo}`,
       html: `
-        <h2>¡Gracias por inscribirte a COPAT 3D, ${escapar(nombreApellido)}!</h2>
+        <h2>¡Gracias por inscribirte a COPAT 3D, ${escaparHtml(nombreApellido)}!</h2>
         <p>Tu código de reserva es:</p>
         <p style="font-size:24px;font-weight:bold;letter-spacing:2px">${codigo}</p>
         <p>Guardalo: te lo vamos a pedir para acreditarte el día del evento.</p>
@@ -219,14 +225,4 @@ copat3d.com.ar/privacidad`,
     mensaje: "¡Listo! Te mandamos el código de tu reserva por correo.",
     codigoReserva: codigo,
   };
-}
-
-/** Mismo escape que contacto.ts: el nombre lo escribe el visitante y va
- *  interpolado en el HTML del mail. */
-function escapar(texto: string): string {
-  return texto
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }

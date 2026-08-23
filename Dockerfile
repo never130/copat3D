@@ -44,9 +44,11 @@ COPY . .
 # Los ARG llevan default: sin valor, el ENV quedaría en cadena vacía y el
 # build fallaría al construir la URL base de la metadata.
 ARG NEXT_PUBLIC_SITE_URL=https://copat3d.com.ar
-ARG NEXT_PUBLIC_EVENTBRITE_URL=
+# Default vacío = apagado: sin --build-arg explícito, el registro no se
+# habilita en la imagen. Ver src/lib/site.ts.
+ARG NEXT_PUBLIC_REGISTRO_ABIERTO=
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
-ENV NEXT_PUBLIC_EVENTBRITE_URL=$NEXT_PUBLIC_EVENTBRITE_URL
+ENV NEXT_PUBLIC_REGISTRO_ABIERTO=$NEXT_PUBLIC_REGISTRO_ABIERTO
 # Requiere red: next/font descarga las tipografías de Google en el build
 RUN npm run build
 

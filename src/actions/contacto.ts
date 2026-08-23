@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { Resend } from "resend";
 import { envResend } from "@/lib/env";
+import { escaparHtml } from "@/lib/html";
 import { crearLimitador } from "@/lib/rate-limit";
 import { erroresPorCampo, esquemaContacto } from "@/lib/validation";
 
@@ -27,17 +28,6 @@ const MAX_POR_VENTANA = 3;
 const superaLimite = crearLimitador(VENTANA_MS, MAX_POR_VENTANA);
 
 /* ------------------------------------------------------------------ */
-
-/** Escapa el contenido del visitante antes de interpolarlo en el HTML del
- *  mail. Sin esto, un mensaje con `<script>` o con etiquetas sueltas rompe o
- *  altera el correo que le llega a la AIF. */
-function escapar(texto: string): string {
-  return texto
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
 
 export async function enviarContacto(
   _previo: EstadoContacto,
@@ -96,11 +86,11 @@ export async function enviarContacto(
       subject: `[Web COPAT 3D] ${asunto}`,
       html: `
         <h2>Nuevo mensaje desde copat3d.com.ar</h2>
-        <p><strong>Nombre:</strong> ${escapar(nombre)}</p>
-        <p><strong>Correo:</strong> ${escapar(email)}</p>
-        <p><strong>Asunto:</strong> ${escapar(asunto)}</p>
+        <p><strong>Nombre:</strong> ${escaparHtml(nombre)}</p>
+        <p><strong>Correo:</strong> ${escaparHtml(email)}</p>
+        <p><strong>Asunto:</strong> ${escaparHtml(asunto)}</p>
         <hr />
-        <p style="white-space:pre-wrap">${escapar(mensaje)}</p>
+        <p style="white-space:pre-wrap">${escaparHtml(mensaje)}</p>
       `,
       text: `Nuevo mensaje desde copat3d.com.ar
 

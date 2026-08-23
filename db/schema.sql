@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS inscripciones (
   -- Corto y legible en voz alta (tipo COPAT-7K2M), no un UUID: es lo que
   -- viaja en el mail y lo que alguien puede tener que dictar por teléfono
   -- o buscar en una lista el día del evento. Ver AGENTS.md, "Ya decidido".
+  -- UNIQUE ya crea su propio índice btree: no hace falta uno aparte para
+  -- buscar por código (acreditación en puerta, soporte por mail).
   codigo_reserva     TEXT NOT NULL UNIQUE,
 
   nombre_apellido    TEXT NOT NULL,
@@ -42,6 +44,3 @@ CREATE TABLE IF NOT EXISTS inscripciones (
 
   created_at         TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-
--- Búsqueda por código de reserva (acreditación en puerta, soporte por mail).
-CREATE INDEX IF NOT EXISTS idx_inscripciones_codigo ON inscripciones (codigo_reserva);

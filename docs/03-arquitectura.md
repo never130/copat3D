@@ -135,7 +135,7 @@ DATABASE_URL=            # Neon connection string
 RESEND_API_KEY=          # API key de Resend
 CONTACT_TO=copat3d@aif.gob.ar
 NEXT_PUBLIC_SITE_URL=https://copat3d.com.ar
-NEXT_PUBLIC_EVENTBRITE_URL=   # Enlace público al evento
+NEXT_PUBLIC_REGISTRO_ABIERTO=false   # ver src/lib/site.ts — checklist de docs/04
 ```
 
-Validadas al arranque en `lib/env.ts`: si falta una, el build falla con un mensaje claro en vez de romper en runtime con el sitio ya publicado.
+**No se validan al importar el módulo**, y es deliberado: si `lib/env.ts` tirara al cargarse, el build entero se cae cuando falta una variable — el mismo problema que la trampa 3 de AGENTS.md. Cada Server Action pide lo que necesita en tiempo de ejecución y falla ahí, con un mensaje que se puede mostrar; una página que no usa esa variable sigue funcionando aunque falte.
