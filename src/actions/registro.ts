@@ -2,9 +2,10 @@
 
 import { headers } from "next/headers";
 import { Resend } from "resend";
+import QRCode from "qrcode";
 import { generarCodigoReserva, getPool } from "@/lib/db";
+import { plantillaConfirmacionRegistro } from "@/lib/email-templates";
 import { envResend } from "@/lib/env";
-import { escaparHtml } from "@/lib/html";
 import { crearLimitador } from "@/lib/rate-limit";
 import { REGISTRO_HABILITADO } from "@/lib/site";
 import {
@@ -180,6 +181,26 @@ export async function registrarInscripcion(
     }
   }
 
+  // El QR codifica el código en texto plano, no una URL: no presupone
+  // todavía cómo se controla el acceso en la puerta (D12 en docs/04, aún
+  // abierta) — sirve igual si al final se escanea con una app dedicada o
+  // si alguien solo lo lee a ojo y busca el código a mano.
+  //
+  // Si falla la generación, el mail sale igual sin QR: es un adorno sobre
+  // el dato que importa de verdad (el código en texto), no al revés.
+  let qr: Buffer | undefined;
+  try {
+    qr = await QRCode.toBuffer(codigo, { type: "png", width: 360, margin: 2 });
+  } catch (error) {
+    console.error("No se pudo generar el QR del código de reserva:", error);
+  }
+
+  const { html, text } = plantillaConfirmacionRegistro({
+    nombreApellido,
+    codigo,
+    conQr: !!qr,
+  });
+
   // El mail de confirmación NO puede tirar abajo una inscripción que ya
   // quedó guardada: si Resend falla, se loguea y se sigue. El código de
   // reserva vuelve igual en la respuesta, así la persona lo tiene aunque el
@@ -191,30 +212,20 @@ export async function registrarInscripcion(
       from: remitente,
       to: email,
       subject: `Tu inscripción a COPAT 3D — código ${codigo}`,
-      html: `
-        <h2>¡Gracias por inscribirte a COPAT 3D, ${escaparHtml(nombreApellido)}!</h2>
-        <p>Tu código de reserva es:</p>
-        <p style="font-size:24px;font-weight:bold;letter-spacing:2px">${codigo}</p>
-        <p>Guardalo: te lo vamos a pedir para acreditarte el día del evento.</p>
-        <hr />
-        <p><strong>Cuándo:</strong> 2 y 3 de octubre de 2026</p>
-        <p><strong>Dónde:</strong> Fábrica de Talentos, Ushuaia, Tierra del Fuego</p>
-        <hr />
-        <p style="color:#666;font-size:13px">
-          Tus datos se tratan conforme a la Ley 25.326. Más información en
-          copat3d.com.ar/privacidad
-        </p>
-      `,
-      text: `¡Gracias por inscribirte a COPAT 3D, ${nombreApellido}!
-
-Tu código de reserva es: ${codigo}
-Guardalo: te lo vamos a pedir para acreditarte el día del evento.
-
-Cuándo: 2 y 3 de octubre de 2026
-Dónde: Fábrica de Talentos, Ushuaia, Tierra del Fuego
-
-Tus datos se tratan conforme a la Ley 25.326. Más información en
-copat3d.com.ar/privacidad`,
+      html,
+      text,
+      // `contentId` es lo que permite referenciarlo como `cid:qr-reserva`
+      // en el HTML de la plantilla, en vez de un adjunto suelto.
+      attachments: qr
+        ? [
+            {
+              content: qr,
+              filename: "codigo-qr.png",
+              contentType: "image/png",
+              contentId: "qr-reserva",
+            },
+          ]
+        : undefined,
     });
   } catch (error) {
     console.error("La inscripción se guardó pero falló el mail de confirmación:", error);

@@ -39,3 +39,41 @@ export function generarCodigoReserva(): string {
   }
   return `COPAT-${codigo}`;
 }
+
+/** Una fila de la lista de inscriptos, tal como la necesita el panel
+ *  (`/admin`) y su exportación a CSV — un solo lugar para esta consulta
+ *  evita que las dos vistas terminen mostrando datos distintos. */
+export type InscriptoFila = {
+  codigo_reserva: string;
+  nombre_apellido: string;
+  dni: string;
+  fecha_nacimiento: string;
+  email: string;
+  ciudad: string;
+  provincia: string;
+  interes: string | null;
+  creado: string;
+};
+
+export async function obtenerInscriptos(): Promise<InscriptoFila[]> {
+  const pool = getPool();
+  // Fechas formateadas del lado de SQL, no armadas con `Date` en JS: es la
+  // misma trampa de huso horario que calcularEdad() en validation.ts —
+  // `new Date("2008-08-22")` puede leerse un día antes en huso Argentina.
+  // `to_char` evita el problema de raíz.
+  const { rows } = await pool.query<InscriptoFila>(
+    `SELECT
+       codigo_reserva,
+       nombre_apellido,
+       dni,
+       to_char(fecha_nacimiento, 'DD/MM/YYYY') AS fecha_nacimiento,
+       email,
+       ciudad,
+       provincia,
+       interes,
+       to_char(created_at AT TIME ZONE 'America/Argentina/Ushuaia', 'DD/MM/YYYY HH24:MI') AS creado
+     FROM inscripciones
+     ORDER BY created_at DESC`,
+  );
+  return rows;
+}

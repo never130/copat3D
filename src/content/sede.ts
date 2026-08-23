@@ -11,11 +11,11 @@ export type Servicio = {
 
 export const SEDE = {
   nombre: "Fábrica de Talentos",
-  calle: "Maipú 1255",
+  calle: "Av. Maipú 1255",
   ciudad: "Ushuaia",
   provincia: "Tierra del Fuego",
   /** Dirección completa, tal como se manda a Google Maps. */
-  direccion: "Maipú 1255, Ushuaia, Tierra del Fuego, Argentina",
+  direccion: "Av. Maipú 1255, Ushuaia, Tierra del Fuego, Argentina",
 } as const;
 
 export const SERVICIOS: Servicio[] = [

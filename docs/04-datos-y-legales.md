@@ -24,14 +24,14 @@ El registro debe incluir un **checkbox no pre-tildado** con texto que declare, c
 > ✅ **Texto cargado en el formulario (23/8/2026), confirmado por gestión —
 > Ever Loza.** Es el que está en producción hoy en
 > [RegistroForm.tsx](../src/components/sections/RegistroForm.tsx), con el
-> domicilio de la AIF completado (Maipú 1255, Ushuaia). Sigue pendiente que
+> domicilio de la AIF completado (Av. Maipú 1255, Ushuaia). Sigue pendiente que
 > el área legal de la AIF lo revise formalmente antes de considerar D3
 > cerrada del todo — la confirmación de gestión alcanza para tener el
 > formulario funcionando, no reemplaza esa revisión.
 
 Texto de referencia sugerido, ya actualizado con las respuestas de D2 y D4:
 
-> Presto mi consentimiento libre, expreso e informado para que la Agencia de Innovación Fueguina (AIF), con domicilio en Maipú 1255, Ushuaia, Tierra del Fuego, trate mis datos personales con la finalidad exclusiva de gestionar mi inscripción y acreditación al congreso COPAT 3D. Los datos no serán cedidos a terceros. Podré ejercer mis derechos de acceso, rectificación y supresión conforme a la Ley 25.326 escribiendo a copat3d@aif.gob.ar.
+> Presto mi consentimiento libre, expreso e informado para que la Agencia de Innovación Fueguina (AIF), con domicilio en Av. Maipú 1255, Ushuaia, Tierra del Fuego, trate mis datos personales con la finalidad exclusiva de gestionar mi inscripción y acreditación al congreso COPAT 3D. Los datos no serán cedidos a terceros. Podré ejercer mis derechos de acceso, rectificación y supresión conforme a la Ley 25.326 escribiendo a copat3d@aif.gob.ar.
 
 La cláusula legal obligatoria que debe figurar visible:
 

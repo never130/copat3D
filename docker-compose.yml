@@ -18,6 +18,9 @@ services:
       # true acá es seguro: es Postgres local, no la base real. Ver
       # src/lib/site.ts sobre por qué el default de producción es false.
       NEXT_PUBLIC_REGISTRO_ABIERTO: ${NEXT_PUBLIC_REGISTRO_ABIERTO:-true}
+      # Default de desarrollo, no un secreto real: cambiala con
+      # ADMIN_PASSWORD=lo-que-sea docker compose up si hace falta otra.
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-copat3d-dev}
       WATCHPACK_POLLING: "true" # el hot-reload en volumen montado necesita polling
     volumes:
       - .:/app

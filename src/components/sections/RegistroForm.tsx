@@ -225,7 +225,7 @@ export function RegistroForm() {
       {/* Texto confirmado por gestión (23/8/2026, Ever Loza): sin cesión a
           sponsors y sin flujo especial para menores (D4 y D5 en
           docs/04-datos-y-legales.md, ambos cerrados). El domicilio es el
-          mismo que la sede del evento (Maipú 1255, Ushuaia) — coincidencia
+          mismo que la sede del evento (Av. Maipú 1255, Ushuaia) — coincidencia
           real, no una referencia automática a SEDE: son dos datos distintos
           que hoy comparten valor, así que va escrito a mano acá para que un
           cambio de sede algún día no mueva el domicilio legal de la AIF sin
@@ -244,7 +244,7 @@ export function RegistroForm() {
           />
           <span className="text-sm leading-relaxed">
             Presto mi consentimiento libre, expreso e informado para que la
-            Agencia de Innovación Fueguina (AIF), con domicilio en Maipú
+            Agencia de Innovación Fueguina (AIF), con domicilio en Av. Maipú
             1255, Ushuaia, Tierra del Fuego, trate mis datos personales con
             la finalidad exclusiva de gestionar mi inscripción y
             acreditación al congreso COPAT 3D. Los datos no serán cedidos a
