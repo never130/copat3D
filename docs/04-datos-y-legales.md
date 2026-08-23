@@ -21,19 +21,29 @@ El registro debe incluir un **checkbox no pre-tildado** con texto que declare, c
 - Si se ceden a terceros y a quiénes (¿sponsors? ¿Eventbrite? — **esto hay que definirlo**).
 - Que el titular puede ejercer sus derechos de acceso, rectificación y supresión.
 
-Texto de referencia sugerido (**debe validarlo el área legal de la AIF antes de publicar**):
+> ✅ **Texto cargado en el formulario (23/8/2026), confirmado por gestión —
+> Ever Loza.** Es el que está en producción hoy en
+> [RegistroForm.tsx](../src/components/sections/RegistroForm.tsx), con el
+> domicilio de la AIF completado (Maipú 1255, Ushuaia). Sigue pendiente que
+> el área legal de la AIF lo revise formalmente antes de considerar D3
+> cerrada del todo — la confirmación de gestión alcanza para tener el
+> formulario funcionando, no reemplaza esa revisión.
 
-> Presto mi consentimiento libre, expreso e informado para que la Agencia de Innovación de Fuego (AIF) trate mis datos personales con la finalidad exclusiva de gestionar mi inscripción y acreditación al congreso COPAT 3D. Los datos no serán cedidos a terceros sin mi consentimiento previo. Podré ejercer mis derechos de acceso, rectificación y supresión conforme a la Ley 25.326 escribiendo a copat3d@aif.gob.ar.
+Texto de referencia sugerido, ya actualizado con las respuestas de D2 y D4:
+
+> Presto mi consentimiento libre, expreso e informado para que la Agencia de Innovación Fueguina (AIF), con domicilio en Maipú 1255, Ushuaia, Tierra del Fuego, trate mis datos personales con la finalidad exclusiva de gestionar mi inscripción y acreditación al congreso COPAT 3D. Los datos no serán cedidos a terceros. Podré ejercer mis derechos de acceso, rectificación y supresión conforme a la Ley 25.326 escribiendo a copat3d@aif.gob.ar.
 
 La cláusula legal obligatoria que debe figurar visible:
 
 > El titular de los datos personales tiene la facultad de ejercer el derecho de acceso a los mismos en forma gratuita a intervalos no inferiores a seis meses, salvo que se acredite un interés legítimo al efecto conforme lo establecido en el artículo 14, inciso 3 de la Ley Nº 25.326.
 
-### 2. ⛔ Definir la finalidad y no excederla
+### 2. ✅ Definir la finalidad y no excederla
 
 Si los datos se recolectan "para inscripción al congreso", **no pueden después usarse** para enviar publicidad de sponsors ni cederse a empresas participantes. Si la AIF quiere hacer eso, tiene que estar declarado en el consentimiento desde el día uno.
 
-**Pregunta directa para la AIF:** ¿los datos de inscriptos se comparten con sponsors o empresas? La respuesta cambia el texto legal.
+> ✅ **Resuelto (23/8/2026, Ever Loza): no se ceden datos a sponsors ni a
+> ninguna otra organización.** El texto de consentimiento (§1) y
+> `/privacidad` ya lo reflejan.
 
 ### 3. Minimización — el punto técnico más importante
 
@@ -60,12 +70,21 @@ Si los datos se recolectan "para inscripción al congreso", **no pueden después
 > ser un tema que se cierra solo** si el congreso no convoca secundarios —hay
 > que resolverlo sí o sí antes de recibir el primer registro.
 
-### 4. Menores de edad
+### 4. ✅ Menores de edad
 
 Si el congreso admite estudiantes secundarios, hay inscriptos menores de 18. El consentimiento de un menor **no es válido por sí solo**. Opciones:
 
 - **(a)** Restringir el registro individual a mayores de 18 y canalizar a los colegios por inscripción institucional (un docente responsable inscribe al grupo). ← *recomendada, mucho más simple*
 - **(b)** Implementar consentimiento parental, con la complejidad de verificación que eso implica.
+
+> ✅ **Resuelto (23/8/2026, Ever Loza): opción (a).** El congreso no apunta a
+> menores de edad, así que no hace falta un flujo de consentimiento
+> parental. Ya está implementado en
+> [validation.ts](../src/lib/validation.ts) y
+> [registro.ts](../src/actions/registro.ts): el sistema calcula la edad a
+> partir de la fecha de nacimiento y **bloquea el guardado** de cualquier
+> inscripto menor de 18, mostrando el mensaje de coordinar por mail la
+> inscripción institucional. Ningún dato de un menor llega a guardarse.
 
 ### 5. Seguridad de los datos
 
@@ -136,17 +155,22 @@ Está **escrita y publicable, pero es un borrador técnico**: cubre la estructur
 que pide la ley y describe con exactitud lo que el sitio hace hoy, con la
 cláusula del art. 14 inc. 3 incluida.
 
-⛔ **Falta que el área legal de la AIF la valide antes de darla por definitiva.**
-No describe el registro de inscriptos porque todavía no existe; cuando se
-habilite hay que agregar esa sección *antes* de recolectar el primer dato.
+✅ **La sección de registro de inscriptos ya está agregada** (23/8/2026): DNI,
+fecha de nacimiento, la restricción a mayores de 18, y los proveedores
+técnicos (Neon, Resend). Era el requisito de la trampa de arriba —"antes de
+recolectar el primer dato"— y ya se cumplió.
+
+⛔ **Sigue faltando que el área legal de la AIF la valide antes de darla por
+definitiva.** El contenido está completo y correcto según lo que el sitio
+hace hoy, pero eso no reemplaza la revisión legal formal.
 
 ## Checklist previo a publicar el formulario
 
-- [ ] Texto de consentimiento validado por legales de la AIF
-- [ ] Definido si se ceden datos a sponsors
+- [ ] Texto de consentimiento validado **formalmente por legales de la AIF** — hay un texto cargado y confirmado por gestión (23/8), pero eso no reemplaza la revisión legal (ver §1)
+- [x] ~~Definido si se ceden datos a sponsors~~ → **no se ceden** (23/8/2026, ver §2)
 - [x] ~~Decidido: fecha de nacimiento exacta vs. rango etario~~ → **fecha completa** (ver §3)
-- [ ] Decidido: política para menores de edad — **urgente**, ya no se puede posponer (ver §3)
+- [x] ~~Decidido: política para menores de edad~~ → **registro individual solo para mayores de 18**, implementado (23/8/2026, ver §4)
 - [x] ~~Confirmado si el DNI es realmente necesario~~ → **sí, siempre** (ver §3)
-- [ ] Página `/privacidad` publicada
+- [x] Página `/privacidad` publicada — actualizada el 23/8 con la sección de inscriptos
 - [ ] Base registrada ante la AAIP (o confirmado que ya está cubierta)
-- [ ] Definido plazo de retención
+- [ ] Definido plazo de retención — `/privacidad` ya usa el default recomendado (12 meses), pero no está confirmado explícitamente por la AIF

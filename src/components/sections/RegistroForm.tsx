@@ -222,10 +222,14 @@ export function RegistroForm() {
         </select>
       </div>
 
-      {/* ⚠️ Texto BORRADOR — pendiente de validar por legales de la AIF
-          (D3 en docs/04-datos-y-legales.md). No es el texto definitivo:
-          es el que permite tener el formulario listo y probado para
-          publicarlo apenas ese texto cierre. */}
+      {/* Texto confirmado por gestión (23/8/2026, Ever Loza): sin cesión a
+          sponsors y sin flujo especial para menores (D4 y D5 en
+          docs/04-datos-y-legales.md, ambos cerrados). El domicilio es el
+          mismo que la sede del evento (Maipú 1255, Ushuaia) — coincidencia
+          real, no una referencia automática a SEDE: son dos datos distintos
+          que hoy comparten valor, así que va escrito a mano acá para que un
+          cambio de sede algún día no mueva el domicilio legal de la AIF sin
+          que nadie se dé cuenta. */}
       <div className="border-border bg-surface-2 mt-6 rounded-xl border p-4">
         <label htmlFor="consentimiento" className="flex items-start gap-3">
           <input
@@ -240,12 +244,13 @@ export function RegistroForm() {
           />
           <span className="text-sm leading-relaxed">
             Presto mi consentimiento libre, expreso e informado para que la
-            Agencia de Innovación Fueguina (AIF) trate mis datos personales
-            con la finalidad exclusiva de gestionar mi inscripción y
+            Agencia de Innovación Fueguina (AIF), con domicilio en Maipú
+            1255, Ushuaia, Tierra del Fuego, trate mis datos personales con
+            la finalidad exclusiva de gestionar mi inscripción y
             acreditación al congreso COPAT 3D. Los datos no serán cedidos a
-            terceros sin mi consentimiento previo. Podré ejercer mis derechos
-            de acceso, rectificación y supresión conforme a la Ley 25.326
-            escribiendo a copat3d@aif.gob.ar. Ver la{" "}
+            terceros. Podré ejercer mis derechos de acceso, rectificación y
+            supresión conforme a la Ley 25.326 escribiendo a
+            copat3d@aif.gob.ar. Ver la{" "}
             <a
               href="/privacidad"
               className="hover:text-fg underline underline-offset-4"

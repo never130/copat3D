@@ -385,11 +385,9 @@ Sirve para leer clases, opacidad computada y posición durante el scroll. No est
 
 Estas bloquean trabajo. No las resuelvas por tu cuenta:
 
-1. **Texto legal de consentimiento.** Sin esto no se publica el formulario.
-2. **¿Se ceden datos a sponsors?** Cambia el texto del consentimiento.
-3. **¿Cómo se controla el acceso en la puerta?** QR, listado o libre — es logística del evento, ya no cambia qué datos se piden (ver más abajo).
-4. **¿Cómo se inscriben los menores de edad?** Urgente: con la fecha de nacimiento completa ya decidida, cualquier inscripto menor de 18 queda identificado individualmente. Ya no se puede posponer.
-5. **¿Quién accede a los datos de inscriptos y cómo se exportan?** "Después procesamos los datos" necesita una vía concreta, y la Ley 25.326 pide limitar el acceso a quien lo necesite.
+1. **Validación legal formal del texto de consentimiento.** Hay un texto cargado y confirmado por gestión (23/8/2026); falta que el área legal de la AIF lo revise antes de darlo por definitivo — sin eso no se publica el formulario.
+2. **¿Cómo se controla el acceso en la puerta?** QR, listado o libre — es logística del evento, ya no cambia qué datos se piden.
+3. **¿Quién accede a los datos de inscriptos y cómo se exportan?** "Después procesamos los datos" necesita una vía concreta, y la Ley 25.326 pide limitar el acceso a quien lo necesite.
 
 ### Ya decidido
 
@@ -403,8 +401,13 @@ formulario → el sistema emite un **código de reserva** → el código le lleg
 gestión, distinta de la recomendación técnica de minimizar campos que traía
 este documento — ver [docs/04](docs/04-datos-y-legales.md)). El DNI se pide
 siempre, no solo si hay control de acceso en puerta; la fecha va completa
-(día, mes, año), no en rango. Efecto directo: escala la urgencia del punto 4
-de arriba, que antes se podía posponer.
+(día, mes, año), no en rango.
+
+**No se ceden datos a sponsors, y el registro individual es solo para
+mayores de 18** (23/8/2026, Ever Loza). Los menores se coordinan por mail
+con la AIF (inscripción institucional vía colegio); el sistema bloquea el
+guardado de cualquier inscripto menor de edad — ver
+[docs/04](docs/04-datos-y-legales.md) §2 y §4.
 
 ## Documentación completa
 

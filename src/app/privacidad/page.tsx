@@ -14,10 +14,11 @@ export const metadata: Metadata = {
  * ⚠️ BORRADOR TÉCNICO — REQUIERE VALIDACIÓN DEL ÁREA LEGAL DE LA AIF.
  *
  * Cubre la estructura que exige la Ley 25.326 y describe **lo que el sitio
- * hace hoy**: formulario de contacto y mapa embebido. No describe el registro
- * de inscriptos porque todavía no está publicado; cuando se habilite hay que
- * agregar la sección de datos de inscripción (DNI, edad, etc.), que es
- * justamente lo que está bloqueado por el checklist de docs/04.
+ * hace hoy**: formulario de contacto, mapa embebido, y —desde el 23/8/2026—
+ * el registro de inscriptos, con los datos confirmados por gestión (sin
+ * cesión a sponsors, sin registro individual de menores). Es la sección que
+ * `docs/04-datos-y-legales.md` exige agregar antes de recolectar el primer
+ * dato real, y ya está agregada.
  *
  * No publicar como definitivo sin que legales lo revise. Ver
  * docs/04-datos-y-legales.md
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
 /** Fecha de la última revisión del texto. Constante y no `new Date()`: con la
  *  fecha calculada, la página diría "actualizada hoy" para siempre, aunque el
  *  texto lleve meses sin tocarse. */
-const ULTIMA_ACTUALIZACION = "19 de agosto de 2026";
+const ULTIMA_ACTUALIZACION = "23 de agosto de 2026";
 
 function Seccion({
   titulo,
@@ -84,20 +85,39 @@ export default function PrivacidadPage() {
 
             <Seccion titulo="2. Qué datos recolectamos">
               <p>
-                Solo los que nos das voluntariamente al escribirnos por el
-                formulario de contacto: <strong className="text-fg">nombre
-                y apellido, correo electrónico, asunto y el mensaje</strong> que
+                Depende del formulario que uses:
+              </p>
+              <p>
+                <strong className="text-fg">Formulario de contacto:</strong>{" "}
+                nombre y apellido, correo electrónico, asunto y el mensaje que
                 redactás.
+              </p>
+              <p>
+                <strong className="text-fg">Inscripción al congreso:</strong>{" "}
+                nombre y apellido, DNI, fecha de nacimiento, correo
+                electrónico, ciudad y provincia. El eje temático de mayor
+                interés es opcional. Pedimos DNI y fecha de nacimiento
+                completos —no un dato parcial ni un rango— porque son
+                necesarios para la acreditación en el evento; ver la sección 5
+                para cuánto tiempo se conservan.
+              </p>
+              <p>
+                <strong className="text-fg">
+                  El registro individual está reservado a mayores de 18 años.
+                </strong>{" "}
+                Si sos menor de edad y querés participar, escribinos a{" "}
+                <a
+                  href={`mailto:${EVENTO.email}`}
+                  className="text-accent-text font-semibold underline underline-offset-4"
+                >
+                  {EVENTO.email}
+                </a>{" "}
+                para coordinar la inscripción a través de tu colegio o
+                institución.
               </p>
               <p>
                 No pedimos ni almacenamos datos sensibles, no usamos cookies de
                 seguimiento propias y no creamos perfiles publicitarios.
-              </p>
-              <p>
-                La inscripción al congreso todavía no está habilitada. Cuando se
-                abra, esta política se actualizará para detallar qué datos pide
-                el formulario de registro y con qué finalidad, antes de que se
-                recolecte ningún dato.
               </p>
             </Seccion>
 
@@ -119,10 +139,13 @@ export default function PrivacidadPage() {
                 ni a empresas auspiciantes ni a ninguna otra organización.
               </p>
               <p>
-                Para hacer llegar tu mensaje a nuestra casilla usamos un
-                proveedor de envío de correo (Resend), que actúa únicamente como
-                intermediario técnico y procesa los datos en servidores fuera de
-                la Argentina. El mensaje viaja cifrado.
+                Para hacer llegar tu mensaje a nuestra casilla, y para
+                mandarte el código de reserva si te inscribís, usamos un
+                proveedor de envío de correo (Resend). Los datos de
+                inscripción se guardan en una base de datos (Neon). Los dos
+                actúan únicamente como intermediarios técnicos y procesan los
+                datos en servidores fuera de la Argentina. Toda la conexión
+                viaja cifrada.
               </p>
               <p>
                 La sección de sede incluye un mapa embebido de Google Maps. Al
@@ -135,11 +158,16 @@ export default function PrivacidadPage() {
 
             <Seccion titulo="5. Cuánto tiempo los conservamos">
               <p>
-                Conservamos los mensajes de contacto por el tiempo necesario
-                para responderlos y dejar constancia del intercambio, y como
-                máximo <strong className="text-fg">doce meses posteriores a la
-                realización del congreso</strong>. Cumplido ese plazo se
-                eliminan.
+                Conservamos los mensajes de contacto y los datos de
+                inscripción por el tiempo necesario para gestionar el
+                congreso, y como máximo{" "}
+                <strong className="text-fg">
+                  doce meses posteriores a la realización del congreso
+                </strong>
+                . Cumplido ese plazo, los datos que identifican a cada persona
+                se eliminan; puede conservarse información agregada sin
+                identificar a nadie (por ejemplo, cuántos inscriptos hubo por
+                ciudad) con fines estadísticos.
               </p>
             </Seccion>
 
