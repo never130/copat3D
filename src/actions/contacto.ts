@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { Resend } from "resend";
 import { envResend } from "@/lib/env";
+import { crearLimitador } from "@/lib/rate-limit";
 import { erroresPorCampo, esquemaContacto } from "@/lib/validation";
 
 /** Lo que la Server Action le devuelve al formulario. */
@@ -21,41 +22,9 @@ export type EstadoContacto = {
 const VENTANA_MS = 10 * 60 * 1000; // 10 minutos
 const MAX_POR_VENTANA = 3;
 
-/**
- * Contador en memoria del proceso.
- *
- * ⚠️ **Esto es un badén, no un portón.** En Vercel cada instancia serverless
- * tiene su propia memoria y se recicla, así que el contador ni se comparte
- * entre instancias ni sobrevive a un arranque en frío. Frena el reenvío
- * accidental y al script perezoso; no frena a alguien decidido.
- *
- * Para un límite real hace falta un almacén compartido (Upstash Redis es lo
- * habitual con Vercel). Es un servicio más y una cuenta más, así que queda
- * como decisión a tomar, no algo que agrego por mi cuenta. Mientras tanto, el
- * honeypot del esquema cubre el grueso del spam automatizado.
- */
-const envios = new Map<string, number[]>();
-
-function superaLimite(clave: string): boolean {
-  const ahora = Date.now();
-  const previos = (envios.get(clave) ?? []).filter((t) => ahora - t < VENTANA_MS);
-
-  if (previos.length >= MAX_POR_VENTANA) {
-    envios.set(clave, previos);
-    return true;
-  }
-
-  previos.push(ahora);
-  envios.set(clave, previos);
-
-  // Poda: sin esto el Map crece sin techo mientras viva la instancia.
-  if (envios.size > 500) {
-    for (const [k, v] of envios) {
-      if (v.every((t) => ahora - t >= VENTANA_MS)) envios.delete(k);
-    }
-  }
-  return false;
-}
+// El honeypot del esquema cubre el grueso del spam automatizado; ver
+// `src/lib/rate-limit.ts` para el porqué de este límite y sus límites.
+const superaLimite = crearLimitador(VENTANA_MS, MAX_POR_VENTANA);
 
 /* ------------------------------------------------------------------ */
 

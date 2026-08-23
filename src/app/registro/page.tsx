@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { NavbarSentinel } from "@/components/layout/NavbarSentinel";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { RegistroForm } from "@/components/sections/RegistroForm";
 import {
   WireCube,
   WireMargins,
   WireOctahedron,
 } from "@/components/shapes/wire";
+import { REGISTRO_HABILITADO } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Inscripción",
@@ -55,24 +57,30 @@ export default function RegistroPage() {
             />
           </WireMargins>
 
-          <div className="sheet border-border bg-surface rounded-3xl border border-dashed p-12 text-center">
-          <h2 className="text-2xl">El formulario se habilita en breve</h2>
-          <p className="text-muted mx-auto mt-4 max-w-md leading-relaxed">
-            Estamos terminando de definir el circuito de acreditación junto a la
-            AIF. Mientras tanto podés escribirnos y te avisamos apenas se abra
-            la inscripción.
-          </p>
-          <a
-            href="mailto:copat3d@aif.gob.ar?subject=Quiero%20inscribirme%20a%20COPAT%203D"
-            className="bg-magenta mt-8 inline-block rounded-full px-8 py-4 font-bold text-white transition-transform duration-200 hover:scale-[1.03]"
-          >
-            Avisenme cuando abra
-          </a>
-        </div>
+          {/* El interruptor es de código (src/lib/site.ts), no de
+              infraestructura: no alcanza con tocar la variable en Vercel sin
+              haber cerrado antes el checklist legal de docs/04. */}
+          <div className="sheet sheet-print">
+            {REGISTRO_HABILITADO ? (
+              <RegistroForm />
+            ) : (
+              <div className="border-border bg-surface rounded-3xl border border-dashed p-12 text-center">
+                <h2 className="text-2xl">El formulario se habilita en breve</h2>
+                <p className="text-muted mx-auto mt-4 max-w-md leading-relaxed">
+                  Estamos terminando de definir el circuito de acreditación
+                  junto a la AIF. Mientras tanto podés escribirnos y te
+                  avisamos apenas se abra la inscripción.
+                </p>
+                <a
+                  href="mailto:copat3d@aif.gob.ar?subject=Quiero%20inscribirme%20a%20COPAT%203D"
+                  className="bg-magenta mt-8 inline-block rounded-full px-8 py-4 font-bold text-white transition-transform duration-200 hover:scale-[1.03]"
+                >
+                  Avisenme cuando abra
+                </a>
+              </div>
+            )}
+          </div>
 
-          {/* El formulario no se publica hasta cerrar el checklist legal:
-              se recolecta DNI y el responsable es un organismo público.
-              Ver docs/04-datos-y-legales.md */}
           <p className="text-muted mt-8 text-center text-sm">
             Tus datos se tratarán conforme a la Ley 25.326 de Protección de
             Datos Personales.

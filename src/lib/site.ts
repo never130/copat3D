@@ -15,6 +15,23 @@
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://copat3d.com.ar";
 
+/**
+ * Interruptor del formulario de registro. Apagado por defecto: recolecta
+ * DNI y fecha de nacimiento de un organismo público, así que no se puede
+ * publicar hasta cerrar el checklist legal de docs/04-datos-y-legales.md
+ * (texto de consentimiento validado, ante todo).
+ *
+ * `=== "true"` y no una comparación con `!==`: así una variable ausente,
+ * vacía, o con cualquier otro valor cae del lado seguro (apagado), en vez de
+ * que solo `"false"` lo apague. Ver trampa 3 de AGENTS.md sobre variables
+ * `NEXT_PUBLIC_*` vacías.
+ *
+ * El interruptor real es de código, no de infraestructura: no alcanza con
+ * cambiar la variable en Vercel sin haber cerrado el checklist antes.
+ */
+export const REGISTRO_HABILITADO =
+  process.env.NEXT_PUBLIC_REGISTRO_ABIERTO === "true";
+
 export const EVENTO = {
   nombre: "COPAT 3D",
   nombreCompleto:

@@ -15,6 +15,9 @@ services:
       CONTACT_TO: ${CONTACT_TO:-copat3d@aif.gob.ar}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      # true acá es seguro: es Postgres local, no la base real. Ver
+      # src/lib/site.ts sobre por qué el default de producción es false.
+      NEXT_PUBLIC_REGISTRO_ABIERTO: ${NEXT_PUBLIC_REGISTRO_ABIERTO:-true}
       WATCHPACK_POLLING: "true" # el hot-reload en volumen montado necesita polling
     volumes:
       - .:/app

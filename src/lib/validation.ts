@@ -74,3 +74,146 @@ export function erroresPorCampo(
   }
   return salida;
 }
+
+/* ============================================================
+   REGISTRO DE INSCRIPCIÓN
+   Ver docs/03-arquitectura.md (modelo de datos) y docs/04-datos-y-legales.md
+   (por qué estos campos exactos). DNI y fecha de nacimiento COMPLETA son
+   decisión de gestión, no la recomendación técnica original — ver AGENTS.md,
+   sección "Ya decidido".
+   ============================================================ */
+
+export const LIMITES_REGISTRO = {
+  nombreApellido: 100,
+  email: 120,
+  ciudad: 80,
+} as const;
+
+/** Provincias argentinas (23 + CABA), orden alfabético. Único lugar donde
+ *  vive la lista: el <select> del formulario la recorre, no la copia. */
+export const PROVINCIAS = [
+  "Buenos Aires",
+  "Catamarca",
+  "Chaco",
+  "Chubut",
+  "Ciudad Autónoma de Buenos Aires",
+  "Córdoba",
+  "Corrientes",
+  "Entre Ríos",
+  "Formosa",
+  "Jujuy",
+  "La Pampa",
+  "La Rioja",
+  "Mendoza",
+  "Misiones",
+  "Neuquén",
+  "Río Negro",
+  "Salta",
+  "San Juan",
+  "San Luis",
+  "Santa Cruz",
+  "Santa Fe",
+  "Santiago del Estero",
+  "Tierra del Fuego, Antártida e Islas del Atlántico Sur",
+  "Tucumán",
+] as const;
+
+/** Edad mínima para inscribirse por cuenta propia. La política real para
+ *  menores (D5, aún abierta — ver docs/04) puede reemplazar este bloqueo
+ *  por un flujo institucional; hasta entonces, no se guarda en la base un
+ *  registro cuyo consentimiento no sería legalmente válido. */
+export const EDAD_MINIMA = 18;
+
+/** Años en un mes fijo (0-indexado) y día fijo simplifica de sobra para esto:
+ *  no hace falta exactitud al día para decidir "es menor de edad hoy". */
+export function calcularEdad(fechaISO: string): number {
+  const nacimiento = new Date(fechaISO);
+  const hoy = new Date();
+  let edad = hoy.getFullYear() - nacimiento.getFullYear();
+  const meses = hoy.getMonth() - nacimiento.getMonth();
+  if (meses < 0 || (meses === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edad--;
+  }
+  return edad;
+}
+
+export const esquemaRegistro = z.object({
+  nombreApellido: z
+    .string()
+    .trim()
+    .min(3, "Escribí tu nombre completo.")
+    .max(
+      LIMITES_REGISTRO.nombreApellido,
+      `Máximo ${LIMITES_REGISTRO.nombreApellido} caracteres.`,
+    ),
+
+  // Se aceptan puntos y espacios (como la gente lo escribe a mano) y se
+  // limpian antes de validar el largo real. 6 dígitos cubre DNI viejos;
+  // 8 es el largo actual.
+  dni: z
+    .string()
+    .trim()
+    .transform((valor) => valor.replace(/[.\s]/g, ""))
+    .pipe(
+      z
+        .string()
+        .regex(/^\d{6,8}$/, "El DNI va sin puntos, solo los números."),
+    ),
+
+  fechaNacimiento: z.iso
+    .date("Ingresá una fecha válida.")
+    .refine((valor) => new Date(valor) <= new Date(), {
+      message: "La fecha no puede ser futura.",
+    })
+    .refine(
+      (valor) => new Date(valor).getFullYear() >= new Date().getFullYear() - 110,
+      { message: "Revisá el año: parece un error de tipeo." },
+    ),
+
+  email: z
+    .string()
+    .trim()
+    .min(1, "Escribí tu correo.")
+    .max(LIMITES_REGISTRO.email, `Máximo ${LIMITES_REGISTRO.email} caracteres.`)
+    .pipe(z.email("Revisá el correo: parece que falta algo.")),
+
+  ciudad: z
+    .string()
+    .trim()
+    .min(2, "Escribí tu ciudad.")
+    .max(LIMITES_REGISTRO.ciudad, `Máximo ${LIMITES_REGISTRO.ciudad} caracteres.`),
+
+  provincia: z.enum(PROVINCIAS, "Seleccioná tu provincia."),
+
+  /** Opcional: no todos llegan sabiendo qué eje les interesa más. Sin
+   *  validación estricta contra los ids de `src/content/ejes.ts` porque el
+   *  propio <select> ya limita las opciones; acá solo hay un techo de largo
+   *  por las dudas de un POST armado a mano. */
+  interes: z
+    .string()
+    .max(40)
+    .optional()
+    .transform((valor) => (valor ? valor : undefined)),
+
+  /** El checkbox llega como `"on"` cuando está tildado, o ausente cuando no.
+   *  El texto real (validado por legales) todavía no existe — ver D3 en
+   *  docs/04 — así que lo que se pinta en el formulario es un borrador. Lo
+   *  que se guarda no es el texto, es que la persona lo tildó y cuándo. */
+  // `.nullish()` y no `.optional()`: un checkbox sin tildar no manda el
+  // campo, y `FormData.get()` devuelve `null` para una clave ausente, no
+  // `undefined`. `.optional()` solo cubre `undefined` — con `null` el error
+  // era el genérico de Zod ("expected string, received null") en vez del
+  // mensaje pensado para esto.
+  consentimiento: z
+    .string()
+    .nullish()
+    .refine(
+      (valor) => valor === "on",
+      "Tenés que aceptar el tratamiento de tus datos para continuar.",
+    ),
+
+  // Mismo honeypot que el formulario de contacto — ver el comentario ahí.
+  sitioWeb: z.string().optional(),
+});
+
+export type DatosRegistro = z.infer<typeof esquemaRegistro>;

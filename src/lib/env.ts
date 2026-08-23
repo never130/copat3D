@@ -27,6 +27,10 @@ function requerida(nombre: string): string {
   return valor;
 }
 
+export function envDb() {
+  return { connectionString: requerida("DATABASE_URL") };
+}
+
 export function envResend() {
   return {
     apiKey: requerida("RESEND_API_KEY"),
