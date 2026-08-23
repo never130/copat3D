@@ -36,15 +36,17 @@ Sitio del **Congreso Patagónico de Impresión 3D, Fabricación Digital e Innova
 | Docker (dev + producción) | ✅ Verificado corriendo |
 | SEO: metadata, sitemap, robots, JSON-LD, favicon, Open Graph | ✅ Hecho |
 | Documentación `docs/01` a `docs/06` | ✅ Hecho |
-| Formulario de registro | ❌ Sin construir — vía definida (base propia), bloqueado solo para **publicar** |
-| Formulario de contacto → Resend | ✅ Hecho (falta cargar `RESEND_API_KEY` y verificar el dominio) |
-| Base de datos (Neon) | ❌ Pendiente — ya se sabe qué guardar, ver [docs/03](docs/03-arquitectura.md) |
+| Formulario de registro | ✅ Construido y verificado de punta a punta — **apagado en Production** detrás de `NEXT_PUBLIC_REGISTRO_ABIERTO`, ver [src/lib/site.ts](src/lib/site.ts) |
+| Formulario de contacto → Resend | ✅ Hecho y verificado en producción |
+| Base de datos (Neon, San Pablo) | ✅ Conectada, migrada, probada — [db/schema.sql](db/schema.sql) |
+| Dominio `copat3d.com.ar` verificado en Resend (DKIM/SPF/MX) | ✅ Hecho — los mails salen de `no-responder@copat3d.com.ar` |
+| Región de Vercel/Neon | ✅ Las dos en San Pablo (`gru1` / `sa-east-1`), ver [docs/05](docs/05-infraestructura-deploy.md) |
 | Página `/privacidad` | ⚠️ Borrador publicable — **requiere validación de legales de la AIF** |
 | Sección de sede con mapa de Google | ✅ Hecho (ver nota de privacidad en [docs/04](docs/04-datos-y-legales.md)) |
 | Logo oficial de COPAT 3D (arte de la AIF) | ✅ Hecho |
 | Logos en el carrousel: Gobierno TDF, AIF, Buena Mezcla, Rayuela | ✅ Hecho |
 | Agenda real, speakers, logos del resto de sponsors | ❌ Falta contenido de terceros |
-| DNS en NIC.ar → Cloudflare | ❌ Pendiente (tarda 24-48hs, urgente) |
+| DNS: `copat3d.com.ar` en Cloudflare, proxeado, SSL Full (strict) | ✅ Hecho y verificado en vivo |
 
 ## Comandos
 

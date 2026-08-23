@@ -42,7 +42,7 @@ Nada de esto lo puede destrabar el equipo técnico solo. **Son cinco pedidos con
 
 | # | Qué falta | Quién | Qué frena si no llega | Cuándo se vuelve crítico |
 |---|---|---|---|---|
-| 1 | ⏱️ **Delegar DNS en NIC.ar → Cloudflare** | Gestión | Dominio productivo **y** el envío de correo (Resend necesita verificar el dominio con SPF/DKIM/DMARC) | **Ya.** Propaga en 24-48hs y recién después se verifica el dominio |
+| ~~1~~ | ✅ **Delegar DNS en NIC.ar → Cloudflare** | Gestión | — | **Resuelto el 23/8.** Dominio en vivo, proxeado, SSL Full (strict), y dominio verificado en Resend (DKIM/SPF/MX) — los mails ya salen de `no-responder@copat3d.com.ar` |
 | 2 | ⛔ **Texto legal de consentimiento** | Legales AIF | Publicar el formulario de registro | Semana del 31/8 |
 | ~~3~~ | ✅ **Registro propio vs. Eventbrite** | AIF | — | **Resuelta el 18/8: base propia**, con el flujo de Eventbrite copiado (código de reserva + mail). Ver [03](03-arquitectura.md) |
 | 4 | **¿Se ceden datos a sponsors?** | AIF | Cambia el texto del consentimiento (va junto con #2) | Semana del 31/8 |
@@ -59,11 +59,11 @@ Dos pendientes menores que también son decisión, no tarea:
 
 ### Semana del 24–30 ago — Destrabar y conversión
 
-- [ ] ⏱️ Iniciar delegación DNS (si no salió antes, es lo primero del lunes)
-- [ ] ⛔ Reunión con la AIF por las decisiones 2 a 6
-- [ ] Cargar `RESEND_API_KEY` en Vercel
-- [ ] Verificar el dominio en Resend y probar que el contacto llegue de verdad a `copat3d@aif.gob.ar` (revisar spam)
-- [ ] Arrancar el formulario de registro con la opción que defina la AIF
+- [x] ~~Iniciar delegación DNS~~ — hecho el 23/8, propagó y ya está verificado en vivo
+- [ ] ⛔ Reunión con la AIF por las decisiones 2, 4 y 7 (las únicas que siguen abiertas de esta tabla)
+- [x] ~~Cargar `RESEND_API_KEY` en Vercel~~
+- [x] ~~Verificar el dominio en Resend y probar que el contacto llegue~~ — probado, llega a la bandeja principal (no spam)
+- [x] ~~Arrancar el formulario de registro~~ — construido, probado de punta a punta contra Neon + Resend reales, apagado en Production hasta cerrar #2
 
 ### Semana del 31 ago–6 sep — Registro de punta a punta
 
@@ -124,8 +124,8 @@ Dos pendientes menores que también son decisión, no tarea:
 
 | Riesgo | Prob. | Impacto | Mitigación |
 |---|---|---|---|
-| **El DNS no se delega a tiempo** | **Alta** | **Alto** | Es el único ítem con espera externa que no se puede comprimir, y ahora además bloquea el correo. Iniciarlo ya |
-| **La AIF demora el texto de consentimiento** | **Alta** | **Alto** | Con el registro ya definido, el riesgo se corrió: el formulario se construye igual, pero sin ese texto no se publica. Se puede dejar listo y apagado, aunque cada semana sin él es una semana menos para probarlo con gente real |
+| ~~El DNS no se delega a tiempo~~ | — | — | **Resuelto el 23/8.** Ya no es un riesgo |
+| **La AIF demora el texto de consentimiento** | **Alta** | **Alto** | Con el registro ya construido y probado de punta a punta (incluido el envío real desde el dominio propio), el riesgo se corrió por completo a este punto: técnicamente no falta nada más, solo el texto para poder publicar |
 | El contenido (speakers, agenda) llega tarde | **Alta** | Medio | Los estados "próximamente" ya están diseñados; no bloquear el deploy esperando contenido |
 | Legales demora el texto de consentimiento | Media | **Alto** | El formulario se puede tener listo y publicarlo detrás de ese texto |
 | Alcance creciente ("agreguemos un blog…") | Media | Alto | [01-visión](01-vision-y-alcance.md) fija el alcance; todo pedido nuevo entra a v2 por defecto |
