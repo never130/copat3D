@@ -18,8 +18,13 @@ export const dynamic = "force-dynamic";
 export default async function AdminPage() {
   const inscriptos = await obtenerInscriptos();
 
+  // pt-28 y no py-12: el navbar es `fixed` y mide 78px, así que con 48px de
+  // padding el <h1> y el botón de descarga quedaban debajo de él — tapados e
+  // inclickeables. El resto de las páginas interiores reserva ese espacio con
+  // el pt-32 de PageHeader; acá no hay PageHeader (es un panel interno, no
+  // lleva la cabecera de marca) así que va a mano.
   return (
-    <main className="flex-1 px-5 py-12">
+    <main className="flex-1 px-5 pt-28 pb-12">
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>

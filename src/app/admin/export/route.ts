@@ -1,12 +1,26 @@
 import { obtenerInscriptos } from "@/lib/db";
 
-/** Envuelve en comillas un campo si tiene coma, comilla o salto de línea;
- *  las comillas internas se duplican, que es como CSV las escapa. */
+/** Prepara un valor para una celda CSV.
+ *
+ *  Dos cosas, no una:
+ *
+ *  1. **Neutraliza fórmulas.** Excel interpreta como fórmula toda celda que
+ *     arranque con `= + - @` (y con tab o retorno de carro). Alguien que se
+ *     inscriba con el nombre `=HYPERLINK(...)` conseguiría que su fórmula
+ *     corra en la máquina de quien abra el export, con acceso a las celdas
+ *     de al lado — o sea al DNI y correo de otros inscriptos. Se antepone un
+ *     apóstrofo, que Excel lee como "esto es texto" y no muestra.
+ *  2. **Escapa según CSV.** Comillas dobles duplicadas y el campo entre
+ *     comillas si contiene coma, comilla o salto de línea. `\r` incluido: el
+ *     archivo une filas con `\r\n`, así que un `\r` suelto en un dato
+ *     partiría la fila al medio. */
 function celda(valor: string): string {
-  if (/[",\n]/.test(valor)) {
-    return `"${valor.replace(/"/g, '""')}"`;
+  const neutralizado = /^[=+\-@\t\r]/.test(valor) ? `'${valor}` : valor;
+
+  if (/["\n\r,]/.test(neutralizado)) {
+    return `"${neutralizado.replace(/"/g, '""')}"`;
   }
-  return valor;
+  return neutralizado;
 }
 
 const COLUMNAS = [

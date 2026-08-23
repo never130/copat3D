@@ -1,7 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
-import { alternarAsistencia } from "@/lib/db";
+import { fijarAsistencia } from "@/lib/db";
 import { verificarAuthAdmin } from "@/lib/admin-auth";
 
 export type EstadoAsistencia = {
@@ -11,7 +11,10 @@ export type EstadoAsistencia = {
   asistio?: boolean;
 };
 
-export async function marcarAsistencia(codigo: string): Promise<EstadoAsistencia> {
+export async function marcarAsistencia(
+  codigo: string,
+  asistio: boolean,
+): Promise<EstadoAsistencia> {
   // Defensa en profundidad: el proxy ya protege /admin, pero una Server
   // Function no es una ruta aparte en esa cadena — ver el comentario en
   // src/lib/admin-auth.ts. Sin esto, alguien que arme el POST a mano sin
@@ -28,7 +31,7 @@ export async function marcarAsistencia(codigo: string): Promise<EstadoAsistencia
   }
 
   try {
-    const resultado = await alternarAsistencia(normalizado);
+    const resultado = await fijarAsistencia(normalizado, asistio);
     if (!resultado) {
       return { ok: false, mensaje: `No existe ninguna inscripción con el código ${normalizado}.` };
     }

@@ -27,9 +27,13 @@ export function TablaInscriptos({
 }) {
   const [inscriptos, setInscriptos] = useState(inscriptosIniciales);
   const [busqueda, setBusqueda] = useState("");
-  const [codigoEnCurso, setCodigoEnCurso] = useState<string | null>(null);
+  // Un Set y no un solo código: si se tocan dos filas seguidas, con una
+  // variable única el callback de la primera en terminar limpiaba el
+  // "pendiente" de la segunda, que quedaba clickeable de nuevo estando
+  // todavía en curso — y un segundo toque la marcaba dos veces.
+  const [enCurso, setEnCurso] = useState<ReadonlySet<string>>(new Set());
   const [mensaje, setMensaje] = useState<string | null>(null);
-  const [pendiente, iniciarTransicion] = useTransition();
+  const [, iniciarTransicion] = useTransition();
 
   const termino = busqueda.trim().toLowerCase();
   const filtrados = termino
@@ -41,11 +45,14 @@ export function TablaInscriptos({
       )
     : inscriptos;
 
-  function alternar(codigo: string) {
-    setCodigoEnCurso(codigo);
+  function cambiarAsistencia(codigo: string, asistio: boolean) {
+    setEnCurso((prev) => new Set(prev).add(codigo));
     setMensaje(null);
     iniciarTransicion(async () => {
-      const resultado = await marcarAsistencia(codigo);
+      // Se manda el valor deseado, no "invertí lo que haya": con dos
+      // personas acreditando desde dos celulares, un toggle ciego hace que
+      // el segundo toque desmarque a alguien que ya entró.
+      const resultado = await marcarAsistencia(codigo, asistio);
       setMensaje(resultado.mensaje);
       if (resultado.ok && resultado.asistio !== undefined) {
         setInscriptos((prev) =>
@@ -56,7 +63,11 @@ export function TablaInscriptos({
           ),
         );
       }
-      setCodigoEnCurso(null);
+      setEnCurso((prev) => {
+        const siguiente = new Set(prev);
+        siguiente.delete(codigo);
+        return siguiente;
+      });
     });
   }
 
@@ -134,15 +145,17 @@ export function TablaInscriptos({
                 <td className={CELDA}>
                   <button
                     type="button"
-                    onClick={() => alternar(fila.codigo_reserva)}
-                    disabled={pendiente && codigoEnCurso === fila.codigo_reserva}
+                    onClick={() =>
+                      cambiarAsistencia(fila.codigo_reserva, !fila.asistio)
+                    }
+                    disabled={enCurso.has(fila.codigo_reserva)}
                     className={`rounded-full px-3 py-1.5 text-xs font-bold transition-colors disabled:cursor-wait disabled:opacity-60 ${
                       fila.asistio
                         ? "bg-copat-green-deep/15 text-copat-green-deep dark:bg-copat-green/15 dark:text-copat-green"
                         : "border-border text-muted border hover:border-magenta/40"
                     }`}
                   >
-                    {pendiente && codigoEnCurso === fila.codigo_reserva
+                    {enCurso.has(fila.codigo_reserva)
                       ? "…"
                       : fila.asistio
                         ? "✓ Asistió"

@@ -82,21 +82,34 @@ export async function obtenerInscriptos(): Promise<InscriptoFila[]> {
   return rows;
 }
 
-/** Marca (o desmarca) la asistencia de un inscripto por su código de
- *  reserva. Devuelve la fila actualizada, o `null` si el código no existe
- *  — el panel lo usa para avisar "código no encontrado" en vez de fallar
- *  en silencio. */
-export async function alternarAsistencia(
+/** Marca o desmarca la asistencia de un inscripto por su código de reserva.
+ *  Devuelve la fila actualizada, o `null` si el código no existe — el panel
+ *  lo usa para avisar "código no encontrado" en vez de fallar en silencio.
+ *
+ *  Recibe el valor deseado en vez de invertir el actual (`NOT asistio`): con
+ *  dos personas acreditando en la puerta desde dos celulares, la lista de
+ *  cada una puede estar desactualizada, y un toggle ciego hace que el
+ *  segundo toque de "Marcar" DESMARQUE a alguien que ya entró. Con el valor
+ *  explícito, marcar dos veces deja el mismo resultado. */
+export async function fijarAsistencia(
   codigo: string,
+  asistio: boolean,
 ): Promise<{ nombre_apellido: string; asistio: boolean } | null> {
   const pool = getPool();
   const { rows } = await pool.query<{ nombre_apellido: string; asistio: boolean }>(
     `UPDATE inscripciones
-       SET asistio = NOT asistio,
-           asistio_at = CASE WHEN NOT asistio THEN now() ELSE NULL END
+       SET asistio = $2,
+           -- Solo se pisa la marca de tiempo si el estado cambia: si alguien
+           -- vuelve a tocar "Marcar" sobre un asistente ya acreditado, se
+           -- conserva la hora del ingreso real.
+           asistio_at = CASE
+             WHEN $2 AND NOT asistio THEN now()
+             WHEN NOT $2 THEN NULL
+             ELSE asistio_at
+           END
      WHERE codigo_reserva = $1
      RETURNING nombre_apellido, asistio`,
-    [codigo],
+    [codigo, asistio],
   );
   return rows[0] ?? null;
 }

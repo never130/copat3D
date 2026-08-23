@@ -20,11 +20,24 @@ export function verificarAuthAdmin(cabeceraAuthorization: string | null): boolea
 
   let decodificado: string;
   try {
-    decodificado = atob(cabeceraAuthorization.slice(6));
+    // `atob` devuelve los bytes como Latin-1; hay que reinterpretarlos como
+    // UTF-8 para que una contraseña con acentos o eñe se compare bien.
+    const bytes = Uint8Array.from(atob(cabeceraAuthorization.slice(6)), (c) =>
+      c.charCodeAt(0),
+    );
+    decodificado = new TextDecoder().decode(bytes);
   } catch {
     return false;
   }
 
-  const [, intento] = decodificado.split(":");
+  // `indexOf` y no `split(":")`: la contraseña puede contener dos puntos
+  // —RFC 7617 solo se los prohíbe al usuario, no a la contraseña— y con
+  // `split` nos quedaríamos con el primer tramo. Con una clave tipo
+  // `mi:clave:larga`, comparar contra `"mi"` no coincide nunca y el panel
+  // queda inaccesible para siempre, sin ningún error que lo explique.
+  const separador = decodificado.indexOf(":");
+  if (separador === -1) return false;
+  const intento = decodificado.slice(separador + 1);
+
   return intento === clave;
 }
