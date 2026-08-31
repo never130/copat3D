@@ -5,6 +5,7 @@ import {
   WireOctahedron,
   WirePrism,
 } from "@/components/shapes/wire";
+import { ACENTOS } from "@/components/ui/acentos";
 import { Tarjeta3D } from "@/components/ui/Tarjeta3D";
 import { EJES } from "@/content/ejes";
 
@@ -15,48 +16,8 @@ import { EJES } from "@/content/ejes";
  * a un costado. El número gigante sangra fuera del recorte, como en el arte
  * original del afiche.
  */
-/**
- * Acentos por eje.
- *
- * `borde`, `glow` y `luz` no son clases sino colores: se inyectan como custom
- * properties. Dos motivos: Tailwind no puede generar una utilidad por cada
- * mezcla, y sobre todo hacen falta en DOS estados —el hover del escritorio y
- * el estado por defecto en táctil, donde no hay hover posible—. Como clase de
- * Tailwind solo servirían para uno de los dos.
- */
-const ACCENT: Record<
-  string,
-  { text: string; bg: string; borde: string; glow: string; luz: string }
-> = {
-  "copat-coral": {
-    text: "text-copat-coral",
-    bg: "bg-copat-coral",
-    borde: "color-mix(in srgb, var(--color-copat-coral) 45%, transparent)",
-    glow: "color-mix(in srgb, var(--color-copat-coral) 26%, var(--paper-shadow))",
-    luz: "color-mix(in srgb, var(--color-copat-coral) 15%, transparent)",
-  },
-  "copat-sky": {
-    text: "text-copat-sky",
-    bg: "bg-copat-sky",
-    borde: "color-mix(in srgb, var(--color-copat-sky) 45%, transparent)",
-    glow: "color-mix(in srgb, var(--color-copat-sky) 26%, var(--paper-shadow))",
-    luz: "color-mix(in srgb, var(--color-copat-sky) 15%, transparent)",
-  },
-  "copat-yellow": {
-    text: "text-copat-yellow",
-    bg: "bg-copat-yellow",
-    borde: "color-mix(in srgb, var(--color-copat-yellow) 45%, transparent)",
-    glow: "color-mix(in srgb, var(--color-copat-yellow) 26%, var(--paper-shadow))",
-    luz: "color-mix(in srgb, var(--color-copat-yellow) 15%, transparent)",
-  },
-  "copat-green": {
-    text: "text-copat-green",
-    bg: "bg-copat-green",
-    borde: "color-mix(in srgb, var(--color-copat-green) 45%, transparent)",
-    glow: "color-mix(in srgb, var(--color-copat-green) 26%, var(--paper-shadow))",
-    luz: "color-mix(in srgb, var(--color-copat-green) 15%, transparent)",
-  },
-};
+/* Los acentos viven en `@/components/ui/acentos`: los comparten estas
+   tarjetas y las de /convocatorias. */
 
 /** Capas apiladas: la firma visual de la impresión 3D. Se despliegan al pasar
  *  el mouse, de abajo hacia arriba, como si la pieza siguiera imprimiéndose. */
@@ -145,7 +106,7 @@ export function Ejes() {
 
       <div className="mt-14 grid gap-5 sm:grid-cols-2">
         {EJES.map((eje, i) => {
-          const a = ACCENT[eje.color];
+          const a = ACENTOS[eje.color];
           return (
             // El .sheet va en el envoltorio y no en la tarjeta: así la
             // animación de entrada y el hover no se pelean por `transform`.
