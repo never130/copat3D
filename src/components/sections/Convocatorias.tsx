@@ -11,11 +11,11 @@ import { CONVOCATORIAS } from "@/content/convocatorias";
 /**
  * Aviso de las convocatorias en la portada.
  *
- * Existe por una razón concreta: la inscripción del concurso de secundarios
- * cierra el 7 de septiembre, y hasta ahora eso solo se veía entrando a
- * `/convocatorias` desde el navbar. Quien llegaba a la portada scrolleaba
- * hero → ejes → sede → empresas → contacto sin enterarse nunca de que había
- * un concurso con fecha de vencimiento.
+ * Existe por una razón concreta: la inscripción de "Diseñando el Futuro —
+ * Capa a Capa" cierra el 7 de septiembre, y hasta ahora eso solo se veía
+ * entrando a `/convocatorias` desde el navbar. Quien llegaba a la portada
+ * scrolleaba hero → ejes → sede → empresas → contacto sin enterarse nunca de
+ * que había un concurso con fecha de vencimiento.  
  *
  * **Es una franja, no una tarjeta con vida propia.** Pasó por dos versiones
  * peores antes de esta: dos tarjetas completas (repetían tal cual las de

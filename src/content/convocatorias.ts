@@ -88,13 +88,13 @@ export const CONVOCATORIAS: Convocatoria[] = [
     // ⚠️ Colisiona con el eslogan de la marca —"Diseñando el futuro capa a
     // capa", en el pie de todas las páginas—, así que el mismo texto nombra
     // dos cosas distintas en el sitio.
-    titulo: "Diseñando el Futuro — Capa a Capa",
+    titulo: "Diseñando el Futuro - Capa a Capa",
     detalle:
       "Equipos de colegios secundarios que diseñan y fabrican un proyecto con impacto real en su comunidad.",
     estado: "Inscripción abierta hasta el 7 de septiembre",
     color: "copat-green",
     datos: [
-      { rotulo: "Quiénes", valor: "Escuelas de Río Grande, Ushuaia y Tolhuin" },
+      { rotulo: "Quiénes", valor: "Colegios de Río Grande, Ushuaia y Tolhuin" },
       { rotulo: "Equipo", valor: "7 estudiantes y 1 docente responsable" },
       { rotulo: "Inscripción", valor: "Del 31 de agosto al 7 de septiembre" },
       { rotulo: "Premio", valor: "$1.500.000 + insumos, uno por ciudad" },
