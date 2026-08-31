@@ -47,7 +47,7 @@ export const EJES: Eje[] = [
     numero: "04",
     titulo: "Educación y Formación",
     descripcion:
-      "Formar el talento técnico que la provincia necesita: robótica educativa, diseño digital y el camino de los Polos Creativos hacia el primer emprendimiento.",
+      "Formar el talento técnico que la provincia necesita: robótica educativa, diseño digital y el camino de los Polos Creativos hacia el conocimiento aplicado.",
     temas: ["Formación técnica", "Robótica educativa", "Startups locales", "Diseño digital"],
     color: "copat-green",
   },
