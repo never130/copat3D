@@ -10,7 +10,7 @@ import { Tarjeta3D } from "@/components/ui/Tarjeta3D";
 import { CONVOCATORIAS } from "@/content/convocatorias";
 
 /**
- * Resumen de las convocatorias en la portada.
+ * Aviso de las convocatorias en la portada.
  *
  * Existe por una razón concreta: la inscripción del concurso de secundarios
  * cierra el 7 de septiembre, y hasta ahora eso solo se veía entrando a
@@ -18,21 +18,25 @@ import { CONVOCATORIAS } from "@/content/convocatorias";
  * hero → ejes → sede → empresas → contacto sin enterarse nunca de que había
  * un concurso con fecha de vencimiento.
  *
- * Es un RESUMEN, no una copia: cada tarjeta muestra lo mínimo para decidir
- * si te interesa —qué es y hasta cuándo— y manda a `/convocatorias`, que
- * tiene la ficha completa y las bases. Si esta sección creciera hasta
- * repetir esos datos, la página dejaría de tener sentido.
+ * **Es UNA tarjeta, no dos.** Antes eran dos con el mismo tratamiento que las
+ * de `/convocatorias`, y quedaba redundante: la misma información repetida a
+ * un clic de distancia. Ahora las dos convocatorias conviven adentro de una
+ * sola pieza que entera es el enlace a la página.
  *
- * Las tarjetas son hermanas de las de eje y comparten TODO su tratamiento
- * —inclinación, luz que sigue al puntero, número gigante, capas apiladas,
- * plato de impresora—, porque viven en la misma página, una sección abajo:
- * cualquier diferencia se lee como inconsistencia y no como jerarquía. La
- * única diferencia deliberada es que estas son un enlace, y lo señalan con
- * la flecha del pie.
+ * Lo que NO se puede recortar es el `estado` de cada una: es el dato por el
+ * que la sección existe. Un botón genérico dejaría la fecha de cierre otra
+ * vez escondida detrás de un clic, que es justo el problema que vino a
+ * resolver.
  *
- * Por eso el `.sheet` va en el envoltorio y no en la tarjeta: la animación
- * de entrada y la inclinación se pelearían por `transform` (trampa 6). Es la
- * misma estructura que usa `Ejes`.
+ * Dos detalles de implementación que no son obvios:
+ *
+ * - El CTA es un `<span>` con aspecto de botón y no un `<a>`: la tarjeta
+ *   entera ya es un enlace, y anidar un `<a>` dentro de otro es HTML
+ *   inválido —el navegador rompe el árbol y el interno deja de funcionar—.
+ * - El acento de la tarjeta es el magenta de marca y no uno de `ACENTOS`:
+ *   cubre las dos convocatorias, así que tomar el verde o el lila de una de
+ *   ellas sería arbitrario. Cada una conserva el suyo en su punto y en su
+ *   chip.
  */
 export function Convocatorias() {
   return (
@@ -78,106 +82,104 @@ export function Convocatorias() {
         </p>
       </div>
 
-      <div className="mt-14 grid gap-5 sm:grid-cols-2">
-        {CONVOCATORIAS.map((c, i) => {
-          const a = ACENTOS[c.color];
-          return (
-            <div
-              key={c.id}
-              className="sheet"
-              style={{ "--sheet-delay": `${i * 90}ms` } as React.CSSProperties}
-            >
-              <Tarjeta3D>
-                <Link
-                  href="/convocatorias"
-                  // Sin clases `transition-*` de Tailwind: las transiciones de
-                  // esta tarjeta se declaran en `.tarjeta-3d > *` de
-                  // globals.css, que al estar fuera de `@layer` le gana igual
-                  // a las utilidades (trampa 10).
-                  style={
-                    {
-                      "--luz-color": a.luz,
-                      "--glow": a.glow,
-                      "--borde-activo": a.borde,
-                    } as React.CSSProperties
-                  }
-                  className="tarjeta-eje group border-border bg-surface relative block h-full overflow-hidden rounded-3xl rounded-br-none border pt-8 pr-8 pb-10 pl-8 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_var(--glow)]"
-                >
-                  <span
-                    className="luz-tarjeta pointer-events-none absolute inset-0"
-                    aria-hidden="true"
-                  />
+      {/* El .sheet va en el envoltorio y no en la tarjeta: la animación de
+          entrada y la inclinación se pelearían por `transform` (trampa 6).
+          Misma estructura que usa Ejes. */}
+      <div className="sheet mt-14">
+        <Tarjeta3D>
+          <Link
+            href="/convocatorias"
+            // Sin clases `transition-*` de Tailwind: las transiciones de esta
+            // tarjeta se declaran en `.tarjeta-3d > *` de globals.css, que al
+            // estar fuera de `@layer` le gana igual a las utilidades
+            // (trampa 10).
+            style={
+              {
+                "--luz-color":
+                  "color-mix(in srgb, var(--color-magenta) 15%, transparent)",
+                "--glow":
+                  "color-mix(in srgb, var(--color-magenta) 26%, var(--paper-shadow))",
+                "--borde-activo":
+                  "color-mix(in srgb, var(--color-magenta) 45%, transparent)",
+              } as React.CSSProperties
+            }
+            className="tarjeta-eje group border-border bg-surface relative block overflow-hidden rounded-3xl rounded-br-none border pt-8 pr-8 pb-10 pl-8 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_var(--glow)] sm:pt-10 sm:pr-10 sm:pl-10"
+          >
+            <span
+              className="luz-tarjeta pointer-events-none absolute inset-0"
+              aria-hidden="true"
+            />
 
-                  {/* Número sangrando fuera del recorte, corrido en sentido
-                      CONTRARIO a la inclinación: ese desfase entre planos es
-                      lo que se lee como profundidad. */}
-                  <span
-                    className={`num-tarjeta font-display pointer-events-none absolute -top-6 -right-2 text-[8rem] leading-none font-black ${a.text} opacity-[0.07] transition-opacity duration-500 group-hover:opacity-[0.16]`}
-                    style={{
-                      translate:
-                        "calc(var(--ry, 0deg) / 1deg * -1.1px) calc(var(--rx, 0deg) / 1deg * 1.1px)",
-                    }}
+            <div className="relative">
+              <div className="grid gap-8 sm:grid-cols-2 sm:gap-10">
+                {CONVOCATORIAS.map((c, i) => {
+                  const a = ACENTOS[c.color];
+                  return (
+                    <div
+                      key={c.id}
+                      // El filete divisorio solo desde `sm`: apiladas en
+                      // mobile, una línea vertical no separa nada.
+                      className={
+                        i > 0 ? "sm:border-border sm:border-l sm:pl-10" : ""
+                      }
+                    >
+                      <span className="flex items-center gap-3">
+                        {/* `size-3` y no `size-2.5`: las utilidades `size-*`
+                            con decimales no se generan en este proyecto y el
+                            punto quedaba en 0×0, o sea invisible. */}
+                        <span
+                          className={`size-3 shrink-0 rounded-full ${a.bg}`}
+                          aria-hidden="true"
+                        />
+                        <span className="text-accent-text font-mono text-xs font-bold tracking-[0.2em]">
+                          CONVOCATORIA {c.numero}
+                        </span>
+                      </span>
+
+                      <h3 className="mt-4 text-2xl">{c.titulo}</h3>
+
+                      <span
+                        className="text-fg mt-4 inline-flex w-fit items-center rounded-full border px-4 py-2 text-sm font-semibold"
+                        style={{ borderColor: a.borde }}
+                      >
+                        {c.estado}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* `<span>` con aspecto de botón, NO un `<a>`: la tarjeta entera
+                  ya es el enlace y anidar dos `<a>` es HTML inválido. */}
+              <div className="border-border mt-9 border-t pt-8">
+                <span className="bg-magenta group-hover:bg-magenta-bright inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-base font-bold text-white transition-colors duration-200">
+                  Ver las convocatorias
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="size-4 transition-transform duration-300 group-hover:translate-x-1"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     aria-hidden="true"
                   >
-                    {c.numero}
-                  </span>
-
-                  <div className="relative">
-                    <p className="text-accent-text font-mono text-xs font-bold tracking-[0.2em]">
-                      CONVOCATORIA {c.numero}
-                    </p>
-                    <h3 className="mt-3 max-w-[15ch] text-2xl">{c.titulo}</h3>
-                    <p className="text-muted mt-3 max-w-[42ch] leading-relaxed">
-                      {c.detalle}
-                    </p>
-
-                    {/* El estado es lo que decide si alguien se apura: va
-                        destacado y no como una línea más de texto. Es el
-                        equivalente a los chips de tema de las tarjetas de
-                        eje, con el acento en el borde en vez del relleno. */}
-                    <span
-                      className="text-fg mt-6 inline-flex w-fit items-center gap-2.5 rounded-full border px-4 py-2 text-sm font-semibold"
-                      style={{ borderColor: a.borde }}
-                    >
-                      <span
-                        className={`size-2 shrink-0 rounded-full ${a.bg}`}
-                        aria-hidden="true"
-                      />
-                      {c.estado}
-                    </span>
-
-                    {/* La flecha es la única diferencia deliberada con las
-                        tarjetas de eje: estas sí llevan a algún lado. */}
-                    <span className="text-accent-text mt-7 flex items-center gap-2 text-sm font-bold">
-                      Ver la convocatoria
-                      <svg
-                        viewBox="0 0 24 24"
-                        className="size-4 transition-transform duration-300 group-hover:translate-x-1"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M5 12h14M13 6l6 6-6 6" />
-                      </svg>
-                    </span>
-                  </div>
-
-                  <Capas color={a.bg} />
-
-                  {/* Plato de la impresora, en el borde inferior como en las
-                      tarjetas de eje. */}
-                  <span
-                    className={`plato-tarjeta absolute inset-x-0 bottom-0 h-[3px] ${a.bg} origin-left scale-x-[0.18] transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-x-100`}
-                    aria-hidden="true"
-                  />
-                </Link>
-              </Tarjeta3D>
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </span>
+              </div>
             </div>
-          );
-        })}
+
+            <Capas color="bg-magenta" />
+
+            {/* Plato de la impresora, en el borde inferior como en las
+                tarjetas de eje. */}
+            <span
+              className="plato-tarjeta bg-magenta absolute inset-x-0 bottom-0 h-[3px] origin-left scale-x-[0.18] transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-x-100"
+              aria-hidden="true"
+            />
+          </Link>
+        </Tarjeta3D>
       </div>
     </section>
   );
