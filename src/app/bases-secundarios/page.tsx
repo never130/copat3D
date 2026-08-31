@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/layout/Logo";
+import { CRONOGRAMA_SECUNDARIOS } from "@/content/convocatorias";
 
 export const metadata: Metadata = {
   title: "Bases y condiciones — Concurso de Secundarios",
@@ -38,22 +39,6 @@ export const metadata: Metadata = {
 const ULTIMA_ACTUALIZACION = "31 de agosto de 2026";
 
 const ROTULO = "Concurso de Proyectos de Impresión 3D · Nivel secundario";
-
-const CRONOGRAMA = [
-  {
-    fecha: "1 al 7 de septiembre",
-    instancia: "Inscripción de equipos mediante formulario en línea.",
-  },
-  {
-    fecha: "8 al 20 de septiembre",
-    instancia: "Presentación del proyecto (MVP).",
-  },
-  {
-    fecha: "21 al 25 de septiembre",
-    instancia: "Etapa de revisión técnica y selección por parte del jurado.",
-  },
-  { fecha: "29 de septiembre", instancia: "Anuncio oficial de los ganadores." },
-];
 
 /**
  * Sección numerada, con el número volcado a la izquierda como en el PDF.
@@ -265,7 +250,7 @@ export default function BasesSecundariosPage() {
                     Instancia
                   </span>
                 </div>
-                {CRONOGRAMA.map((fila, i) => (
+                {CRONOGRAMA_SECUNDARIOS.map((fila, i) => (
                   <div
                     key={fila.fecha}
                     className={`grid gap-1 px-5 py-4 text-sm sm:grid-cols-[13rem_1fr] sm:gap-4 sm:text-base ${

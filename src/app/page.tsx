@@ -1,5 +1,6 @@
 import { NavbarSentinel } from "@/components/layout/NavbarSentinel";
 import { Contacto } from "@/components/sections/Contacto";
+import { Convocatorias } from "@/components/sections/Convocatorias";
 import { Ejes } from "@/components/sections/Ejes";
 import { Hero } from "@/components/sections/Hero";
 import { Sede } from "@/components/sections/Sede";
@@ -17,6 +18,8 @@ export default function Home() {
         <div className="paper-page">
           <NavbarSentinel />
           <Ejes />
+          {/* Entre Ejes y Sede, en el mismo orden que el navbar. */}
+          <Convocatorias />
           <Sede />
           <Sponsors />
           <Contacto />

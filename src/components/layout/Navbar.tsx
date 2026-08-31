@@ -18,7 +18,12 @@ const LINKS = [
   // inscripción individual para asistir al evento) y el botón "Inscribirme".
   // Repetirla acá, para el concurso de secundarios y el registro de
   // emprendedores, iba a leerse como si fuera lo mismo.
-  { href: "/convocatorias", label: "Convocatorias" },
+  //
+  // Apunta al ANCLA de la portada, no a /convocatorias: los otros cuatro
+  // items del menú son anclas de la home, y este estaba en el medio de la
+  // lista siendo el único que cambiaba de página. La sección resume y manda
+  // a /convocatorias, que sigue existiendo como destino compartible.
+  { href: "/#convocatorias", label: "Convocatorias" },
   ...(AGENDA_CONFIRMADA ? [{ href: "/agenda", label: "Agenda" }] : []),
   { href: "/#talentos", label: "Fábrica de Talentos" },
   { href: "/#empresas", label: "Empresas" },

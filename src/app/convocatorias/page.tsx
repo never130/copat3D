@@ -3,8 +3,12 @@ import Link from "next/link";
 import { NavbarSentinel } from "@/components/layout/NavbarSentinel";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { WireCube, WireMargins, WirePrism } from "@/components/shapes/wire";
-import { ACENTOS, type Acento } from "@/components/ui/acentos";
+import { ACENTOS } from "@/components/ui/acentos";
 import { Tarjeta3D } from "@/components/ui/Tarjeta3D";
+import {
+  CONVOCATORIAS,
+  CRONOGRAMA_SECUNDARIOS,
+} from "@/content/convocatorias";
 
 export const metadata: Metadata = {
   title: "Convocatorias",
@@ -29,6 +33,11 @@ export const metadata: Metadata = {
  * cuánto se lleva el ganador), y salen del PDF de bases y de los textos de
  * los formularios.
  *
+ * El contenido vive en `@/content/convocatorias` y no acá porque lo comparten
+ * tres lugares: esta página, la sección de la portada que la resume, y
+ * `/bases-secundarios`, que muestra el mismo cronograma dentro del documento
+ * formal.
+ *
  * Los tres links que pasó la AIF por WhatsApp eran de EDICIÓN (`.../edit`),
  * no públicos. Verificado uno por uno (31/8/2026) probando la variante
  * pública de cada uno (`/viewform` en los Forms, `/preview` en el Doc):
@@ -43,93 +52,7 @@ export const metadata: Metadata = {
  *   `/bases-secundarios` (ruta PLANA, no anidada bajo esta — ver trampa 21
  *   de AGENTS.md). No depende de que Google Docs mantenga ese permiso
  *   abierto.
- *
- * `interno` usa `next/link` en vez de una etiqueta `<a>` con
- * `target="_blank"`: es contenido propio del sitio, no un destino externo.
- * Un `enlace` sin `href` se renderiza inerte ("Muy pronto") — hoy no queda
- * ninguno, pero la rama se conserva para la próxima convocatoria que se
- * anuncie antes de tener su formulario.
  */
-type Enlace = {
-  texto: string;
-  href?: string;
-  interno?: boolean;
-  /** El CTA que la persona vino a apretar. Uno solo por tarjeta. */
-  principal?: boolean;
-};
-
-type Convocatoria = {
-  id: string;
-  numero: string;
-  titulo: string;
-  detalle: string;
-  color: Acento;
-  datos: { rotulo: string; valor: string }[];
-  enlaces: Enlace[];
-};
-
-const CONVOCATORIAS: Convocatoria[] = [
-  {
-    id: "secundarios",
-    numero: "01",
-    titulo: "Concurso de Secundarios",
-    detalle:
-      "Equipos de escuelas secundarias que diseñan y fabrican un proyecto con impacto real en su comunidad.",
-    color: "copat-green",
-    datos: [
-      { rotulo: "Quiénes", valor: "Escuelas de Río Grande, Ushuaia y Tolhuin" },
-      { rotulo: "Equipo", valor: "7 estudiantes y 1 docente responsable" },
-      { rotulo: "Inscripción", valor: "Del 31 de agosto al 7 de septiembre" },
-      { rotulo: "Premio", valor: "$1.500.000 + insumos, uno por ciudad" },
-    ],
-    enlaces: [
-      {
-        texto: "Bases y condiciones",
-        // Ruta PLANA (no /convocatorias/bases-secundarios): ver trampa 21
-        // de AGENTS.md — anidarla bajo /convocatorias rompía el pase de
-        // hojas al llegar por navegación interna.
-        href: "/bases-secundarios",
-        interno: true,
-      },
-      {
-        texto: "Inscribirme",
-        principal: true,
-        // ⚠️ Publicado a pedido expreso (31/8/2026) aunque el Form todavía
-        // devuelve 401: sigue compartido solo para personas puntuales, no
-        // para "cualquiera con el enlace". Va con `/viewform` y NO con el
-        // `/edit` que mandó la AIF, que son dos cosas distintas: con
-        // `/viewform` quien no tenga acceso ve la pantalla de "solicitar
-        // acceso" de Google y el link empieza a funcionar solo en cuanto
-        // cambien el permiso; con `/edit` habría caído en el EDITOR del
-        // formulario, pudiendo alterar las preguntas del concurso.
-        href: "https://docs.google.com/forms/d/1N-e6iysCyvojYqatUm0Clf71kIxsIbCQn3ukSx6hges/viewform",
-      },
-    ],
-  },
-  {
-    id: "emprendedores",
-    numero: "02",
-    titulo: "Registro de Emprendedores",
-    detalle:
-      "Emprendimientos, pymes y startups fueguinas que ya trabajan con impresión 3D y fabricación digital.",
-    color: "copat-lilac",
-    datos: [
-      {
-        rotulo: "Quiénes",
-        valor: "Emprendedores, comercios y startups de la provincia",
-      },
-      { rotulo: "Qué ofrece", valor: "Stand propio o charla durante el congreso" },
-      { rotulo: "Cuándo", valor: "2 y 3 de octubre, en la Fábrica de Talentos" },
-    ],
-    enlaces: [
-      {
-        texto: "Inscribirme",
-        principal: true,
-        href: "https://docs.google.com/forms/d/1oHEk1RPvxKd558CdlhAuoD1NhN38FC168V2FjQPLYY4/viewform",
-      },
-    ],
-  },
-];
 
 function FlechaExterna() {
   return (
@@ -324,7 +247,47 @@ export default function ConvocatoriasPage() {
             })}
           </div>
 
-          <p className="sheet text-muted mt-10 text-center">
+          {/* Cronograma del concurso: las fechas son lo que más se consulta
+              después de decidir participar, y tenerlas acá evita mandar a
+              todo el mundo al documento de bases para ver cuatro renglones.
+              Sale de la misma constante que usa /bases-secundarios, así no
+              hay dos listas de fechas que puedan quedar desfasadas. */}
+          <section className="mt-20">
+            <div className="sheet max-w-2xl">
+              <p className="text-accent-text font-mono text-xs font-medium tracking-[0.25em] uppercase">
+                Concurso de Secundarios
+              </p>
+              <h2 className="titulo-impreso mt-4 text-[clamp(1.75rem,5vw,2.75rem)]">
+                Cómo sigue después de inscribirte
+              </h2>
+            </div>
+
+            <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {CRONOGRAMA_SECUNDARIOS.map((etapa, i) => (
+                <li
+                  key={etapa.fecha}
+                  style={
+                    { "--sheet-delay": `${i * 70}ms` } as React.CSSProperties
+                  }
+                  className="sheet border-border bg-surface relative rounded-2xl rounded-br-none border p-6"
+                >
+                  <span
+                    className="bg-magenta/50 absolute inset-x-6 bottom-0 h-px"
+                    aria-hidden="true"
+                  />
+                  <span className="text-accent-text font-mono text-xs font-bold tracking-[0.2em]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <p className="text-fg mt-3 font-semibold">{etapa.fecha}</p>
+                  <p className="text-muted mt-2 text-sm leading-relaxed">
+                    {etapa.instancia}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          <p className="sheet text-muted mt-16 text-center">
             Las inscripciones se completan en un formulario de Google. Ante
             cualquier problema para acceder, escribinos a{" "}
             <a
