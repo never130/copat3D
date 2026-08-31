@@ -257,8 +257,11 @@ export default function ConvocatoriasPage() {
               <p className="text-accent-text font-mono text-xs font-medium tracking-[0.25em] uppercase">
                 Concurso de Secundarios
               </p>
+              {/* No "Cómo sigue después de inscribirte": el primer paso del
+                  cronograma ES la inscripción, así que ese título se
+                  contradecía con su propio contenido. */}
               <h2 className="titulo-impreso mt-4 text-[clamp(1.75rem,5vw,2.75rem)]">
-                Cómo sigue después de inscribirte
+                De la inscripción al anuncio de ganadores
               </h2>
             </div>
 

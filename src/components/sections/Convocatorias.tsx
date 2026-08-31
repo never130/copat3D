@@ -68,10 +68,13 @@ export function Convocatorias() {
         <h2 className="titulo-impreso mt-4 text-[clamp(2rem,6vw,3.5rem)]">
           También podés venir a presentar tu proyecto
         </h2>
+        {/* Sin "ya trabajan": el formulario está dirigido a quienes usan
+            "o desean incorporar" fabricación digital, así que ese "ya"
+            dejaba afuera a parte del público convocado. */}
         <p className="text-muted mt-5 text-lg">
           Un concurso para escuelas secundarias de toda la provincia y un
-          registro para emprendedores fueguinos que ya trabajan con
-          fabricación digital.
+          registro para emprendedores fueguinos que trabajan con fabricación
+          digital o quieren incorporarla.
         </p>
       </div>
 
