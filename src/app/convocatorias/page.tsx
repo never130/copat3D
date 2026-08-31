@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { NavbarSentinel } from "@/components/layout/NavbarSentinel";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { WireCube, WireMargins, WirePrism } from "@/components/shapes/wire";
@@ -24,17 +25,22 @@ export const metadata: Metadata = {
  *
  * - Emprendedores (Form): responde el formulario real. Público, se usa tal
  *   cual con `/viewform`.
- * - Secundarios (Form) y Bases y condiciones (Doc): las dos devuelven
- *   401 Unauthorized. No es un problema de la URL — el archivo está
- *   compartido solo para personas puntuales, no para "cualquiera con el
- *   enlace". Hace falta que la AIF cambie el permiso de acceso (o mande el
- *   PDF de las bases para alojarlo directo acá, más robusto a largo plazo
- *   que depender de que ese permiso no cambie).
+ * - Secundarios (Form): devuelve 401 Unauthorized. No es un problema de la
+ *   URL — está compartido solo para personas puntuales, no para "cualquiera
+ *   con el enlace". Sigue pendiente hasta que la AIF cambie ese permiso
+ *   (decisión 31/8/2026: no se reconstruye como formulario propio, ver
+ *   AGENTS.md).
+ * - Bases y condiciones (Doc): mismo 401, pero acá SÍ hay solución — Maribel
+ *   mandó el texto completo por WhatsApp y está alojado en
+ *   `/convocatorias/bases-secundarios`. No depende de que Google Docs
+ *   mantenga ese permiso abierto.
  *
  * Cada `enlace` sin `href` se renderiza inerte ("Muy pronto"), igual que
- * hacía toda la tarjeta antes de tener el primer link confirmado.
+ * hacía toda la tarjeta antes de tener el primer link confirmado. `interno`
+ * usa `next/link` en vez de una etiqueta `<a>` con `target="_blank"`: es
+ * contenido propio del sitio, no un destino externo.
  */
-type Enlace = { texto: string; href?: string };
+type Enlace = { texto: string; href?: string; interno?: boolean };
 
 const CONVOCATORIAS: {
   id: string;
@@ -47,7 +53,14 @@ const CONVOCATORIAS: {
     titulo: "Concurso de Secundarios",
     detalle:
       "Certamen para estudiantes de escuelas secundarias de Tierra del Fuego, en el marco de COPAT 3D.",
-    enlaces: [{ texto: "Bases y condiciones" }, { texto: "Inscribirme" }],
+    enlaces: [
+      {
+        texto: "Bases y condiciones",
+        href: "/convocatorias/bases-secundarios",
+        interno: true,
+      },
+      { texto: "Inscribirme" },
+    ],
   },
   {
     id: "emprendedores",
@@ -128,7 +141,15 @@ export default function ConvocatoriasPage() {
 
                 <div className="mt-8 flex flex-wrap gap-3">
                   {c.enlaces.map((enlace) =>
-                    enlace.href ? (
+                    enlace.href && enlace.interno ? (
+                      <Link
+                        key={enlace.texto}
+                        href={enlace.href}
+                        className="border-border hover:border-magenta/50 hover:text-accent-text inline-flex w-fit items-center gap-2 rounded-full border px-6 py-3 text-sm font-bold transition-colors duration-200"
+                      >
+                        {enlace.texto}
+                      </Link>
+                    ) : enlace.href ? (
                       <a
                         key={enlace.texto}
                         href={enlace.href}
