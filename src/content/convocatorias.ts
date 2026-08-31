@@ -80,9 +80,17 @@ export const CONVOCATORIAS: Convocatoria[] = [
   {
     id: "secundarios",
     numero: "01",
-    titulo: "Concurso de Secundarios",
+    // Nombre de fantasía del concurso (31/8/2026). El nombre formal que usa
+    // el PDF de bases es "Concurso de Proyectos de Impresión 3D · Nivel
+    // Secundario", y ahí se conserva: el documento es el que vale si alguien
+    // reclama, así que no se le cambia el encabezado.
+    //
+    // ⚠️ Colisiona con el eslogan de la marca —"Diseñando el futuro capa a
+    // capa", en el pie de todas las páginas—, así que el mismo texto nombra
+    // dos cosas distintas en el sitio.
+    titulo: "Diseñando el Futuro — Capa a Capa",
     detalle:
-      "Equipos de escuelas secundarias que diseñan y fabrican un proyecto con impacto real en su comunidad.",
+      "Equipos de colegios secundarios que diseñan y fabrican un proyecto con impacto real en su comunidad.",
     estado: "Inscripción abierta hasta el 7 de septiembre",
     color: "copat-green",
     datos: [

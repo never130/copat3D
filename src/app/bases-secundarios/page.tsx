@@ -4,7 +4,7 @@ import { Logo } from "@/components/layout/Logo";
 import { CRONOGRAMA_SECUNDARIOS } from "@/content/convocatorias";
 
 export const metadata: Metadata = {
-  title: "Bases y condiciones — Concurso de Secundarios",
+  title: "Bases y condiciones — Diseñando el Futuro, Capa a Capa",
   description:
     "Bases y condiciones del Concurso de Proyectos de Impresión 3D para nivel secundario, en el marco de COPAT 3D. Ushuaia, Tierra del Fuego.",
   alternates: { canonical: "/bases-secundarios" },

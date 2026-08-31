@@ -255,7 +255,7 @@ export default function ConvocatoriasPage() {
           <section className="mt-20">
             <div className="sheet max-w-2xl">
               <p className="text-accent-text font-mono text-xs font-medium tracking-[0.25em] uppercase">
-                Concurso de Secundarios
+                Diseñando el Futuro — Capa a Capa
               </p>
               {/* No "Cómo sigue después de inscribirte": el primer paso del
                   cronograma ES la inscripción, así que ese título se
