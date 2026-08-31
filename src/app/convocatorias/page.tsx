@@ -25,21 +25,20 @@ export const metadata: Metadata = {
  *
  * - Emprendedores (Form): responde el formulario real. Público, se usa tal
  *   cual con `/viewform`.
- * - Secundarios (Form): devuelve 401 Unauthorized. No es un problema de la
- *   URL — está compartido solo para personas puntuales, no para "cualquiera
- *   con el enlace". Sigue pendiente hasta que la AIF cambie ese permiso
- *   (decisión 31/8/2026: no se reconstruye como formulario propio, ver
- *   AGENTS.md).
+ * - Secundarios (Form): devuelve 401 Unauthorized — sigue compartido solo
+ *   para personas puntuales, no para "cualquiera con el enlace". Se publica
+ *   igual a pedido expreso, ver la nota en su `enlace`.
  * - Bases y condiciones (Doc): mismo 401, pero acá SÍ hay solución — Maribel
  *   mandó el texto completo por WhatsApp y está alojado en
  *   `/bases-secundarios` (ruta PLANA, no anidada bajo esta — ver trampa 21
  *   de AGENTS.md). No depende de que Google Docs mantenga ese permiso
  *   abierto.
  *
- * Cada `enlace` sin `href` se renderiza inerte ("Muy pronto"), igual que
- * hacía toda la tarjeta antes de tener el primer link confirmado. `interno`
- * usa `next/link` en vez de una etiqueta `<a>` con `target="_blank"`: es
- * contenido propio del sitio, no un destino externo.
+ * `interno` usa `next/link` en vez de una etiqueta `<a>` con
+ * `target="_blank"`: es contenido propio del sitio, no un destino externo.
+ * Un `enlace` sin `href` se renderiza inerte ("Muy pronto") — hoy no queda
+ * ninguno, pero la rama se conserva para la próxima convocatoria que se
+ * anuncie antes de tener su formulario.
  */
 type Enlace = { texto: string; href?: string; interno?: boolean };
 
@@ -63,7 +62,18 @@ const CONVOCATORIAS: {
         href: "/bases-secundarios",
         interno: true,
       },
-      { texto: "Inscribirme" },
+      {
+        texto: "Inscribirme",
+        // ⚠️ Publicado a pedido expreso (31/8/2026) aunque el Form todavía
+        // devuelve 401: sigue compartido solo para personas puntuales, no
+        // para "cualquiera con el enlace". Va con `/viewform` y NO con el
+        // `/edit` que mandó la AIF, que son dos cosas distintas: con
+        // `/viewform` quien no tenga acceso ve la pantalla de "solicitar
+        // acceso" de Google y el link empieza a funcionar solo en cuanto
+        // cambien el permiso; con `/edit` habría caído en el EDITOR del
+        // formulario, pudiendo alterar las preguntas del concurso.
+        href: "https://docs.google.com/forms/d/1N-e6iysCyvojYqatUm0Clf71kIxsIbCQn3ukSx6hges/viewform",
+      },
     ],
   },
   {
@@ -186,8 +196,15 @@ export default function ConvocatoriasPage() {
           </div>
 
           <p className="sheet text-muted mt-10 text-center">
-            Las bases y condiciones y el formulario del concurso de
-            secundarios se publican en cuanto la Agencia habilite el acceso.
+            Las inscripciones se completan en un formulario de Google. Ante
+            cualquier problema para acceder, escribinos a{" "}
+            <a
+              href="mailto:copat3d@aif.gob.ar"
+              className="text-accent-text font-semibold underline underline-offset-4"
+            >
+              copat3d@aif.gob.ar
+            </a>
+            .
           </p>
         </div>
       </div>

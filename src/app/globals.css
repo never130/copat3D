@@ -47,6 +47,35 @@
   --canvas-ink: #12060f;
 }
 
+/* La hoja de un documento formal (bases y condiciones) es literalmente una
+   HOJA DE PAPEL: blanca en los dos modos, como el PDF que circula por mail y
+   por WhatsApp. Es la misma decisión que las tarjetas del carrousel, que van
+   en `bg-white` exacto (trampa 18), y encaja con la metáfora "capa a capa"
+   del sitio: una hoja apoyada sobre el fondo.
+
+   En vez de repetir hex sueltos en cada elemento de adentro, se redefinen acá
+   los tokens semánticos a sus valores de modo claro: todo lo que vive dentro
+   de `.doc-hoja` puede usar `text-fg`, `text-muted`, `text-accent-text` o
+   `border-border` como en cualquier otra parte del sitio, y resuelven al par
+   correcto para fondo blanco — sin una sola variante `dark:`.
+
+   Va sin capa, al lado de `:root` y `.dark`, porque es del mismo tipo que
+   ellos. No compite con ninguna utilidad de Tailwind (trampa 10): define
+   custom properties, que alimentan a las utilidades en vez de pelearse. */
+.doc-hoja {
+  color-scheme: light;
+
+  --bg: #faf7fb;
+  --surface: #ffffff;
+  --surface-2: #f3eef6;
+  --border: rgb(10 4 16 / 0.1);
+  --fg: #12060f;
+  --muted: #5c4e63;
+
+  --accent-text: #b00057;
+  --focus: #b00057;
+}
+
 /* ============================================================
    TEMA TAILWIND
    ============================================================ */
