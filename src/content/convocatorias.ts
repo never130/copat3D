@@ -38,10 +38,10 @@ export type Convocatoria = {
 };
 
 /**
- * Cronograma del Concurso de Secundarios, transcrito palabra por palabra del
- * PDF de bases (punto 7). Vive acá y no dentro de `/bases-secundarios` porque
- * lo muestran las dos páginas: el documento formal y el resumen de
- * `/convocatorias`.
+ * Cronograma de "Diseñando el Futuro — Capa a Capa", transcrito palabra por
+ * palabra del PDF de bases (punto 7). Vive acá y no dentro de
+ * `/bases-secundarios` porque lo muestran las dos páginas: el documento
+ * formal y el resumen de `/convocatorias`.
  *
  * ⚠️ EL PDF SE CONTRADICE CON LA FECHA DE INICIO DE LA INSCRIPCIÓN, y las dos
  * versiones están publicadas en el sitio porque las dos son fieles al

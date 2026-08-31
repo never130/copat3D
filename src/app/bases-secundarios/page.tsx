@@ -4,7 +4,11 @@ import { Logo } from "@/components/layout/Logo";
 import { CRONOGRAMA_SECUNDARIOS } from "@/content/convocatorias";
 
 export const metadata: Metadata = {
-  title: "Bases y condiciones — Diseñando el Futuro, Capa a Capa",
+  // El separador externo es "·" y no otra raya: el nombre del concurso ya
+  // lleva una adentro, y "Bases y condiciones — Diseñando el Futuro — Capa a
+  // Capa" se lee como tres cosas sueltas. Así el nombre queda idéntico al de
+  // todos los demás lugares.
+  title: "Bases y condiciones · Diseñando el Futuro — Capa a Capa",
   description:
     "Bases y condiciones del Concurso de Proyectos de Impresión 3D para nivel secundario, en el marco de COPAT 3D. Ushuaia, Tierra del Fuego.",
   alternates: { canonical: "/bases-secundarios" },
