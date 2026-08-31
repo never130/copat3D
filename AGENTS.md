@@ -257,19 +257,24 @@ Es de Monotype y requiere licencia web. El sitio usa **Inter Tight** como sustit
 
 ### 18. Cada logo de sponsor necesita el fondo que pide su arte
 
-Los logos de Gobierno de Tierra del Fuego y de la AIF (`public/logos/`) son las
-versiones monocromáticas en blanco, pensadas para fondo oscuro. Por eso sus
-tarjetas del carrousel van en **magenta fijo** (`bg-magenta-deep`) y no en la
-superficie del tema como las demás.
+El logo de Gobierno de Tierra del Fuego (`gobierno-tdf.svg`) es **enteramente
+blanco** (una sola clase CSS, `fill: #fff`, sin ningún otro color en el
+archivo): pensado para fondo oscuro. El de la AIF (`aif-blanco.svg`) es mixto
+— el emblema circular es a color (degradados naranja→celeste, un teal sólido),
+pero el wordmark "AIF" es blanco puro igual que el de Gobierno.
 
-Si alguna vez se "corrige" eso para que la tarjeta siga el modo, en modo claro
-la superficie es blanca y **los logos desaparecen por completo**. No es un
-detalle estético: es blanco sobre blanco.
+Por decisión explícita (31/8/2026, Ever Loza) **todas** las tarjetas del
+carrousel van en blanco, para verse consistentes — incluidas estas dos, pese a
+que blanco sobre blanco las volvería ilegibles. La solución no es tratar la
+tarjeta entera distinto: es un **zócalo magenta solo detrás del logo**
+(`chip: true` en `Sponsors.tsx`), del tamaño del logo y no de la tarjeta. La
+tarjeta se ve blanca como el resto; el logo conserva su contraste porque sigue
+sentado sobre magenta, nada más que en un recuadro más chico.
 
-Para unificarlas con el resto habría que pedirle a la AIF las versiones a color
-o en negativo. Hasta entonces, el fondo de marca es lo que garantiza contraste
-en los dos modos — el mismo recurso que usan `.hero-gradient` en el CTA de
-sponsors y en el menú móvil.
+Si alguna vez se quita el `chip` para que estas tarjetas se vean exactamente
+iguales a las demás por dentro también, **los logos desaparecen por
+completo** — blanco sobre blanco no es un detalle estético, es invisible.
+Para eso sí haría falta pedirle a la AIF versiones a color o en negativo.
 
 > Los lockups institucionales son muy **apaisados** (el de Gobierno es 4:1). Con
 > un `max-h` chico quedaban diminutos, sin aprovechar el ancho de la tarjeta.
@@ -282,9 +287,10 @@ son tinta de color sobre blanco, y al ser JPEG **no existe la transparencia**:
 el blanco está incrustado en el archivo. Sobre la superficie del tema (oscura)
 o sobre el magenta, se vería un recuadro blanco recortado.
 
-Por eso llevan `fondo: "blanco"` y la tarjeta va en `bg-white` **exacto**, no
-`bg-surface`: se midieron las cuatro esquinas de ambos archivos y son
-`#FFFFFF` puro. Con cualquier otro tono se marca el borde del rectángulo.
+Por eso la tarjeta va en `bg-white` **exacto**, no `bg-surface` (hoy es así
+para todas, pero nació acá): se midieron las cuatro esquinas de ambos
+archivos y son `#FFFFFF` puro. Con cualquier otro tono se marca el borde del
+rectángulo.
 
 Ese blanco exacto es además lo que permite el campo `escala`, que amplía el
 logo para compensar el margen que trae incrustado el archivo: lo que se recorta

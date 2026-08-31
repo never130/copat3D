@@ -14,24 +14,21 @@ type Empresa = {
    *  de texto (ver docs/06-roadmap.md: los logos del resto siguen pendientes). */
   logo?: string;
   /**
-   * Tratamiento de la tarjeta, que lo decide el arte del logo y no el gusto:
-   *
-   * - `magenta`: el arte es la versión BLANCA sobre transparente (los SVG
-   *   institucionales). Necesita fondo de marca o desaparece en modo claro.
-   *   Ver trampa 18 de AGENTS.md.
-   * - `blanco`: el arte es tinta de color sobre blanco OPACO (los JPG de los
-   *   sponsors comerciales). Al ser JPEG no hay transparencia posible, así que
-   *   la única forma de que no se vea un recuadro blanco recortado es que la
-   *   tarjeta sea exactamente del mismo blanco que el archivo (#FFFFFF
-   *   medido en las cuatro esquinas de ambos).
+   * Todas las tarjetas van sobre blanco (pedido explícito: consistencia
+   * visual del carrousel). Pero "Gobierno TDF" y "AIF" traen arte BLANCO o
+   * parcialmente blanco sobre transparente —los SVG institucionales—, así
+   * que blanco-sobre-blanco los volvería invisibles (ver trampa 18 de
+   * AGENTS.md). Para esos dos, `chip: true` agrega un zócalo magenta
+   * SOLO detrás del logo (no en toda la tarjeta): la tarjeta sigue blanca
+   * como el resto, y el logo conserva el contraste que necesita.
    */
-  fondo?: "magenta" | "blanco";
+  chip?: boolean;
   /** Texto alternativo, cuando el nombre corto no describe al sponsor. */
   alt?: string;
   /**
    * Amplía el logo dentro de la tarjeta para compensar el margen en blanco
-   * que trae incrustado el archivo. Solo tiene sentido con `fondo: "blanco"`:
-   * lo que se recorta al ampliar es blanco puro, que se funde con la tarjeta.
+   * que trae incrustado el archivo. Pensado para los JPG de sponsors
+   * comerciales, cuyo arte llega con margen blanco incrustado (ver trampa 18).
    */
   escala?: number;
 };
@@ -40,20 +37,18 @@ const EMPRESAS: Empresa[] = [
   {
     nombre: "Gobierno de Tierra del Fuego",
     logo: "/logos/gobierno-tdf.svg",
-    fondo: "magenta",
+    chip: true,
   },
-  { nombre: "AIF", logo: "/logos/aif-blanco.svg", fondo: "magenta" },
+  { nombre: "AIF", logo: "/logos/aif-blanco.svg", chip: true },
   {
     nombre: "Buena Mezcla",
     alt: "Buena Mezcla — Pastelería y catering gourmet",
     logo: "/logos/buena_mezcla.jpg",
-    fondo: "blanco",
   },
   {
     nombre: "Rayuela",
     alt: "Rayuela Río Grande",
     logo: "/logos/rayuela.jpg",
-    fondo: "blanco",
     // Sin `escala`: el archivo viene recortado al borde del badge rojo, así
     // que `object-contain` ya lo lleva al ancho completo de la tarjeta. El
     // arte original (rayuela2.jpg, 1600×900) trae el badge centrado con 58%
@@ -112,18 +107,13 @@ export function Sponsors() {
               );
             }
 
-            const enBlanco = empresa.fondo === "blanco";
-
             return (
               <div
                 key={clave}
-                className={`${CAJA} transition-[filter] duration-300 hover:brightness-105 ${
-                  enBlanco
-                    ? // Blanco exacto, no `bg-surface`: el JPG trae su propio
-                      // blanco opaco y cualquier otro tono deja ver el recuadro.
-                      "border-border border bg-white"
-                    : "bg-magenta-deep"
-                }`}
+                // Blanco exacto, no `bg-surface`: los JPG traen su propio
+                // blanco opaco y cualquier otro tono deja ver el recuadro
+                // (ver trampa 18).
+                className={`${CAJA} border-border border bg-white transition-[filter] duration-300 hover:brightness-105`}
                 aria-hidden={duplicada}
               >
                 {/* La caja interna va `absolute inset-0` para tener alto
@@ -132,21 +122,37 @@ export function Sponsors() {
                     resolver: los SVG zafaban por no traer tamaño intrínseco,
                     pero los JPG se plantaban en su alto natural y se salían de
                     la tarjeta —Rayuela se desbordaba 227px—. */}
-                <div className="absolute inset-0 flex items-center justify-center px-8 py-7">
-                  {/* `max-h/max-w` y no `h-full w-full`: así el limitante es
-                      el que corresponda según la proporción de cada logo, que
-                      van desde 4:1 (Gobierno) hasta casi cuadrado. */}
-                  <img
-                    src={empresa.logo}
-                    alt={empresa.alt ?? empresa.nombre}
-                    loading="lazy"
-                    className="max-h-full max-w-full object-contain"
-                    style={
-                      empresa.escala
-                        ? { scale: String(empresa.escala) }
-                        : undefined
+                <div
+                  className={`absolute inset-0 flex items-center justify-center px-8 py-7 ${
+                    empresa.chip ? "p-3" : ""
+                  }`}
+                >
+                  {/* Zócalo magenta detrás del logo, no en toda la tarjeta:
+                      Gobierno TDF y AIF traen arte blanco (o parcialmente
+                      blanco) pensado para fondo oscuro. Sin esto se pierden
+                      contra la tarjeta blanca (trampa 18). */}
+                  <div
+                    className={
+                      empresa.chip
+                        ? "bg-magenta-deep flex h-full w-full items-center justify-center rounded-xl px-6 py-5"
+                        : "contents"
                     }
-                  />
+                  >
+                    {/* `max-h/max-w` y no `h-full w-full`: así el limitante es
+                        el que corresponda según la proporción de cada logo,
+                        que van desde 4:1 (Gobierno) hasta casi cuadrado. */}
+                    <img
+                      src={empresa.logo}
+                      alt={empresa.alt ?? empresa.nombre}
+                      loading="lazy"
+                      className="max-h-full max-w-full object-contain"
+                      style={
+                        empresa.escala
+                          ? { scale: String(empresa.escala) }
+                          : undefined
+                      }
+                    />
+                  </div>
                 </div>
               </div>
             );
@@ -174,7 +180,7 @@ export function Sponsors() {
 
           <div className="relative z-10">
             <h3 className="text-[clamp(1.5rem,4vw,2.75rem)] text-white">
-              ¿Tu empresa quiere ser parte?
+              ¿Querés ser parte?
             </h3>
             <p className="mx-auto mt-4 max-w-xl text-white/90">
               Sumate como sponsor y conectá con el entramado industrial,
