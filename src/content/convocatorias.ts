@@ -38,9 +38,27 @@ export type Convocatoria = {
 };
 
 /**
- * Cronograma del Concurso de Secundarios, tal como figura en el PDF de bases
- * (punto 7). Vive acá y no dentro de `/bases-secundarios` porque lo muestran
- * las dos páginas: el documento formal y el resumen de `/convocatorias`.
+ * Cronograma del Concurso de Secundarios, transcrito palabra por palabra del
+ * PDF de bases (punto 7). Vive acá y no dentro de `/bases-secundarios` porque
+ * lo muestran las dos páginas: el documento formal y el resumen de
+ * `/convocatorias`.
+ *
+ * ⚠️ EL PDF SE CONTRADICE CON LA FECHA DE INICIO DE LA INSCRIPCIÓN, y las dos
+ * versiones están publicadas en el sitio porque las dos son fieles al
+ * original:
+ *
+ * - Punto 5 ("Inscripción"): "del 31 de agosto al 7 de septiembre de 2026".
+ *   Es la que sale en los `datos` de la convocatoria y en el punto 5 de
+ *   /bases-secundarios.
+ * - Punto 7 (este cronograma): "1 al 7 de septiembre".
+ *
+ * Difieren en el arranque: 31 de agosto contra 1 de septiembre. El cierre —7
+ * de septiembre— sí coincide en los dos lados, así que el estado que se
+ * muestra en la portada no está en duda.
+ *
+ * NO unificar por cuenta propia: hay que preguntarle a la AIF cuál vale.
+ * Mientras tanto se transcribe lo que dice el documento oficial en cada
+ * punto, que es lo defendible si alguien reclama por la fecha.
  */
 export const CRONOGRAMA_SECUNDARIOS = [
   {
@@ -101,8 +119,12 @@ export const CONVOCATORIAS: Convocatoria[] = [
     id: "emprendedores",
     numero: "02",
     titulo: "Registro de Emprendedores",
+    // "o quieren incorporarlas" no es relleno: el formulario dice
+    // literalmente "que utilizan O DESEAN INCORPORAR" esas tecnologías.
+    // Decir "que ya trabajan con" dejaba afuera a quien está por arrancar,
+    // que es parte del público que la convocatoria busca.
     detalle:
-      "Emprendimientos, pymes y startups fueguinas que ya trabajan con impresión 3D y fabricación digital.",
+      "Emprendimientos, pymes y startups fueguinas que trabajan con impresión 3D y fabricación digital, o que quieren incorporarlas.",
     // Sin fecha de cierre: ni el formulario ni lo que mandó la AIF la
     // fijan. No se inventa una.
     estado: "Inscripción abierta",
@@ -110,11 +132,14 @@ export const CONVOCATORIAS: Convocatoria[] = [
     datos: [
       {
         rotulo: "Quiénes",
-        valor: "Emprendedores, comercios y startups de la provincia",
+        valor: "Emprendedores, pymes, startups y creadores fueguinos",
       },
       {
+        // "Posibilidad de" y no "Stand propio ...": el formulario habla de
+        // "ser SELECCIONADO para contar con tu propio stand / charla". No
+        // está garantizado y no se puede prometer como si lo estuviera.
         rotulo: "Qué ofrece",
-        valor: "Stand propio o charla durante el congreso",
+        valor: "Posibilidad de stand propio o charla en el congreso",
       },
       { rotulo: "Cuándo", valor: "2 y 3 de octubre, en la Fábrica de Talentos" },
     ],
