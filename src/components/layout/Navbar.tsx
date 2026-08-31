@@ -3,12 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AGENDA_CONFIRMADA } from "@/content/agenda";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 
+/** "Agenda" solo aparece en el menú cuando la página tiene contenido real
+ *  que mostrar: mismo interruptor que usa /agenda para decidir entre el
+ *  cronograma y el placeholder (ver src/content/agenda.ts). Sin esto, el
+ *  link llevaba a una página que decía "Próximamente" — más confuso que
+ *  simplemente no mostrarlo todavía. */
 const LINKS = [
   { href: "/#ejes", label: "Ejes" },
-  { href: "/agenda", label: "Agenda" },
+  ...(AGENDA_CONFIRMADA ? [{ href: "/agenda", label: "Agenda" }] : []),
   { href: "/#talentos", label: "Fábrica de Talentos" },
   { href: "/#empresas", label: "Empresas" },
   { href: "/#contacto", label: "Contacto" },

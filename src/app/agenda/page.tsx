@@ -98,7 +98,7 @@ export default function AgendaPage() {
               <p className="sheet text-muted mt-10 text-center">
                 Estamos cerrando el cronograma con los speakers confirmados.
                 <span className="bg-copat-yellow text-magenta-deep ml-2 inline-block rounded-full px-3 py-1 text-xs font-bold tracking-wide uppercase">
-                  Próximamente
+                  Disponible el 20 de septiembre
                 </span>
               </p>
             </>

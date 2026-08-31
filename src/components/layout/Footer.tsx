@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AGENDA_CONFIRMADA } from "@/content/agenda";
 import { Logo } from "./Logo";
 
 export function Footer() {
@@ -40,14 +41,21 @@ export function Footer() {
                 Ejes temáticos
               </a>
             </li>
-            <li>
-              <a
-                href="#agenda"
-                className="hover:text-fg block py-2.5 transition-colors"
-              >
-                Agenda
-              </a>
-            </li>
+            {/* Oculto hasta que haya cronograma real que mostrar — mismo
+                interruptor que el navbar y que /agenda (ver
+                src/content/agenda.ts). De paso se corrige el href: apuntaba
+                a "#agenda", un ancla que no existe en ningún lado del sitio;
+                la ruta real es /agenda. */}
+            {AGENDA_CONFIRMADA && (
+              <li>
+                <Link
+                  href="/agenda"
+                  className="hover:text-fg block py-2.5 transition-colors"
+                >
+                  Agenda
+                </Link>
+              </li>
+            )}
             <li>
               <a
                 href="#empresas"
