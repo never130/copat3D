@@ -18,28 +18,67 @@ export const metadata: Metadata = {
  * "Inscripción"— tanto en el navbar como acá: compartir el mismo rótulo
  * con /registro iba a leerse como si fueran la misma cosa.
  *
- * Los links reales (bases y condiciones, y los dos formularios) todavía no
- * están cargados: los que pasó la AIF por WhatsApp son de EDICIÓN
- * (`.../edit`), no públicos — publicarlos tal cual dejaría que cualquier
- * visitante intente abrir el editor del documento o del formulario en vez
- * de completarlo. Mismo patrón que /agenda mientras no hay contenido
- * confirmado: la tarjeta ya existe, el botón queda inerte con un aviso,
- * hasta reemplazar `href` por el link público correcto.
+ * Los tres links que pasó la AIF por WhatsApp eran de EDICIÓN (`.../edit`),
+ * no públicos. Verificado uno por uno (31/8/2026) probando la variante
+ * pública de cada uno (`/viewform` en los Forms, `/preview` en el Doc):
+ *
+ * - Emprendedores (Form): responde el formulario real. Público, se usa tal
+ *   cual con `/viewform`.
+ * - Secundarios (Form) y Bases y condiciones (Doc): las dos devuelven
+ *   401 Unauthorized. No es un problema de la URL — el archivo está
+ *   compartido solo para personas puntuales, no para "cualquiera con el
+ *   enlace". Hace falta que la AIF cambie el permiso de acceso (o mande el
+ *   PDF de las bases para alojarlo directo acá, más robusto a largo plazo
+ *   que depender de que ese permiso no cambie).
+ *
+ * Cada `enlace` sin `href` se renderiza inerte ("Muy pronto"), igual que
+ * hacía toda la tarjeta antes de tener el primer link confirmado.
  */
-const CONVOCATORIAS = [
+type Enlace = { texto: string; href?: string };
+
+const CONVOCATORIAS: {
+  id: string;
+  titulo: string;
+  detalle: string;
+  enlaces: Enlace[];
+}[] = [
   {
     id: "secundarios",
     titulo: "Concurso de Secundarios",
     detalle:
       "Certamen para estudiantes de escuelas secundarias de Tierra del Fuego, en el marco de COPAT 3D.",
+    enlaces: [{ texto: "Bases y condiciones" }, { texto: "Inscribirme" }],
   },
   {
     id: "emprendedores",
     titulo: "Registro de Emprendedores",
     detalle:
       "Espacio para presentar proyectos y emprendimientos vinculados a la fabricación digital.",
+    enlaces: [
+      {
+        texto: "Inscribirme",
+        href: "https://docs.google.com/forms/d/1oHEk1RPvxKd558CdlhAuoD1NhN38FC168V2FjQPLYY4/viewform",
+      },
+    ],
   },
 ];
+
+function FlechaExterna() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="size-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M7 17 17 7M9 7h8v8" />
+    </svg>
+  );
+}
 
 export default function ConvocatoriasPage() {
   return (
@@ -87,25 +126,43 @@ export default function ConvocatoriasPage() {
                 <h2 className="text-2xl">{c.titulo}</h2>
                 <p className="text-muted mt-3 flex-1">{c.detalle}</p>
 
-                {/* `span` inerte y no `a`/`button`: todavía no hay link
-                    público al que apuntar (ver comentario arriba). Un CTA
-                    que no lleva a ningún lado es peor que uno ausente. */}
-                <span
-                  aria-disabled="true"
-                  className="border-border text-muted mt-8 inline-flex w-fit items-center gap-2 rounded-full border px-6 py-3 text-sm font-bold"
-                >
-                  Muy pronto
-                  <span className="bg-copat-yellow text-magenta-deep inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wide uppercase">
-                    En camino
-                  </span>
-                </span>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  {c.enlaces.map((enlace) =>
+                    enlace.href ? (
+                      <a
+                        key={enlace.texto}
+                        href={enlace.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="border-border hover:border-magenta/50 hover:text-accent-text inline-flex w-fit items-center gap-2 rounded-full border px-6 py-3 text-sm font-bold transition-colors duration-200"
+                      >
+                        {enlace.texto}
+                        <FlechaExterna />
+                      </a>
+                    ) : (
+                      // `span` inerte y no `a`/`button`: todavía no hay link
+                      // público al que apuntar (ver comentario arriba). Un
+                      // CTA que no lleva a ningún lado es peor que ausente.
+                      <span
+                        key={enlace.texto}
+                        aria-disabled="true"
+                        className="border-border text-muted inline-flex w-fit items-center gap-2 rounded-full border px-6 py-3 text-sm font-bold"
+                      >
+                        {enlace.texto}
+                        <span className="bg-copat-yellow text-magenta-deep inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wide uppercase">
+                          Muy pronto
+                        </span>
+                      </span>
+                    ),
+                  )}
+                </div>
               </article>
             ))}
           </div>
 
           <p className="sheet text-muted mt-10 text-center">
-            Las bases y condiciones y los formularios de inscripción se
-            publican en cuanto estén disponibles.
+            Las bases y condiciones y el formulario del concurso de
+            secundarios se publican en cuanto la Agencia habilite el acceso.
           </p>
         </div>
       </div>

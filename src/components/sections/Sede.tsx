@@ -34,14 +34,6 @@ const ICONOS: Record<string, React.ReactNode> = {
       <path d="M15.5 19a5 5 0 1 1-4.2-7.4" />
     </>
   ),
-  catering: (
-    <>
-      <path d="M6 3v8a2.5 2.5 0 0 0 5 0V3" />
-      <path d="M8.5 11v10" />
-      <path d="M17.5 3c-1.5 1.5-2 3.5-2 6s.5 3 2 3 2-.5 2-3-.5-4.5-2-6Z" />
-      <path d="M17.5 12v9" />
-    </>
-  ),
 };
 
 /**

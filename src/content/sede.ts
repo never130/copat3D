@@ -34,9 +34,4 @@ export const SERVICIOS: Servicio[] = [
     titulo: "Accesibilidad",
     detalle: "Acceso para personas con movilidad reducida",
   },
-  {
-    id: "catering",
-    titulo: "Catering",
-    detalle: "Incluido en la acreditación",
-  },
 ];
