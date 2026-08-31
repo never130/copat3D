@@ -56,6 +56,14 @@ const EMPRESAS: Empresa[] = [
     // resolvieron en el archivo y no acá: ampliar por CSS un fondo gris solo
     // agranda el recuadro gris. Ver trampa 18.
   },
+  {
+    nombre: "Consejo Federal de Inversiones",
+    alt: "CFI — Consejo Federal de Inversiones",
+    logo: "/logos/Consejo_Federal_de_Inversiones.png",
+    // PNG sin canal alfa (fondo blanco incrustado), medido #FFFFFF puro en
+    // las cuatro esquinas — mismo caso que los JPG. Sin `escala`: el archivo
+    // ya viene casi sin margen (97% del ancho, 82% del alto es tinta).
+  },
 ];
 
 export function Sponsors() {
