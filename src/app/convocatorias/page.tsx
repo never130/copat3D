@@ -32,8 +32,9 @@ export const metadata: Metadata = {
  *   AGENTS.md).
  * - Bases y condiciones (Doc): mismo 401, pero acá SÍ hay solución — Maribel
  *   mandó el texto completo por WhatsApp y está alojado en
- *   `/convocatorias/bases-secundarios`. No depende de que Google Docs
- *   mantenga ese permiso abierto.
+ *   `/bases-secundarios` (ruta PLANA, no anidada bajo esta — ver trampa 21
+ *   de AGENTS.md). No depende de que Google Docs mantenga ese permiso
+ *   abierto.
  *
  * Cada `enlace` sin `href` se renderiza inerte ("Muy pronto"), igual que
  * hacía toda la tarjeta antes de tener el primer link confirmado. `interno`
@@ -56,7 +57,10 @@ const CONVOCATORIAS: {
     enlaces: [
       {
         texto: "Bases y condiciones",
-        href: "/convocatorias/bases-secundarios",
+        // Ruta PLANA (no /convocatorias/bases-secundarios): ver trampa 21
+        // de AGENTS.md — anidarla bajo /convocatorias rompía el pase de
+        // hojas al llegar por navegación interna.
+        href: "/bases-secundarios",
         interno: true,
       },
       { texto: "Inscribirme" },

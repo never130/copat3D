@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Bases y condiciones — Concurso de Secundarios",
   description:
     "Bases y condiciones del Concurso de Proyectos de Impresión 3D para nivel secundario, en el marco de COPAT 3D. Ushuaia, Tierra del Fuego.",
-  alternates: { canonical: "/convocatorias/bases-secundarios" },
+  alternates: { canonical: "/bases-secundarios" },
 };
 
 /**
@@ -21,6 +21,12 @@ export const metadata: Metadata = {
  *
  * Si la AIF manda una versión corregida del PDF, el texto se actualiza acá a
  * mano — no hay automatismo con el documento original.
+ *
+ * Ruta PLANA (`/bases-secundarios`, no `/convocatorias/bases-secundarios`):
+ * ver trampa 21 de AGENTS.md. Anidarla bajo /convocatorias dejaba las
+ * secciones invisibles para siempre al llegar por navegación interna —el
+ * template.tsx raíz no se remonta entre rutas que comparten el primer
+ * segmento, así que SheetMotion nunca observaba el contenido nuevo.
  */
 const ULTIMA_ACTUALIZACION = "31 de agosto de 2026";
 

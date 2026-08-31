@@ -364,6 +364,20 @@ Lo que queda de esto:
 3. `animation-delay: 0s !important` también va en el reset: con relleno `both`, mientras dura el delay el elemento sigue invisible. Los 420ms escalonados del hero se veían como un parpadeo en blanco.
 4. **Toda verificación visual se corre en los dos modos.** Con Playwright, `newContext({ reducedMotion: "reduce" })`. Un chequeo que solo mira el modo normal no habría visto nada de esto.
 
+### 21. Una ruta anidada no remonta el `template.tsx` raíz — el pase de hojas se rompe en silencio
+
+Bug real: `/convocatorias/bases-secundarios` se veía perfecto entrando por URL directa, pero **en blanco después de "Última actualización"** al llegar haciendo clic desde `/convocatorias` — todo el contenido bajo el primer bloque quedaba invisible para siempre.
+
+La causa está en la propia doc de Next (`node_modules/next/dist/docs/.../template.md`): *"Templates receive a unique key for their own segment level. Navigations within deeper segments do not remount higher-level templates."* Este proyecto tiene un solo `template.tsx`, en la raíz de `app/`, y su key está atada al **primer segmento** de la ruta. `/convocatorias` → `/convocatorias/bases-secundarios` comparte ese primer segmento (`convocatorias`), así que Next **no remonta** el template raíz al navegar entre ellas. Como `SheetMotion` vive ahí y solo observa el DOM en su `useEffect` de montaje (trampa deliberada: así resincroniza en cada cambio de ruta, ver comentario en `template.tsx`), su observer nunca llega a registrar las secciones de la página nueva — quedan con `.sheet` pero sin `.sheet-in` para siempre, porque `.js-sheets` ya estaba puesto desde la navegación anterior.
+
+Se reprodujo instrumentando `SheetMotion` con `console.log` en mount/cleanup: navegando por clic, el log de montaje no aparecía después del click, solo el de la página anterior. Confirmado además contra la doc: navegar `/` → `/about` (cambia el primer segmento) sí remonta; `/blog` → `/blog/first-post` (mismo primer segmento) no.
+
+Hasta este bug, **todas** las rutas del sitio eran de un solo nivel (`/agenda`, `/registro`, `/privacidad`, `/convocatorias`...), así que el problema nunca se había manifestado — cualquier navegación cambiaba el primer segmento y el template remontaba solo. `/convocatorias/bases-secundarios` fue la primera ruta anidada del proyecto.
+
+**La solución no es "arreglar" `SheetMotion`** (su lógica está bien, el problema es que nunca se ejecuta): es no anidar rutas bajo otras rutas de contenido. `/bases-secundarios` quedó como ruta plana, al mismo nivel que el resto — coherente con que sea la primera vez que hace falta una URL con más de un segmento.
+
+Si en algún momento hace falta anidar de verdad (por URL, por SEO, por lo que sea), la alternativa es agregar un `template.tsx` propio en ese subdirectorio —tal como lo resuelve la doc de Next con `app/blog/template.tsx`—, sabiendo que eso monta un `SheetMotion` (y un `.paper`) **adicional y anidado** dentro del de la raíz, que hay que auditar aparte para no duplicar el efecto de pase de hojas ni romper la animación de `.paper`.
+
 ## Convenciones
 
 - **Tailwind v4 con configuración CSS-first.** No hay `tailwind.config.js`; los tokens se definen en `@theme` dentro de `globals.css`.
