@@ -14,6 +14,11 @@ import { ThemeToggle } from "./ThemeToggle";
  *  simplemente no mostrarlo todavía. */
 const LINKS = [
   { href: "/#ejes", label: "Ejes" },
+  // "Convocatorias" y no "Inscripción": esa palabra ya la usa /registro (la
+  // inscripción individual para asistir al evento) y el botón "Inscribirme".
+  // Repetirla acá, para el concurso de secundarios y el registro de
+  // emprendedores, iba a leerse como si fuera lo mismo.
+  { href: "/convocatorias", label: "Convocatorias" },
   ...(AGENDA_CONFIRMADA ? [{ href: "/agenda", label: "Agenda" }] : []),
   { href: "/#talentos", label: "Fábrica de Talentos" },
   { href: "/#empresas", label: "Empresas" },

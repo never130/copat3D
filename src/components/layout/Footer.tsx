@@ -57,6 +57,14 @@ export function Footer() {
               </li>
             )}
             <li>
+              <Link
+                href="/convocatorias"
+                className="hover:text-fg block py-2.5 transition-colors"
+              >
+                Convocatorias
+              </Link>
+            </li>
+            <li>
               <a
                 href="#empresas"
                 className="hover:text-fg block py-2.5 transition-colors"
