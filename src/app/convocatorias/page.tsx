@@ -153,7 +153,7 @@ function FlechaExterna() {
  *  y no quedaba claro cuál era la acción esperada. */
 function clasesCta(principal?: boolean) {
   const base =
-    "inline-flex w-fit items-center gap-2 rounded-full px-6 py-3 text-sm font-bold transition-colors duration-200";
+    "inline-flex w-fit items-center gap-2 rounded-full px-7 py-3.5 text-base font-bold transition-colors duration-200";
   return principal
     ? `${base} bg-magenta hover:bg-magenta-bright text-white`
     : `${base} border-border hover:border-magenta/50 hover:text-accent-text border`;
@@ -171,7 +171,7 @@ export default function ConvocatoriasPage() {
       <NavbarSentinel />
 
       <div className="overflow-x-clip">
-        <div className="relative mx-auto max-w-5xl px-5 py-20">
+        <div className="relative mx-auto max-w-6xl px-5 py-20">
           <WireMargins className="hidden sm:block">
             <WireCube
               size={120}
@@ -220,7 +220,7 @@ export default function ConvocatoriasPage() {
                           "--borde-activo": a.borde,
                         } as React.CSSProperties
                       }
-                      className="tarjeta-eje group border-border bg-surface relative flex h-full flex-col overflow-hidden rounded-3xl rounded-br-none border p-8 hover:shadow-[0_22px_44px_-22px_var(--glow)]"
+                      className="tarjeta-eje group border-border bg-surface relative flex h-full flex-col overflow-hidden rounded-3xl rounded-br-none border p-8 hover:shadow-[0_22px_44px_-22px_var(--glow)] sm:p-10"
                     >
                       <span
                         className="luz-tarjeta pointer-events-none absolute inset-0"
@@ -246,20 +246,22 @@ export default function ConvocatoriasPage() {
                         <p className="text-accent-text font-mono text-xs font-bold tracking-[0.2em]">
                           CONVOCATORIA {c.numero}
                         </p>
-                        <h2 className="mt-3 text-2xl">{c.titulo}</h2>
-                        <p className="text-muted mt-3 leading-relaxed">
+                        <h2 className="mt-3 text-2xl sm:text-3xl">
+                          {c.titulo}
+                        </h2>
+                        <p className="text-muted mt-4 text-lg leading-relaxed">
                           {c.detalle}
                         </p>
 
                         {/* Los datos que definen si la convocatoria es para
                             vos, antes de abrir el formulario. */}
-                        <dl className="border-border mt-7 space-y-3 border-t pt-6 text-sm">
+                        <dl className="border-border mt-7 space-y-3.5 border-t pt-6 text-base">
                           {c.datos.map((dato) => (
                             <div
                               key={dato.rotulo}
-                              className="grid gap-1 sm:grid-cols-[7rem_1fr] sm:gap-3"
+                              className="grid gap-1 sm:grid-cols-[8rem_1fr] sm:gap-3"
                             >
-                              <dt className="text-muted font-mono text-[11px] tracking-[0.12em] uppercase sm:pt-0.5">
+                              <dt className="text-muted font-mono text-xs tracking-[0.12em] uppercase sm:pt-1">
                                 {dato.rotulo}
                               </dt>
                               <dd className="text-fg">{dato.valor}</dd>
