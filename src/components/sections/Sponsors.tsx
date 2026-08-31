@@ -20,16 +20,6 @@ type Empresa = {
    * de AGENTS.md).
    */
   escala?: number;
-  /**
-   * El arte ya trae su PROPIO fondo de marca a sangre (sin margen blanco
-   * alrededor, ver Terra Ignis: teal sólido en las cuatro esquinas). Meterlo
-   * igual dentro de la caja blanca con padding dejaría ver un recuadro de
-   * color flotando sobre blanco — se lee como un recorte accidental, no
-   * como una tarjeta de marca. Con `fondoPropio` la imagen ocupa la tarjeta
-   * completa (`object-cover`, sin padding ni fondo blanco propio) y es ella
-   * misma la que define el color de fondo.
-   */
-  fondoPropio?: boolean;
 };
 
 const EMPRESAS: Empresa[] = [
@@ -70,11 +60,10 @@ const EMPRESAS: Empresa[] = [
   {
     nombre: "Terra Ignis",
     alt: "Terra Ignis Energía",
-    logo: "/logos/terraignis.png",
-    // PNG sin transparencia real (alfa 255 en toda la imagen) con fondo
-    // teal sólido de punta a punta — es arte de marca, no un logo recortado
-    // sobre blanco. Va con `fondoPropio`, no con la caja blanca genérica.
-    fondoPropio: true,
+    logo: "/logos/terra.png",
+    // A diferencia del archivo anterior (terraignis.png, reemplazado), este
+    // sí trae margen blanco alrededor del badge teal — mismo tratamiento
+    // que el resto: caja blanca genérica, `object-contain`.
   },
 ];
 
@@ -102,25 +91,6 @@ export function Sponsors() {
         {EMPRESAS.map((empresa) => {
           const CAJA =
             "relative grid h-32 w-72 shrink-0 place-items-center overflow-hidden rounded-2xl rounded-br-none";
-
-          if (empresa.fondoPropio) {
-            return (
-              <div
-                key={empresa.nombre}
-                className={`${CAJA} border-border border transition-[filter] duration-300 hover:brightness-105`}
-              >
-                {/* Sin padding ni fondo blanco propio: el archivo ya trae su
-                    color de marca a sangre, `object-cover` lo estira a toda
-                    la tarjeta en vez de dejarlo flotando sobre blanco. */}
-                <img
-                  src={empresa.logo}
-                  alt={empresa.alt ?? empresa.nombre}
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            );
-          }
 
           return (
             <div
