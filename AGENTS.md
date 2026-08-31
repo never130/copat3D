@@ -263,18 +263,23 @@ archivo): pensado para fondo oscuro. El de la AIF (`aif-blanco.svg`) es mixto
 — el emblema circular es a color (degradados naranja→celeste, un teal sólido),
 pero el wordmark "AIF" es blanco puro igual que el de Gobierno.
 
-Por decisión explícita (31/8/2026, Ever Loza) **todas** las tarjetas del
-carrousel van en blanco, para verse consistentes — incluidas estas dos, pese a
-que blanco sobre blanco las volvería ilegibles. La solución no es tratar la
-tarjeta entera distinto: es un **zócalo magenta solo detrás del logo**
-(`chip: true` en `Sponsors.tsx`), del tamaño del logo y no de la tarjeta. La
-tarjeta se ve blanca como el resto; el logo conserva su contraste porque sigue
-sentado sobre magenta, nada más que en un recuadro más chico.
+Por decisión explícita (31/8/2026, Ever Loza) todas las tarjetas del
+carrousel van en blanco, sin ningún color de marca de por medio — se probó
+primero un zócalo magenta solo detrás del logo, pero se pidió sacarlo también
+por completo. Como blanco sobre blanco es directamente invisible, la solución
+quedó en **variantes oscuras de los dos archivos**: `gobierno-tdf-oscuro.svg`
+y `aif-oscuro.svg`, generadas cambiando el único `fill: #fff` de cada uno por
+el ink del tema claro (`#12060f`, mismo valor que `--fg` en `:root`). El resto
+del arte —incluidos los degradados de color del emblema de la AIF— queda
+intacto: el cambio es una sola línea dentro del bloque `<style>` de cada SVG,
+no un filtro CSS aplicado en el navegador (un `invert()` habría invertido
+también el emblema a color de la AIF, con un resultado fuera de marca).
 
-Si alguna vez se quita el `chip` para que estas tarjetas se vean exactamente
-iguales a las demás por dentro también, **los logos desaparecen por
-completo** — blanco sobre blanco no es un detalle estético, es invisible.
-Para eso sí haría falta pedirle a la AIF versiones a color o en negativo.
+Los archivos originales (`gobierno-tdf.svg`, `aif-blanco.svg`) siguen en
+`public/logos/` por si hace falta el blanco puro en algún otro lugar —no se
+tocaron—; `Sponsors.tsx` usa las variantes `-oscuro`. Si el arte fuente
+cambia (nueva versión enviada por la AIF), hay que regenerar las dos
+variantes a mano con el mismo reemplazo.
 
 > Los lockups institucionales son muy **apaisados** (el de Gobierno es 4:1). Con
 > un `max-h` chico quedaban diminutos, sin aprovechar el ancho de la tarjeta.

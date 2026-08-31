@@ -792,33 +792,6 @@
 }
 
 /* ============================================================
-   CARROUSEL DE SPONSORS
-   ============================================================ */
-
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.marquee-track {
-  animation: marquee 40s linear infinite;
-  width: max-content;
-}
-
-/* La pausa va acá y no como utilidad `group-hover:` de Tailwind: esta regla
-   está fuera de toda capa (`@layer`), y en la cascada los estilos sin capa
-   le ganan a cualquier utilidad por más específica que sea. La utilidad
-   nunca se aplicaría. */
-.marquee-mask:hover .marquee-track {
-  animation-play-state: paused;
-}
-
-.marquee-mask {
-  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-}
-
-/* ============================================================
    TRANSICIÓN DE HOJA entre vistas
    Cada ruta entra como una hoja de papel que se apoya sobre la
    anterior: sube desde abajo, con la sombra proyectada bajo su

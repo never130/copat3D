@@ -1,45 +1,45 @@
 import { Plus, Zigzag } from "@/components/shapes";
 
 /**
- * Carrousel infinito de empresas y sponsors.
- *
- * El track duplica la lista y se desplaza -50%: al llegar al final está
- * exactamente donde empezó, así el loop es continuo sin salto.
- * Diseñado para verse bien con 4 logos o con 20 (ver docs/06-roadmap.md).
+ * Fila fija de empresas y sponsors (sin animación: ver nota más abajo).
+ * Solo se listan las que ya tienen logo real — sin placeholders de texto,
+ * para no mezclar sponsors confirmados con nombres todavía en gestión
+ * (ver docs/06-roadmap.md).
  */
 
 type Empresa = {
   nombre: string;
-  /** Ruta del logo real en `public/`. Sin esto la tarjeta cae al placeholder
-   *  de texto (ver docs/06-roadmap.md: los logos del resto siguen pendientes). */
-  logo?: string;
-  /**
-   * Todas las tarjetas van sobre blanco (pedido explícito: consistencia
-   * visual del carrousel). Pero "Gobierno TDF" y "AIF" traen arte BLANCO o
-   * parcialmente blanco sobre transparente —los SVG institucionales—, así
-   * que blanco-sobre-blanco los volvería invisibles (ver trampa 18 de
-   * AGENTS.md). Para esos dos, `chip: true` agrega un zócalo magenta
-   * SOLO detrás del logo (no en toda la tarjeta): la tarjeta sigue blanca
-   * como el resto, y el logo conserva el contraste que necesita.
-   */
-  chip?: boolean;
+  /** Ruta del logo en `public/`. */
+  logo: string;
   /** Texto alternativo, cuando el nombre corto no describe al sponsor. */
   alt?: string;
   /**
    * Amplía el logo dentro de la tarjeta para compensar el margen en blanco
    * que trae incrustado el archivo. Pensado para los JPG de sponsors
-   * comerciales, cuyo arte llega con margen blanco incrustado (ver trampa 18).
+   * comerciales, cuyo arte llega con margen blanco incrustado (ver trampa 18
+   * de AGENTS.md).
    */
   escala?: number;
 };
 
 const EMPRESAS: Empresa[] = [
   {
+    // Variante "-oscuro": el arte original es blanco puro sobre transparente
+    // (pensado para fondo de marca). Con las tarjetas ahora en blanco, un
+    // logo blanco se pierde por completo — no es tratable con fondo de color
+    // porque se pidió sacar el magenta de la tarjeta. La variante cambia el
+    // único `fill: #fff` del archivo por el ink del tema (`--fg` claro,
+    // `#12060f`); el resto del trazo queda igual. Ver trampa 18.
     nombre: "Gobierno de Tierra del Fuego",
-    logo: "/logos/gobierno-tdf.svg",
-    chip: true,
+    logo: "/logos/gobierno-tdf-oscuro.svg",
   },
-  { nombre: "AIF", logo: "/logos/aif-blanco.svg", chip: true },
+  {
+    // El emblema circular ya es a color (degradado + teal): no se toca.
+    // Solo el wordmark "AIF" venía en blanco puro, mismo tratamiento que
+    // Gobierno TDF.
+    nombre: "AIF",
+    logo: "/logos/aif-oscuro.svg",
+  },
   {
     nombre: "Buena Mezcla",
     alt: "Buena Mezcla — Pastelería y catering gourmet",
@@ -56,22 +56,11 @@ const EMPRESAS: Empresa[] = [
     // resolvieron en el archivo y no acá: ampliar por CSS un fondo gris solo
     // agranda el recuadro gris. Ver trampa 18.
   },
-  { nombre: "Fábrica de Talentos" },
-  { nombre: "UNTDF" },
-  { nombre: "UTN" },
-  { nombre: "Polos Creativos" },
-  { nombre: "Parque Industrial Río Grande" },
-  { nombre: "INTI" },
 ];
 
 export function Sponsors() {
-  const track = [...EMPRESAS, ...EMPRESAS];
-
   return (
-    <section
-      id="empresas"
-      className="scroll-mt-24 overflow-hidden py-24 sm:py-32"
-    >
+    <section id="empresas" className="scroll-mt-24 py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-5">
         <div className="sheet sheet-print max-w-2xl">
           <p className="text-accent-text font-mono text-xs font-medium tracking-[0.25em] uppercase">
@@ -83,81 +72,50 @@ export function Sponsors() {
         </div>
       </div>
 
-      {/* La marquesina se frena al pasar el mouse para poder leer los
-          nombres. La regla vive en globals.css junto a .marquee-track. */}
-      <div className="sheet marquee-mask mt-14 flex overflow-hidden">
-        <div className="marquee-track flex gap-4">
-          {track.map((empresa, i) => {
-            // Solo la primera mitad se anuncia: la segunda es duplicado visual.
-            const duplicada = i >= EMPRESAS.length;
-            const clave = `${empresa.nombre}-${i}`;
-            const CAJA =
-              "relative grid h-32 w-72 shrink-0 place-items-center overflow-hidden rounded-2xl rounded-br-none";
+      {/* Fila fija, sin desplazamiento automático (pedido explícito,
+          31/8/2026): con solo 4 logos confirmados, la marquesina infinita
+          quedaba dando vueltas sobre un set muy chico. `flex-wrap` +
+          `justify-center` la sostiene centrada tanto en una fila (desktop)
+          como en dos (mobile), sin depender de que haya suficientes logos
+          para llenar el ancho. */}
+      <div className="sheet mt-14 flex flex-wrap justify-center gap-4">
+        {EMPRESAS.map((empresa) => {
+          const CAJA =
+            "relative grid h-32 w-72 shrink-0 place-items-center overflow-hidden rounded-2xl rounded-br-none";
 
-            if (!empresa.logo) {
-              return (
-                <div
-                  key={clave}
-                  className={`${CAJA} border-border bg-surface text-muted hover:text-fg hover:border-magenta/40 border px-6 text-center text-base font-semibold transition-colors duration-300`}
-                  aria-hidden={duplicada}
-                >
-                  <span className="bg-magenta/50 absolute inset-x-6 bottom-0 h-px" />
-                  {empresa.nombre}
-                </div>
-              );
-            }
-
-            return (
-              <div
-                key={clave}
-                // Blanco exacto, no `bg-surface`: los JPG traen su propio
-                // blanco opaco y cualquier otro tono deja ver el recuadro
-                // (ver trampa 18).
-                className={`${CAJA} border-border border bg-white transition-[filter] duration-300 hover:brightness-105`}
-                aria-hidden={duplicada}
-              >
-                {/* La caja interna va `absolute inset-0` para tener alto
-                    DEFINIDO. Con el padding directamente en la tarjeta, el
-                    alto quedaba automático y `max-h-full` no tenía contra qué
-                    resolver: los SVG zafaban por no traer tamaño intrínseco,
-                    pero los JPG se plantaban en su alto natural y se salían de
-                    la tarjeta —Rayuela se desbordaba 227px—. */}
-                <div
-                  className={`absolute inset-0 flex items-center justify-center px-8 py-7 ${
-                    empresa.chip ? "p-3" : ""
-                  }`}
-                >
-                  {/* Zócalo magenta detrás del logo, no en toda la tarjeta:
-                      Gobierno TDF y AIF traen arte blanco (o parcialmente
-                      blanco) pensado para fondo oscuro. Sin esto se pierden
-                      contra la tarjeta blanca (trampa 18). */}
-                  <div
-                    className={
-                      empresa.chip
-                        ? "bg-magenta-deep flex h-full w-full items-center justify-center rounded-xl px-6 py-5"
-                        : "contents"
-                    }
-                  >
-                    {/* `max-h/max-w` y no `h-full w-full`: así el limitante es
-                        el que corresponda según la proporción de cada logo,
-                        que van desde 4:1 (Gobierno) hasta casi cuadrado. */}
-                    <img
-                      src={empresa.logo}
-                      alt={empresa.alt ?? empresa.nombre}
-                      loading="lazy"
-                      className="max-h-full max-w-full object-contain"
-                      style={
-                        empresa.escala
-                          ? { scale: String(empresa.escala) }
-                          : undefined
-                      }
-                    />
-                  </div>
-                </div>
+          return (
+            <div
+              key={empresa.nombre}
+              // Blanco exacto, no `bg-surface`: los JPG traen su propio
+              // blanco opaco y cualquier otro tono deja ver el recuadro
+              // (ver trampa 18).
+              className={`${CAJA} border-border border bg-white transition-[filter] duration-300 hover:brightness-105`}
+            >
+              {/* La caja interna va `absolute inset-0` para tener alto
+                  DEFINIDO. Con el padding directamente en la tarjeta, el
+                  alto quedaba automático y `max-h-full` no tenía contra qué
+                  resolver: los SVG zafaban por no traer tamaño intrínseco,
+                  pero los JPG se plantaban en su alto natural y se salían de
+                  la tarjeta —Rayuela se desbordaba 227px—. */}
+              <div className="absolute inset-0 flex items-center justify-center px-8 py-7">
+                {/* `max-h/max-w` y no `h-full w-full`: así el limitante es
+                    el que corresponda según la proporción de cada logo, que
+                    van desde 4:1 (Gobierno) hasta casi cuadrado. */}
+                <img
+                  src={empresa.logo}
+                  alt={empresa.alt ?? empresa.nombre}
+                  loading="lazy"
+                  className="max-h-full max-w-full object-contain"
+                  style={
+                    empresa.escala
+                      ? { scale: String(empresa.escala) }
+                      : undefined
+                  }
+                />
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="mx-auto mt-16 max-w-7xl px-5">
