@@ -96,8 +96,7 @@ export function Sede() {
           {SEDE.nombre}
         </h2>
         <p className="text-muted mt-5 text-lg">
-          El polo de formación técnica de la provincia, y el lugar donde vas a
-          pasar los dos días del congreso.
+          El lugar donde vas a pasar los dos días del congreso.
         </p>
       </div>
 
