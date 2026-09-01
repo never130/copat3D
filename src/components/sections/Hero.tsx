@@ -145,11 +145,17 @@ export function Hero() {
           >
             Quiero mi entrada
           </Link>
+          {/* "Quiero participar" y no "Sumá tu empresa": desde que este botón
+              lleva a #convocatorias (concurso de secundarios + registro de
+              emprendedores) y no a los sponsors, el texto viejo prometía
+              otra cosa. Mismo texto que usa el CTA de esa sección
+              (Convocatorias.tsx), y hace pareja con "Quiero mi entrada" de
+              al lado. */}
           <a
             href="#convocatorias"
             className="rounded-full border-2 border-white/60 px-8 py-4 text-base font-bold text-white transition-colors duration-200 hover:bg-white/15"
           >
-            Sumá tu empresa
+            Quiero participar
           </a>
         </div>
       </div>
