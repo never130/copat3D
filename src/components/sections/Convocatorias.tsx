@@ -5,8 +5,12 @@ import {
   WireMargins,
 } from "@/components/shapes/wire";
 import { ACENTOS } from "@/components/ui/acentos";
-import { Tarjeta3D } from "@/components/ui/Tarjeta3D";
 import { CONVOCATORIAS } from "@/content/convocatorias";
+
+/** La única convocatoria con fecha de cierre, y por eso la que se anuncia
+ *  acá. Si en algún momento la de emprendedores también recibe un plazo, esto
+ *  pasa a ser una lista y hay que rediseñar la línea de estado. */
+const URGENTE = CONVOCATORIAS.find((c) => c.id === "secundarios");
 
 /**
  * Aviso de las convocatorias en la portada.
@@ -79,86 +83,48 @@ export function Convocatorias() {
         </p>
       </div>
 
-      {/* El .sheet va en el envoltorio y no en la franja: la animación de
-          entrada y la inclinación se pelearían por `transform` (trampa 6). */}
-      <div className="sheet mt-12">
-        <Tarjeta3D>
-          <Link
-            href="/convocatorias"
-            // Sin clases `transition-*` de Tailwind: las transiciones se
-            // declaran en `.tarjeta-3d > *` de globals.css, que al estar
-            // fuera de `@layer` le gana igual a las utilidades (trampa 10).
-            //
-            // El acento es el magenta de marca y no uno de `ACENTOS`: la
-            // franja cubre las dos convocatorias, así que tomar el verde o el
-            // lila de una sería arbitrario. Cada una conserva el suyo en su
-            // punto.
-            style={
-              {
-                "--luz-color":
-                  "color-mix(in srgb, var(--color-magenta) 15%, transparent)",
-                "--glow":
-                  "color-mix(in srgb, var(--color-magenta) 26%, var(--paper-shadow))",
-                "--borde-activo":
-                  "color-mix(in srgb, var(--color-magenta) 45%, transparent)",
-              } as React.CSSProperties
-            }
-            className="tarjeta-eje group border-border bg-surface relative flex flex-col gap-8 overflow-hidden rounded-3xl rounded-br-none border p-8 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_var(--glow)] sm:p-10 lg:flex-row lg:items-center lg:justify-between lg:gap-12"
+      {/* Un botón y una línea de estado, sin caja alrededor. Es la tercera
+          versión de este bloque y la más chica: el contenido son dos nombres
+          y dos fechas, y cualquier contenedor que se le pusiera encima
+          quedaba vacío. La invitación la hace el botón; el contexto ya lo
+          dio la bajada de arriba. */}
+      <div className="sheet mt-10 flex flex-wrap items-center gap-x-7 gap-y-5">
+        <Link
+          href="/convocatorias"
+          className="bg-magenta hover:bg-magenta-bright inline-flex items-center gap-2.5 rounded-full px-9 py-4 text-lg font-bold text-white transition-[background-color,transform] duration-200 hover:scale-[1.03]"
+        >
+          Quiero participar
+          <svg
+            viewBox="0 0 24 24"
+            className="size-5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
           >
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </Link>
+
+        {/* El plazo va acá y no adentro de la página: es el dato por el que
+            existe esta sección. Sale de `estado` en vez de escribirse a mano
+            para que la fecha viva en un solo lugar, y se nombra la
+            convocatoria porque es la única de las dos que tiene cierre —sin
+            el nombre, se leería como que cierran las dos. */}
+        {URGENTE && (
+          <span className="text-muted flex items-center gap-2.5 text-sm">
             <span
-              className="luz-tarjeta pointer-events-none absolute inset-0"
+              className={`size-3 shrink-0 rounded-full ${ACENTOS[URGENTE.color].bg}`}
               aria-hidden="true"
             />
-
-            <ul className="relative space-y-6">
-              {CONVOCATORIAS.map((c) => {
-                const a = ACENTOS[c.color];
-                return (
-                  <li key={c.id} className="flex gap-3">
-                    {/* `size-3` y no `size-2.5`: las utilidades `size-*` con
-                        decimales no se generan en este proyecto y el punto
-                        quedaba en 0×0, o sea invisible. */}
-                    <span
-                      className={`mt-2 size-3 shrink-0 rounded-full ${a.bg}`}
-                      aria-hidden="true"
-                    />
-                    <span>
-                      <span className="font-display block text-xl font-bold">
-                        {c.titulo}
-                      </span>
-                      <span className="text-muted mt-1 block text-sm">
-                        {c.estado}
-                      </span>
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-
-            <span className="bg-magenta group-hover:bg-magenta-bright relative inline-flex w-fit shrink-0 items-center gap-2 rounded-full px-7 py-3.5 text-base font-bold text-white transition-colors duration-200">
-              Ver las convocatorias
-              <svg
-                viewBox="0 0 24 24"
-                className="size-4 transition-transform duration-300 group-hover:translate-x-1"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14M13 6l6 6-6 6" />
-              </svg>
+            <span>
+              <span className="text-fg font-semibold">{URGENTE.titulo}</span>:{" "}
+              {URGENTE.estado.toLowerCase()}
             </span>
-
-            {/* Plato de la impresora, en el borde inferior como en las
-                tarjetas de eje. */}
-            <span
-              className="plato-tarjeta bg-magenta absolute inset-x-0 bottom-0 h-[3px] origin-left scale-x-[0.18] transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-x-100"
-              aria-hidden="true"
-            />
-          </Link>
-        </Tarjeta3D>
+          </span>
+        )}
       </div>
     </section>
   );

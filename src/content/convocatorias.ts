@@ -160,3 +160,16 @@ export const CONVOCATORIAS: Convocatoria[] = [
     ],
   },
 ];
+
+/**
+ * Nombre del concurso para los lugares que lo mencionan FUERA de su propia
+ * tarjeta: el encabezado del cronograma en `/convocatorias` y el título de
+ * pestaña de `/bases-secundarios`.
+ *
+ * Existe porque escribirlo a mano ya se desincronizó dos veces —una con coma
+ * en vez de raya, otra con guion corto en vez de raya—, y son diferencias que
+ * no se ven salvo comparando los tres lugares al lado. Con una sola fuente no
+ * puede volver a pasar.
+ */
+export const NOMBRE_CONCURSO =
+  CONVOCATORIAS.find((c) => c.id === "secundarios")?.titulo ?? "";

@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/layout/Logo";
-import { CRONOGRAMA_SECUNDARIOS } from "@/content/convocatorias";
+import {
+  CRONOGRAMA_SECUNDARIOS,
+  NOMBRE_CONCURSO,
+} from "@/content/convocatorias";
 
 export const metadata: Metadata = {
-  // El separador externo es "·" y no otra raya: el nombre del concurso ya
-  // lleva una adentro, y "Bases y condiciones — Diseñando el Futuro — Capa a
-  // Capa" se lee como tres cosas sueltas. Así el nombre queda idéntico al de
-  // todos los demás lugares.
-  title: "Bases y condiciones · Diseñando el Futuro — Capa a Capa",
+  // El nombre sale del content y el separador externo es "·": el del concurso
+  // ya trae su propio separador adentro, y encadenar dos rayas en el mismo
+  // título se lee como tres cosas sueltas.
+  title: `Bases y condiciones · ${NOMBRE_CONCURSO}`,
   description:
     "Bases y condiciones del Concurso de Proyectos de Impresión 3D para nivel secundario, en el marco de COPAT 3D. Ushuaia, Tierra del Fuego.",
   alternates: { canonical: "/bases-secundarios" },

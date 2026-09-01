@@ -8,6 +8,7 @@ import { Tarjeta3D } from "@/components/ui/Tarjeta3D";
 import {
   CONVOCATORIAS,
   CRONOGRAMA_SECUNDARIOS,
+  NOMBRE_CONCURSO,
 } from "@/content/convocatorias";
 
 export const metadata: Metadata = {
@@ -254,8 +255,12 @@ export default function ConvocatoriasPage() {
               hay dos listas de fechas que puedan quedar desfasadas. */}
           <section className="mt-20">
             <div className="sheet max-w-2xl">
+              {/* El nombre sale del content y no escrito a mano: ya se
+                  desincronizó dos veces (una con coma en vez de raya, otra
+                  con guion corto). Con una sola fuente no puede volver a
+                  pasar. */}
               <p className="text-accent-text font-mono text-xs font-medium tracking-[0.25em] uppercase">
-                Diseñando el Futuro — Capa a Capa
+                {NOMBRE_CONCURSO}
               </p>
               {/* No "Cómo sigue después de inscribirte": el primer paso del
                   cronograma ES la inscripción, así que ese título se
