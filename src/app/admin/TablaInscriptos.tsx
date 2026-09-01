@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { marcarAsistencia } from "@/actions/admin";
+import { EscanerQR } from "@/components/admin/EscanerQR";
 import { EJES } from "@/content/ejes";
 import type { InscriptoFila } from "@/lib/db";
 
@@ -33,6 +34,7 @@ export function TablaInscriptos({
   // todavía en curso — y un segundo toque la marcaba dos veces.
   const [enCurso, setEnCurso] = useState<ReadonlySet<string>>(new Set());
   const [mensaje, setMensaje] = useState<string | null>(null);
+  const [escaneando, setEscaneando] = useState(false);
   const [, iniciarTransicion] = useTransition();
 
   const termino = busqueda.trim().toLowerCase();
@@ -71,6 +73,14 @@ export function TablaInscriptos({
     });
   }
 
+  // La cámara SIEMPRE marca presente, nunca desmarca: escanear el QR de
+  // alguien es el gesto de "esta persona está entrando ahora", no un
+  // interruptor. Para corregir una marca por error sigue estando el botón
+  // manual de cada fila, que sí alterna.
+  function manejarDeteccion(codigoDetectado: string) {
+    cambiarAsistencia(codigoDetectado.trim().toUpperCase(), true);
+  }
+
   const asistieron = inscriptos.filter((i) => i.asistio).length;
 
   return (
@@ -97,7 +107,30 @@ export function TablaInscriptos({
             {filtrados.length} de {inscriptos.length}
           </span>
         )}
+        <button
+          type="button"
+          onClick={() => setEscaneando((v) => !v)}
+          className={`shrink-0 rounded-full px-4 py-2.5 text-sm font-bold transition-colors sm:ml-auto ${
+            escaneando
+              ? "border-border text-fg border"
+              : "bg-magenta hover:bg-magenta-bright text-white"
+          }`}
+        >
+          {escaneando ? "Cerrar cámara" : "Escanear QR"}
+        </button>
       </div>
+
+      {/* Apuntar la cámara al QR marca presente en un paso, sin buscar ni
+          tipear nada — ver EscanerQR.tsx sobre por qué el circuito no
+          quedaba cerrado sin esto. Se desmonta al cerrar, no se oculta con
+          CSS: así la cámara del celular se apaga de verdad en vez de seguir
+          prendida en segundo plano. */}
+      {escaneando && (
+        <EscanerQR
+          onDetectado={manejarDeteccion}
+          onCerrar={() => setEscaneando(false)}
+        />
+      )}
 
       {/* `role="status"` para que un lector de pantalla anuncie el resultado
           del marcado sin que alguien tenga que ir a buscarlo. */}
