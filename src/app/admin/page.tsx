@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cupoTotal } from "@/lib/cupo";
 import { obtenerInscriptos } from "@/lib/db";
 import { TablaInscriptos } from "./TablaInscriptos";
 
@@ -17,6 +18,8 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
   const inscriptos = await obtenerInscriptos();
+  const cupo = cupoTotal();
+  const libres = Math.max(cupo - inscriptos.length, 0);
 
   // pt-28 y no py-12: el navbar es `fixed` y mide 78px, así que con 48px de
   // padding el <h1> y el botón de descarga quedaban debajo de él — tapados e
@@ -31,6 +34,16 @@ export default async function AdminPage() {
             <h1 className="font-display text-3xl font-bold">
               Inscriptos — COPAT 3D
             </h1>
+            {/* El cupo se ve acá porque es la información que decide si hay
+                que ampliarlo. El total sale de REGISTRO_CUPO: para pasar de
+                300 a 500 se cambia esa variable en Vercel, sin tocar código. */}
+            <p className="text-muted mt-2 text-sm">
+              <span className="text-fg font-semibold">
+                {inscriptos.length} de {cupo}
+              </span>{" "}
+              lugares ocupados ·{" "}
+              {libres > 0 ? `quedan ${libres}` : "cupo agotado"}
+            </p>
           </div>
           <a
             href="/admin/export"

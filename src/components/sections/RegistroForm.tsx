@@ -343,14 +343,16 @@ export function RegistroForm() {
       <div>
         <Boton />
 
-        {/* Caso especial: menor de edad. Se pinta distinto de un error de
-            campo —no es un dato mal escrito, es una regla del sistema— con el
-            mismo tono neutro que usan los estados "Próximamente" del sitio. */}
+        {/* Casos especiales: menor de edad y cupo agotado. Se pintan distinto
+            de un error de campo —no son un dato mal escrito sino una regla
+            del sistema, y no hay nada que corregir ni sentido en reintentar—
+            con el mismo tono neutro que usan los estados "Próximamente" del
+            sitio. */}
         {estado.mensaje && !estado.ok && (
           <p
             role="status"
             className={`mt-5 rounded-xl border px-4 py-3 text-sm font-medium ${
-              estado.menorDeEdad
+              estado.menorDeEdad || estado.cupoAgotado
                 ? "border-border bg-surface-2 text-fg"
                 : "border-magenta/50 text-accent-text"
             }`}

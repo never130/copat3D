@@ -3,7 +3,8 @@
 import { headers } from "next/headers";
 import { Resend } from "resend";
 import QRCode from "qrcode";
-import { generarCodigoReserva, getPool } from "@/lib/db";
+import { cupoTotal } from "@/lib/cupo";
+import { generarCodigoReserva, insertarInscripcionSiHayCupo } from "@/lib/db";
 import { plantillaConfirmacionRegistro } from "@/lib/email-templates";
 import { envResend } from "@/lib/env";
 import { crearLimitador } from "@/lib/rate-limit";
@@ -28,6 +29,10 @@ export type EstadoRegistro = {
   /** Distingue el caso "sos menor de edad" del resto de los errores: la UI
    *  lo pinta como aviso informativo, no como un campo mal completado. */
   menorDeEdad?: boolean;
+  /** Se llenó el cupo mientras la persona completaba el formulario. Como el
+   *  de menor de edad, es un aviso y no un error de carga: no hay nada que
+   *  corregir ni sentido en reintentar. */
+  cupoAgotado?: boolean;
 };
 
 // Más generoso que el de contacto (3 cada 10 min): acá varias personas de
@@ -127,18 +132,19 @@ export async function registrarInscripcion(
 
   for (;;) {
     try {
-      // getPool() DENTRO del try: si falta DATABASE_URL, tira sincrónico
-      // (ver src/lib/env.ts) y sin el try alrededor la Server Action entera
-      // explota con el error crudo de Next en vez de la respuesta prolija de
-      // siempre. El catch de abajo no necesita distinguir el caso: cae al
-      // mensaje genérico igual que cualquier otro fallo de base.
-      const pool = getPool();
-      await pool.query(
-        `INSERT INTO inscripciones
-           (codigo_reserva, nombre_apellido, dni, fecha_nacimiento, email,
-            ciudad, provincia, interes, consentimiento, consentimiento_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true, $9)`,
-        [
+      // La comprobación de cupo y el guardado van juntos y serializados
+      // dentro de insertarInscripcionSiHayCupo(): contar acá y guardar
+      // después dejaría pasar de largo el límite con dos envíos simultáneos.
+      // Ver el comentario largo en src/lib/db.ts.
+      //
+      // La llamada va DENTRO del try porque si falta DATABASE_URL tira
+      // sincrónico (ver src/lib/env.ts) y sin el try alrededor la Server
+      // Action entera explota con el error crudo de Next en vez de la
+      // respuesta prolija de siempre. El catch de abajo no necesita
+      // distinguir el caso: cae al mensaje genérico como cualquier otro
+      // fallo de base.
+      const guardada = await insertarInscripcionSiHayCupo(
+        {
           codigo,
           nombreApellido,
           dni,
@@ -146,10 +152,21 @@ export async function registrarInscripcion(
           email,
           ciudad,
           provincia,
-          interes ?? null,
+          interes: interes ?? null,
           consentimientoAt,
-        ],
+        },
+        cupoTotal(),
       );
+
+      if (!guardada) {
+        return {
+          ok: false,
+          cupoAgotado: true,
+          mensaje:
+            "Se agotaron los lugares para la inscripción individual. Escribinos a copat3d@aif.gob.ar y te avisamos si se liberan cupos.",
+        };
+      }
+
       break;
     } catch (error) {
       const pgError = error as { code?: string; constraint?: string };

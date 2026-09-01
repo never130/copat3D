@@ -40,6 +40,98 @@ export function generarCodigoReserva(): string {
   return `COPAT-${codigo}`;
 }
 
+/** Clave del lock de cupo. Es un número arbitrario pero FIJO: dos procesos
+ *  solo se serializan entre sí si piden exactamente la misma clave. */
+const LOCK_CUPO = 30_2026;
+
+export type ValoresInscripcion = {
+  codigo: string;
+  nombreApellido: string;
+  dni: string;
+  fechaNacimiento: string;
+  email: string;
+  ciudad: string;
+  provincia: string;
+  interes: string | null;
+  consentimientoAt: Date;
+};
+
+/**
+ * Guarda una inscripción solo si todavía queda cupo. Devuelve `false` si el
+ * evento ya está lleno; los errores de base (DNI repetido, choque de código)
+ * siguen saliendo como excepción para que los maneje quien llama.
+ *
+ * **Por qué una transacción con lock y no un `SELECT COUNT(*)` seguido de un
+ * `INSERT`:** entre esas dos consultas hay una ventana en la que otro pedido
+ * puede insertar. Con dos personas enviando el formulario a la vez —lo
+ * esperable apenas se difunde la convocatoria— las dos leen 299 y quedan 301
+ * inscriptos. No es un caso teórico: es exactamente lo que pasa cuando el
+ * cupo está por agotarse, que es cuando el límite importa.
+ *
+ * `pg_advisory_xact_lock` serializa a todos los que estén intentando
+ * anotarse: el segundo espera a que el primero termine y recién ahí cuenta.
+ * El lock se libera solo al cerrar la transacción (COMMIT o ROLLBACK), así
+ * que no puede quedar tomado si algo falla en el medio.
+ *
+ * El conteo va DENTRO del propio INSERT (`WHERE (SELECT COUNT(*)...) < $10`)
+ * y no en una consulta aparte, así no hay dos números que puedan diferir.
+ * `rowCount === 0` significa "no entró porque no había lugar".
+ */
+export async function insertarInscripcionSiHayCupo(
+  v: ValoresInscripcion,
+  cupo: number,
+): Promise<boolean> {
+  const pool = getPool();
+  // `connect()` y no `pool.query()`: una transacción necesita que todas las
+  // sentencias vayan por la MISMA conexión, y el pool puede repartir cada
+  // query a una distinta.
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+    await client.query("SELECT pg_advisory_xact_lock($1)", [LOCK_CUPO]);
+
+    // Casts explícitos: en un `INSERT ... SELECT` Postgres no siempre infiere
+    // el tipo de los parámetros desde las columnas destino, y `interes` puede
+    // llegar en null, que sin cast falla con "could not determine data type".
+    const res = await client.query(
+      `INSERT INTO inscripciones
+         (codigo_reserva, nombre_apellido, dni, fecha_nacimiento, email,
+          ciudad, provincia, interes, consentimiento, consentimiento_at)
+       SELECT $1::text, $2::text, $3::text, $4::date, $5::text,
+              $6::text, $7::text, $8::text, true, $9::timestamptz
+       WHERE (SELECT COUNT(*) FROM inscripciones) < $10::int`,
+      [
+        v.codigo,
+        v.nombreApellido,
+        v.dni,
+        v.fechaNacimiento,
+        v.email,
+        v.ciudad,
+        v.provincia,
+        v.interes,
+        v.consentimientoAt,
+        cupo,
+      ],
+    );
+
+    if (res.rowCount === 0) {
+      await client.query("ROLLBACK");
+      return false;
+    }
+
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // El ROLLBACK puede fallar si la conexión ya se cortó; que eso no tape
+    // el error real, que es el que quien llama necesita ver.
+    await client.query("ROLLBACK").catch(() => {});
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 /** Una fila de la lista de inscriptos, tal como la necesita el panel
  *  (`/admin`) y su exportación a CSV — un solo lugar para esta consulta
  *  evita que las dos vistas terminen mostrando datos distintos. */

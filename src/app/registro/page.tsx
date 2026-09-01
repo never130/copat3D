@@ -7,6 +7,7 @@ import {
   WireMargins,
   WireOctahedron,
 } from "@/components/shapes/wire";
+import { type EstadoCupo, estadoCupo } from "@/lib/cupo";
 import { REGISTRO_HABILITADO } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -16,7 +17,37 @@ export const metadata: Metadata = {
   alternates: { canonical: "/registro" },
 };
 
-export default function RegistroPage() {
+/**
+ * La página consulta el cupo, así que no puede quedar prerenderizada de una
+ * vez para siempre: el número se congelaría en el del build. Con 60 segundos
+ * el contador está fresco sin pegarle a la base en cada visita, y el desfase
+ * no tiene consecuencia — quien decide de verdad si entra una inscripción es
+ * la Server Action, no esto.
+ */
+export const revalidate = 60;
+
+/**
+ * Estado del cupo, o `null` si la base no responde.
+ *
+ * Ante un fallo de base se muestra el formulario normal en vez de un cartel
+ * de error: la comprobación real la hace la Server Action al guardar, así que
+ * lo peor que pasa es que alguien complete el formulario y reciba ahí el
+ * aviso. Tratar la caída como "agotado" sería mucho peor — cerraría la
+ * inscripción por un problema de infraestructura.
+ */
+async function leerCupo(): Promise<EstadoCupo | null> {
+  if (!REGISTRO_HABILITADO) return null;
+  try {
+    return await estadoCupo();
+  } catch (error) {
+    console.error("No se pudo leer el estado del cupo:", error);
+    return null;
+  }
+}
+
+export default async function RegistroPage() {
+  const cupo = await leerCupo();
+
   return (
     <main className="flex-1">
       <PageHeader
@@ -62,8 +93,33 @@ export default function RegistroPage() {
               infraestructura: no alcanza con tocar la variable en Vercel sin
               haber cerrado antes el checklist legal de docs/04. */}
           <div className="sheet sheet-print">
-            {REGISTRO_HABILITADO ? (
-              <RegistroForm />
+            {REGISTRO_HABILITADO && cupo?.agotado ? (
+              <div className="border-border bg-surface rounded-3xl border border-dashed p-12 text-center">
+                <h2 className="text-2xl">Cupos agotados</h2>
+                <p className="text-muted mx-auto mt-4 max-w-md leading-relaxed">
+                  Se completaron los {cupo.total} lugares de la inscripción
+                  individual. Escribinos y te avisamos si se liberan cupos o si
+                  se amplía la capacidad.
+                </p>
+                <a
+                  href="mailto:copat3d@aif.gob.ar?subject=Lista%20de%20espera%20COPAT%203D"
+                  className="bg-magenta mt-8 inline-block rounded-full px-8 py-4 font-bold text-white transition-transform duration-200 hover:scale-[1.03]"
+                >
+                  Quiero estar en lista de espera
+                </a>
+              </div>
+            ) : REGISTRO_HABILITADO ? (
+              <>
+                {/* Solo cuando ya queda poco: con 12 inscriptos sobre 300,
+                    anunciar los lugares libres comunica que el evento está
+                    vacío. Ver UMBRAL_AVISO en src/lib/cupo.ts. */}
+                {cupo?.avisar && (
+                  <p className="border-copat-yellow/40 bg-copat-yellow/10 text-fg mb-6 rounded-2xl border px-5 py-4 text-center text-sm font-semibold">
+                    Quedan {cupo.disponibles} de {cupo.total} lugares.
+                  </p>
+                )}
+                <RegistroForm />
+              </>
             ) : (
               <div className="border-border bg-surface rounded-3xl border border-dashed p-12 text-center">
                 <h2 className="text-2xl">El formulario se habilita en breve</h2>
