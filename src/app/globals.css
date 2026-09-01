@@ -220,7 +220,17 @@
 
 /* Sin `position` acá: esta regla está fuera de capa y le ganaría a las
    utilidades de Tailwind (trampa 10), pisando el `sticky` del hero. Cada
-   elemento que use la clase define su propio posicionamiento. */
+   elemento que use la clase define su propio posicionamiento.
+
+   SIN animación (a diferencia de `.hero-gradient`, que sí gira en los dos
+   modos): animar el ángulo de un `linear-gradient` no es gratis como
+   `transform`/`opacity` —no lo resuelve el compositor, así que cada
+   fotograma repinta el elemento entero—, y este es el hero, `sticky` y a
+   pantalla completa, en pantalla durante gran parte del scroll de la
+   portada. El modo oscuro ya lo tenía apagado (ver `.dark .brand-canvas`,
+   fondo plano); esto empareja el claro con el mismo criterio. `--gradient-
+   angle` queda en su `initial-value` (135deg, ver la declaración de
+   `@property`) al no haber nada que la anime. */
 .brand-canvas {
   background: linear-gradient(
     var(--gradient-angle),
@@ -228,7 +238,6 @@
     var(--color-magenta) 45%,
     var(--color-magenta-deep) 100%
   );
-  animation: rotate-gradient 24s linear infinite;
 }
 
 /* Grano sobre el magenta: evita que se lea "plano digital" */
