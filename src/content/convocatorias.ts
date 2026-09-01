@@ -43,22 +43,15 @@ export type Convocatoria = {
  * `/bases-secundarios` porque lo muestran las dos páginas: el documento
  * formal y el resumen de `/convocatorias`.
  *
- * ⚠️ EL PDF SE CONTRADICE CON LA FECHA DE INICIO DE LA INSCRIPCIÓN, y las dos
- * versiones están publicadas en el sitio porque las dos son fieles al
- * original:
+ * El PDF se contradecía con la fecha de inicio: el punto 5 decía "del 31 de
+ * agosto" y este cronograma "1 al 7 de septiembre". **Resuelto por la AIF el
+ * 31/8/2026: vale del 1 al 7 de septiembre**, o sea que el error estaba en el
+ * punto 5. Todo el sitio dice 1 de septiembre, incluida la transcripción de
+ * ese punto en /bases-secundarios.
  *
- * - Punto 5 ("Inscripción"): "del 31 de agosto al 7 de septiembre de 2026".
- *   Es la que sale en los `datos` de la convocatoria y en el punto 5 de
- *   /bases-secundarios.
- * - Punto 7 (este cronograma): "1 al 7 de septiembre".
- *
- * Difieren en el arranque: 31 de agosto contra 1 de septiembre. El cierre —7
- * de septiembre— sí coincide en los dos lados, así que el estado que se
- * muestra en la portada no está en duda.
- *
- * NO unificar por cuenta propia: hay que preguntarle a la AIF cuál vale.
- * Mientras tanto se transcribe lo que dice el documento oficial en cada
- * punto, que es lo defendible si alguien reclama por la fecha.
+ * ⚠️ El archivo PDF original sigue diciendo "31 de agosto" en su punto 5. Si
+ * la AIF lo reparte por mail o WhatsApp va a contradecir al sitio; hay que
+ * pedirles que corrijan el documento.
  */
 export const CRONOGRAMA_SECUNDARIOS = [
   {
@@ -91,12 +84,16 @@ export const CONVOCATORIAS: Convocatoria[] = [
     titulo: "Diseñando el Futuro - Capa a Capa",
     detalle:
       "Equipos de colegios secundarios que diseñan y fabrican un proyecto con impacto real en su comunidad.",
-    estado: "Inscripción abierta hasta el 7 de septiembre",
+    // Rango y no "abierta": la inscripción arranca el 1 de septiembre, así
+    // que hasta el 31 de agosto decir "abierta" era falso. El rango es cierto
+    // antes, durante y después, y no depende de que alguien se acuerde de
+    // volver a tocar este archivo el día que abre.
+    estado: "Inscripción del 1 al 7 de septiembre",
     color: "copat-green",
     datos: [
       { rotulo: "Quiénes", valor: "Colegios de Río Grande, Ushuaia y Tolhuin" },
       { rotulo: "Equipo", valor: "7 estudiantes y 1 docente responsable" },
-      { rotulo: "Inscripción", valor: "Del 31 de agosto al 7 de septiembre" },
+      { rotulo: "Inscripción", valor: "Del 1 al 7 de septiembre" },
       { rotulo: "Premio", valor: "$1.500.000 + insumos, uno por ciudad" },
     ],
     enlaces: [

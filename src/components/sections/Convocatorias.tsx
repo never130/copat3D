@@ -7,11 +7,6 @@ import {
 import { ACENTOS } from "@/components/ui/acentos";
 import { CONVOCATORIAS } from "@/content/convocatorias";
 
-/** La única convocatoria con fecha de cierre, y por eso la que se anuncia
- *  acá. Si en algún momento la de emprendedores también recibe un plazo, esto
- *  pasa a ser una lista y hay que rediseñar la línea de estado. */
-const URGENTE = CONVOCATORIAS.find((c) => c.id === "secundarios");
-
 /**
  * Aviso de las convocatorias en la portada.
  *
@@ -108,23 +103,32 @@ export function Convocatorias() {
           </svg>
         </Link>
 
-        {/* El plazo va acá y no adentro de la página: es el dato por el que
-            existe esta sección. Sale de `estado` en vez de escribirse a mano
-            para que la fecha viva en un solo lugar, y se nombra la
-            convocatoria porque es la única de las dos que tiene cierre —sin
-            el nombre, se leería como que cierran las dos. */}
-        {URGENTE && (
-          <span className="text-muted flex items-center gap-2.5 text-sm">
-            <span
-              className={`size-3 shrink-0 rounded-full ${ACENTOS[URGENTE.color].bg}`}
-              aria-hidden="true"
-            />
-            <span>
-              <span className="text-fg font-semibold">{URGENTE.titulo}</span>:{" "}
-              {URGENTE.estado.toLowerCase()}
-            </span>
-          </span>
-        )}
+        {/* Los plazos van acá y no adentro de la página: son el dato por el
+            que existe esta sección. Salen de `estado` en vez de escribirse a
+            mano, para que las fechas vivan en un solo lugar.
+
+            Se listan LAS DOS aunque solo una tenga fecha de cierre: mostrar
+            únicamente la de colegios desbalanceaba la sección, porque el
+            título de arriba anuncia dos convocatorias y abajo aparecía una
+            sola. Cada una va con su nombre, si no el plazo de una se leería
+            como si aplicara a las dos. */}
+        <ul className="space-y-2">
+          {CONVOCATORIAS.map((c) => (
+            <li
+              key={c.id}
+              className="text-muted flex items-center gap-2.5 text-sm"
+            >
+              <span
+                className={`size-3 shrink-0 rounded-full ${ACENTOS[c.color].bg}`}
+                aria-hidden="true"
+              />
+              <span>
+                <span className="text-fg font-semibold">{c.titulo}</span>:{" "}
+                {c.estado.toLowerCase()}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

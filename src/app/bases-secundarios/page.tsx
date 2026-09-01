@@ -210,11 +210,16 @@ export default function BasesSecundariosPage() {
                 formulario en línea, publicado en la web oficial de la Agencia
                 de Innovación Fueguina.
               </p>
+              {/* El PDF dice "del 31 de agosto" acá, contradiciendo a su
+                  propio cronograma del punto 7 ("1 al 7 de septiembre"). La
+                  AIF lo resolvió el 31/8/2026: vale del 1 al 7, así que el
+                  error estaba en este punto y la transcripción lo corrige.
+                  Es la ÚNICA parte del documento que no va textual. */}
               <p>
                 <strong className="text-fg font-semibold">
                   Período de inscripción:
                 </strong>{" "}
-                del 31 de agosto al 7 de septiembre de 2026.
+                del 1 al 7 de septiembre de 2026.
               </p>
               <p>
                 Al inscribirse, cada equipo deberá presentar los datos
