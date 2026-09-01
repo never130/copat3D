@@ -146,7 +146,7 @@ export function Hero() {
             Quiero mi entrada
           </Link>
           <a
-            href="#empresas"
+            href="#convocatorias"
             className="rounded-full border-2 border-white/60 px-8 py-4 text-base font-bold text-white transition-colors duration-200 hover:bg-white/15"
           >
             Sumá tu empresa
