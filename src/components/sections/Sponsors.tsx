@@ -42,6 +42,14 @@ const EMPRESAS: Empresa[] = [
     // ya viene casi sin margen (97% del ancho, 82% del alto es tinta).
   },
   {
+    nombre: "Terra Ignis",
+    alt: "Terra Ignis Energía",
+    logo: "/logos/terra.png",
+    // A diferencia del archivo anterior (terraignis.png, reemplazado), este
+    // sí trae margen blanco alrededor del badge teal — mismo tratamiento
+    // que el resto: caja blanca genérica, `object-contain`.
+  },
+  {
     nombre: "Buena Mezcla",
     alt: "Buena Mezcla — Pastelería y catering gourmet",
     logo: "/logos/buena_mezcla.jpg",
@@ -56,14 +64,6 @@ const EMPRESAS: Empresa[] = [
     // de margen y fondo #F7F7F7 — no blanco puro. Los dos problemas se
     // resolvieron en el archivo y no acá: ampliar por CSS un fondo gris solo
     // agranda el recuadro gris. Ver trampa 18.
-  },
-  {
-    nombre: "Terra Ignis",
-    alt: "Terra Ignis Energía",
-    logo: "/logos/terra.png",
-    // A diferencia del archivo anterior (terraignis.png, reemplazado), este
-    // sí trae margen blanco alrededor del badge teal — mismo tratamiento
-    // que el resto: caja blanca genérica, `object-contain`.
   },
 ];
 
