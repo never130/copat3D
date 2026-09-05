@@ -65,6 +65,17 @@ const EMPRESAS: Empresa[] = [
     // resolvieron en el archivo y no acá: ampliar por CSS un fondo gris solo
     // agranda el recuadro gris. Ver trampa 18.
   },
+  {
+    nombre: "Nexo",
+    logo: "/logos/nexo.jpg",
+    // Mismo caso que Rayuela: el archivo original (nexo.jpeg, 952×615)
+    // traía fondo #F7F7F7 uniforme, no blanco puro. Normalizado siguiendo
+    // el proceso de la trampa 18: relleno por inundación desde las cuatro
+    // esquinas (no un test de color global, para no agujerear el gris de
+    // las letras) y recorte a la caja de tinta con 8px de margen. Se
+    // reemplaza el .jpeg crudo por el .jpg ya normalizado, no conviven los
+    // dos.
+  },
 ];
 
 export function Sponsors() {
