@@ -249,7 +249,7 @@ Para eso existen los tokens `--color-copat-*-deep` (los mismos tonos que ya usan
 
 Contraste medido contra el fondo: **1.5 a 2.12 en ambos modos**. Para decoración no hace falta 4.5:1, pero por debajo de ~1.25:1 el trazo es imperceptible.
 
-> Al medir contraste desde Playwright, **Tailwind v4 emite los colores como `oklab(...)` con alpha** y parsearlos con una regex da resultados falsos (daban 1.01 en todo). Hay que dejar que el navegador haga la mezcla: pintar fondo y color en un `<canvas>` de 1×1 y leer el píxel. Además `next-themes` usa `defaultTheme="dark"`, así que `colorScheme` de Playwright no cambia el tema — hay que fijar `localStorage.theme` con `addInitScript`.
+> Al medir contraste desde Playwright, **Tailwind v4 emite los colores como `oklab(...)` con alpha** y parsearlos con una regex da resultados falsos (daban 1.01 en todo). Hay que dejar que el navegador haga la mezcla: pintar fondo y color en un `<canvas>` de 1×1 y leer el píxel. Además `next-themes` usa `defaultTheme` con un valor concreto (`"light"` desde el 5/9/2026, antes `"dark"`) y no `"system"`, así que **ignora la preferencia del sistema operativo por completo** para cualquier visitante sin tema guardado — confirmado en el código fuente de la librería, no solo observado: con un string literal en `defaultTheme`, nunca llega a evaluar `matchMedia("(prefers-color-scheme: dark)")`. Por eso `colorScheme` de Playwright no cambia el tema — para probar el modo que NO es el default hay que fijar `localStorage.theme` con `addInitScript`.
 
 ### 17. Helvetica Now Display es paga
 
@@ -381,7 +381,7 @@ Si en algún momento hace falta anidar de verdad (por URL, por SEO, por lo que s
 ## Convenciones
 
 - **Tailwind v4 con configuración CSS-first.** No hay `tailwind.config.js`; los tokens se definen en `@theme` dentro de `globals.css`.
-- **Modo oscuro por defecto.** La identidad es neón sobre fondo profundo.
+- **Modo claro por defecto** (cambiado el 5/9/2026; hasta entonces era oscuro). `defaultTheme="light"` en `layout.tsx` — un string concreto, no `"system"`, así que un visitante sin preferencia guardada ve claro sin importar el modo de su sistema operativo (ver trampa 16 sobre por qué `next-themes` funciona así). El modo oscuro sigue completo y con la misma identidad neón sobre fondo profundo; solo cambió cuál se ofrece primero.
 - **El lienzo de marca sí cambia entre modos**, siguiendo el arte oficial: `.brand-canvas` (hero y `PageHeader`) es magenta en claro y negro con retícula en oscuro. En cambio `.hero-gradient` es magenta **siempre** — lo usan el CTA de sponsors y el menú móvil, que deben resaltar sobre el contenido y en oscuro desaparecerían. Ver [docs/02](docs/02-design-system.md).
 - **Las figuras del hero no llevan opacidad reducida.** Atenuarlas las mezcla con el fondo, y el fondo cambia entre modos: al 50% el zigzag verde tiraba a marrón sobre magenta y a oliva sobre negro. La profundidad la dan el tamaño y el parallax.
 - **Server Components por defecto.** `"use client"` solo donde hace falta interactividad real.
